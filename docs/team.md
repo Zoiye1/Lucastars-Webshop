@@ -2,7 +2,6 @@
 title: Zoiye
 ---
 # Team
-**TODO:** Werk op deze pagina de informatie over teamleden uit. Doe dit volgens onderstaand formaat.
 
 
 ## Zoiye
@@ -38,3 +37,11 @@ Mijn commits zijn in de loop van het project zeker verbeterd. Wel wil ik me nog 
 
 ### Project: Webshop
 Ik hoop dat we goed kunnen samenwerken, dat we allemaal nieuwe dingen leren en dat iedereen zo veel mogelijk aanwezig kan zijn. Ook hoop ik dat we elkaar blijven helpen en ondersteunen tijdens het project.
+## Miguel Jesus Madeira
+Mijn naam is Miguel Madeira, ik ben 23 jaar oud. Ik heb voor de opleiding HBO-ICT gekozen omdat ik ICT heel leuk vind en graag een bachelor diploma wil.
+
+### Project: The Game
+Dit project was goed verlopen. We hebben onze game optijd kunnen afronden en de samenwerking met de groep ging goed. Tijdens dit project heb ik veel over express.js geleerd.
+
+### Project: Webshop
+Ik hoop dat aan het einde van dit project goed kan werken met grotere team en dat mijn planning beter wordt. Ik hoop dat te bereiken door goed te communiceren en aan de afspraken te houden die wij hebben opgesteld.
