@@ -105,7 +105,13 @@ Mogelijke conflicten en oplossingen:
     - Dingen niet communiseren (zoals iets niet afmaken voor de inlever datum)
   
 ## leerdoelen
-
+- omar
+- 1e
+Ik wil mijn kennis en vaardigheden in Object-Oriented Programming (OOP) verbeteren door in de komende drie maanden  filmpjes van lenard twee of drie keer te kijken zo dat ik alles begrijp  Ik zal mijn voortgang documenteren in een Markdown-document en regelmatig feedback vragen aan mijn docent of een ervaren programmeur
+- 2e
+Ik wil mijn TMC-cyclus verbeteren door mijn code minimaal twee keer per week te laten controleren en feedback te vragen aan minstens 
+- 3e
+Meer feedback verzamelen over (af)gemaakt werk en dit dan documenteren via Scorion. Varieer zoveel mogelijk van mensen waarvan je feedback vraagt. Dit zorgt voor veel verschillende kijken op het gemaakte werk. En hierdoor houd je er meerdere mensen bij betrokken die misschien goede ideëen voor je hebben.
 ## Handtekeningen
 
 | Naam    | Handtekening |
