@@ -1,7 +1,6 @@
 ---
 title: Samenwerkingscontract
 ---
-
 # Samenwerkingscontract
 
 ## 1. Doelstelling van het project
@@ -28,24 +27,19 @@ Een werkend webshop ontwikkelen dat voldoet aan de gestelde eisen en doelstellin
 
 - **Afspraken over elkaar helpen en feedback geven:**
     1. Er is een Discord server waar teamleden feedback kunnen vragen.
-    2. Voordat er naar de main branch gemerged wordt, moet er een merge request gedaan worden, die
-       gecontroleerd wordt en waarop feedback wordt gegeven.
-    3. Elke woensdag is er een verplichte meeting waar feedback kan worden gegeven en ondersteuning kan worden
-       geboden.
+    2. Voordat er naar de main branch gemerged wordt, moet er een merge request gedaan worden, die gecontroleerd wordt en waarop feedback wordt gegeven.
+    3. Elke woensdag is er een verplichte meeting waar feedback kan worden gegeven en ondersteuning kan worden geboden.
 
 - **Verantwoordelijkheid voor sprintplanning:**
     - Scrum master van de huidige sprint is verantwoordelijkheid voor de sprintplanning.
 
-- **Verantwoordelijkheid voor naleving van codeconventies en controle van user stories op acceptatiecriteria (
-  incl. Definition of Done):**
+- **Verantwoordelijkheid voor naleving van codeconventies en controle van user stories op acceptatiecriteria (incl. Definition of Done):**
     - Elk teamlid is verantwoordelijk voor tijdige updates en communicatie over voortgang en obstakels.
     - Elk teamlid is verantwoordelijk voor zijn eigen werk.
-    - De reviewers zijn verantwoordelijk voor het controleren van de codeconventies, acceptatiecriteria,
-      Definition of Done.
+    - De reviewers zijn verantwoordelijk voor het controleren van de codeconventies, acceptatiecriteria, Definition of Done.
 
 - **Overige rollen:**
-    - Afhankelijk van de sprint kunnen rollen variëren, zodat iedereen ervaring opdoet met verschillende
-      aspecten van het project.
+    - Afhankelijk van de sprint kunnen rollen variëren, zodat iedereen ervaring opdoet met verschillende aspecten van het project.
 
 ### 3.2 Proces & Communicatie
 
@@ -72,20 +66,17 @@ Een werkend webshop ontwikkelen dat voldoet aan de gestelde eisen en doelstellin
     - Mappenstructuur per projectonderdeel.
 - **Commit Structuur:**
     - Commits worden gemaakt op basis van een algemeen aanvaard commit structuur.
-- **scope** - We gebruiken ook een scope om extra contextuele informatie over de commit te geven. De scope kan
-  alles zijn wat de locatie van de wijziging in de commit specificeert.
-    * **feat** – een nieuwe functie die wordt geïntroduceerd met de wijzigingen.
-    * **fix** – een bugfix die is doorgevoerd.
-    * **chore** – wijzigingen die niet gerelateerd zijn aan een bugfix of functie en die geen invloed hebben
-      op de src of test bestanden (bijvoorbeeld het bijwerken van afhankelijkheden).
-    * **refactor** – refactoren van code die geen bugfix of nieuwe functie toevoegt.
-    * **docs** – updates aan documentatie, zoals de README of andere markdown-bestanden.
-    * **style** – wijzigingen die geen invloed hebben op de betekenis van de code, waarschijnlijk gerelateerd
-      aan codeopmaak, zoals witruimtes, ontbrekende puntkomma's, enzovoort.
-    * **WIP** – een lokale commit die aangeeft dat het werk in uitvoering is.
-
+- **scope** - We gebruiken ook een scope om extra contextuele informatie over de commit te geven. De scope kan alles zijn wat de locatie van de wijziging in de commit specificeert.
+    *   **feat** – een nieuwe functie die wordt geïntroduceerd met de wijzigingen.
+    *   **fix** – een bugfix die is doorgevoerd.
+    *   **chore** – wijzigingen die niet gerelateerd zijn aan een bugfix of functie en die geen invloed hebben op de src of test bestanden (bijvoorbeeld het bijwerken van afhankelijkheden).
+    *   **refactor** – refactoren van code die geen bugfix of nieuwe functie toevoegt.
+    *   **docs** – updates aan documentatie, zoals de README of andere markdown-bestanden.
+    *   **style** – wijzigingen die geen invloed hebben op de betekenis van de code, waarschijnlijk gerelateerd aan codeopmaak, zoals witruimtes, ontbrekende puntkomma's, enzovoort.
+    *   **WIP** – een lokale commit die aangeeft dat het werk in uitvoering is.
     - https://www.conventionalcommits.org/en/v1.0.0
     - https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/
+
 
 ### 3.4 Conflictsignalering en -oplossing
 
@@ -114,27 +105,17 @@ Mogelijke conflicten en oplossingen:
     - Dingen niet communiseren (zoals iets niet afmaken voor de inlever datum)
 
 ## leerdoelen
-
 - omar
 - 1e
-  Ik wil mijn kennis en vaardigheden in Object-Oriented Programming (OOP) verbeteren door in de komende drie
-  maanden filmpjes van lenard twee of drie keer te kijken zo dat ik alles begrijp Ik zal mijn voortgang
-  documenteren in een Markdown-document en regelmatig feedback vragen aan mijn docent of een ervaren
-  programmeur
+  Ik wil mijn kennis en vaardigheden in Object-Oriented Programming (OOP) verbeteren door in de komende drie maanden  filmpjes van lenard twee of drie keer te kijken zo dat ik alles begrijp  Ik zal mijn voortgang documenteren in een Markdown-document en regelmatig feedback vragen aan mijn docent of een ervaren programmeur
 - 2e
-  Ik wil mijn TMC-cyclus verbeteren door mijn code minimaal twee keer per week te laten controleren en
-  feedback te vragen aan minstens
+  Ik wil mijn TMC-cyclus verbeteren door mijn code minimaal twee keer per week te laten controleren en feedback te vragen aan minstens
 - 3e
-  Meer feedback verzamelen over (af)gemaakt werk en dit dan documenteren via Scorion. Varieer zoveel mogelijk
-  van mensen waarvan je feedback vraagt. Dit zorgt voor veel verschillende kijken op het gemaakte werk. En
-  hierdoor houd je er meerdere mensen bij betrokken die misschien goede ideëen voor je hebben.
-
+  Meer feedback verzamelen over (af)gemaakt werk en dit dan documenteren via Scorion. Varieer zoveel mogelijk van mensen waarvan je feedback vraagt. Dit zorgt voor veel verschillende kijken op het gemaakte werk. En hierdoor houd je er meerdere mensen bij betrokken die misschien goede ideëen voor je hebben.
 ## Handtekeningen
 
-| Naam | Handtekening |
-|------|--------------|
-
---
+| Naam    | Handtekening |
+|---------|--------------|
 
 ## Akif
 
