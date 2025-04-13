@@ -20,7 +20,7 @@ Een werkend webshop ontwikkelen dat voldoet aan de gestelde eisen en doelstellin
 
 ### 3.1 Verantwoordelijkheden/Rollen
 
-- **Scrum Master:** 
+- **Scrum Master:**
     - Sprint 1: Omar
     - Sprint 2: Zoiye
     - Sprint 3: Miguel
@@ -38,31 +38,31 @@ Een werkend webshop ontwikkelen dat voldoet aan de gestelde eisen en doelstellin
     - Elk teamlid is verantwoordelijk voor zijn eigen werk.
     - De reviewers zijn verantwoordelijk voor het controleren van de codeconventies, acceptatiecriteria, Definition of Done.
 
-- **Overige rollen:** 
+- **Overige rollen:**
     - Afhankelijk van de sprint kunnen rollen variëren, zodat iedereen ervaring opdoet met verschillende aspecten van het project.
 
 ### 3.2 Proces & Communicatie
 
-- **Stand-ups:** 
+- **Stand-ups:**
     - Elke woensdag wordt er een standup meeting gehouden via discord.
-- **Communicatiemiddelen:**  
-    - Discord: voor algemene communicatie en vragen.  
-    - GitHub: voor codebeheer en merge requests.  
+- **Communicatiemiddelen:**
+    - Discord: voor algemene communicatie en vragen.
+    - GitHub: voor codebeheer en merge requests.
     - Teams: voor snelle afstemming.
-- **Afspraken over tijdigheid van communicatie:**  
-    - Berichten dienen binnen 24 uur beantwoord te worden.  
+- **Afspraken over tijdigheid van communicatie:**
+    - Berichten dienen binnen 24 uur beantwoord te worden.
     - Urgente zaken worden via Teams of Discord gemeld.
-- **Verantwoordelijkheid in het proces en communicatie:**  
+- **Verantwoordelijkheid in het proces en communicatie:**
     - Elk teamlid is verantwoordelijk voor tijdige updates en communicatie over voortgang en obstakels.
 
 ### 3.3 Documentatie
 
-- **Opslag van documentatie:**  
+- **Opslag van documentatie:**
     - Code-documentatie in de GitHub-repository.
-- **Formats:**  
+- **Formats:**
     - Markdown (.md) voor technische documentatie.
     - Mermaid.js voor diagrammen
-- **Structurering van documentatie:**  
+- **Structurering van documentatie:**
     - Mappenstructuur per projectonderdeel.
 - **Commit Structuur:**
     - Commits worden gemaakt op basis van een algemeen aanvaard commit structuur.
@@ -83,36 +83,87 @@ Een werkend webshop ontwikkelen dat voldoet aan de gestelde eisen en doelstellin
 Doel is om elkaar verantwoordelijk te houden en afspraken na te komen.
 Mogelijke conflicten en oplossingen:
 
-- **Kwaliteit van geleverd werk:**  
-    - Feedbackmomenten implementeren.  
+- **Kwaliteit van geleverd werk:**
+    - Feedbackmomenten implementeren.
     - Verbeterpunten bespreken in de wekelijkse meeting.
 
-- **Verantwoordelijkheden met betrekking tot planning en deadlines:**  
-    - Tijdige communicatie over problemen en voortgang.  
+- **Verantwoordelijkheden met betrekking tot planning en deadlines:**
+    - Tijdige communicatie over problemen en voortgang.
     - Bij structurele vertragingen bespreken in de groepsmeeting.
 
-- **Communicatie en bereikbaarheid:**  
-    - Verwachtingen over reactietijd vaststellen.  
+- **Communicatie en bereikbaarheid:**
+    - Verwachtingen over reactietijd vaststellen.
     - Als iemand langere tijd niet bereikbaar is, moet dit vooraf worden aangegeven.
     - Als iemand niet naar de les kan komen moeten ze dit aan het team laten weten.
 
-- **Waarschuwingen en gevolgen:**  
+- **Waarschuwingen en gevolgen:**
     - 1e waarschuwing: melding aan projectleider/docent.
     - 2e waarschuwing: verdere escalatie volgens onderwijsinstellingsbeleid.
 
 - **Waneer krijg je een waarschuwing?**
     - Als iemand hun obligaties niet nakomen.
     - Dingen niet communiseren (zoals iets niet afmaken voor de inlever datum)
-  
+
 ## leerdoelen
 - omar
 - 1e
-Ik wil mijn kennis en vaardigheden in Object-Oriented Programming (OOP) verbeteren door in de komende drie maanden  filmpjes van lenard twee of drie keer te kijken zo dat ik alles begrijp  Ik zal mijn voortgang documenteren in een Markdown-document en regelmatig feedback vragen aan mijn docent of een ervaren programmeur
+  Ik wil mijn kennis en vaardigheden in Object-Oriented Programming (OOP) verbeteren door in de komende drie maanden  filmpjes van lenard twee of drie keer te kijken zo dat ik alles begrijp  Ik zal mijn voortgang documenteren in een Markdown-document en regelmatig feedback vragen aan mijn docent of een ervaren programmeur
 - 2e
-Ik wil mijn TMC-cyclus verbeteren door mijn code minimaal twee keer per week te laten controleren en feedback te vragen aan minstens 
+  Ik wil mijn TMC-cyclus verbeteren door mijn code minimaal twee keer per week te laten controleren en feedback te vragen aan minstens
 - 3e
-Meer feedback verzamelen over (af)gemaakt werk en dit dan documenteren via Scorion. Varieer zoveel mogelijk van mensen waarvan je feedback vraagt. Dit zorgt voor veel verschillende kijken op het gemaakte werk. En hierdoor houd je er meerdere mensen bij betrokken die misschien goede ideëen voor je hebben.
+  Meer feedback verzamelen over (af)gemaakt werk en dit dan documenteren via Scorion. Varieer zoveel mogelijk van mensen waarvan je feedback vraagt. Dit zorgt voor veel verschillende kijken op het gemaakte werk. En hierdoor houd je er meerdere mensen bij betrokken die misschien goede ideëen voor je hebben.
 ## Handtekeningen
 
 | Naam    | Handtekening |
 |---------|--------------|
+
+## Akif
+
+### Doel 1: Leren om realistische deadlines te stellen voor mijn taken
+
+#### Specifiek:
+
+Ik wil leren om realistische persoonlijke deadlines te stellen voor elke user story die ik oppak, zodat ik
+mijn tijd beter plan en taken op tijd kan afronden.
+
+#### Meetbaar:
+
+Ik stel in GitLab bij elke user story die ik oppak een persoonlijke deadline in (bijvoorbeeld met een due date
+of een notitie). Aan het einde van elke sprint controleer ik hoeveel van deze deadlines ik gehaald heb.
+
+#### Acceptabel:
+
+Deze actie past bij mijn rol als ontwikkelaar in het projectteam en helpt mij én het team vooruit. Het is
+haalbaar omdat ik alleen werk met user stories die ik zelf oppak.
+
+#### Realistisch:
+
+Ik stel alleen deadlines voor werk dat ik zelf uitvoer en hou rekening met de sprintduur en de complexiteit
+van de taak. Ik begin klein en stel niet te veel tegelijk in.
+
+#### Tijdgebonden:
+
+Ik voer dit leerdoel uit gedurende de komende 3 sprints. Aan het eind van elke sprint reflecteer ik kort op
+hoe het ging in een logboek, of retrospective.
+
+### Doel 2: Deadlines maken voor mijzelf
+
+#### Specifiek:
+
+Kijken naar alle taken die binnen een sprint of blok af moet, die taken delen voor elke dag
+
+#### Meetbaar:
+
+Vaker zelf aan oplossingen denken wanneer we vastlopen
+
+#### Acceptable:
+
+Dit zorgt voor een beter teamverband en leer ik zelf dingen te regelen wanneer we vast lopen
+
+#### Realistisch:
+
+Dit leerdoel ga ik halen door beter te samenwerken met mijn team.
+
+#### Tijdgebonden:
+
+Hiermee begin ik vanaf het begin zodat ik later minder moeite heb
