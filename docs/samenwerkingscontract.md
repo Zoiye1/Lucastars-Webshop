@@ -119,7 +119,7 @@ Mogelijke conflicten en oplossingen:
 
 ## Akif
 
-### Doel 1: Leren om realistische deadlines te stellen voor mijn taken
+### Doel 1: Realistische deadlines stellen
 
 #### Specifiek:
 
@@ -146,24 +146,33 @@ van de taak. Ik begin klein en stel niet te veel tegelijk in.
 Ik voer dit leerdoel uit gedurende de komende 3 sprints. Aan het eind van elke sprint reflecteer ik kort op
 hoe het ging in een logboek, of retrospective.
 
-### Doel 2: Deadlines maken voor mijzelf
+### Doel 2: Werken met feedback
 
 #### Specifiek:
 
 Kijken naar alle taken die binnen een sprint of blok af moet, die taken delen voor elke dag
+Ik wil leren om actief feedback te vragen op mijn projectresultaten en die feedback
+bewust te verwerken. Zo verbeter ik mijn programmeervaardigheden en mijn vermogen om samen te werken.
 
 #### Meetbaar:
 
 Vaker zelf aan oplossingen denken wanneer we vastlopen
+Ik vraag minimaal twee keer per week om feedback: één keer aan een docent en één keer aan een medestudent,
+familielid
+of vriend. Ik noteer minimaal één aanpassing die ik heb gedaan op basis van die feedback in mijn learning
+journey.
 
 #### Acceptable:
 
-Dit zorgt voor een beter teamverband en leer ik zelf dingen te regelen wanneer we vast lopen
+Deze actie is goed uitvoerbaar binnen het project en draagt bij aan mijn persoonlijke ontwikkeling. Feedback
+vragen en toepassen is een actief leerproces dat me helpt om beter keuzes te maken in mijn werk.
 
 #### Realistisch:
 
 Dit leerdoel ga ik halen door beter te samenwerken met mijn team.
+Het is haalbaar omdat ik in elk projectmoment wel iets oplever waar ik feedback op kan vragen, zoals code,
+ontwerp of documentatie. Eén aanpassing doorvoeren is ook overzichtelijk.
 
 #### Tijdgebonden:
 
-Hiermee begin ik vanaf het begin zodat ik later minder moeite heb
+Ik voer dit leerdoel uit vanaf de eerstvolgende schooldag en werk eraan tot het einde van dit semester.
