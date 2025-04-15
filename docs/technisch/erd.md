@@ -1,11 +1,11 @@
 ---
-title: EERD
+title: ERD
 ---
-# EERD
+# ERD
 
-![EERD](assets/eerd.svg)
+![ERD](assets/eerd.svg)
 
-Wij hebben de EERD in [dbdiagram](https://dbdiagram.io/) gemaakt.
+Wij hebben de ERD in [dbdiagram](https://dbdiagram.io/) gemaakt.
 
 ```DBML
 // Use DBML to define your database structure
