@@ -3,7 +3,7 @@ title: ERD
 ---
 # ERD
 
-![ERD](assets/eerd.svg)
+![ERD](assets/erd.svg)
 
 Wij hebben de ERD in [dbdiagram](https://dbdiagram.io/) gemaakt.
 
