@@ -1,6 +1,4 @@
-import "@web/components/NavigationComponent";
-import "@web/components/WelcomeComponent";
-
+import "@web/components/LayoutComponent";
 import { html } from "@web/helpers/webComponents";
 
 class ExamplePageComponent extends HTMLElement {
@@ -16,9 +14,7 @@ class ExamplePageComponent extends HTMLElement {
         }
 
         const element: HTMLElement = html`
-            <div>
-                <webshop-navigation></webshop-navigation>
-
+            <webshop-layout>
                 <div>
                     <h1>
                         Welkom bij de LucaStars Webshop!
@@ -28,7 +24,7 @@ class ExamplePageComponent extends HTMLElement {
                         Dit is example.html!
                     </p>
                 </div>
-            </div>
+            </webshop-layout>
         `;
 
         this.shadowRoot.firstChild?.remove();
