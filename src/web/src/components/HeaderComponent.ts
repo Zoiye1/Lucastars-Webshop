@@ -1,0 +1,65 @@
+import { html } from "@web/helpers/webComponents";
+
+export class HeaderComponent extends HTMLElement {
+    public connectedCallback(): void {
+        this.attachShadow({ mode: "open" });
+
+        this.render();
+    }
+
+    private render(): void {
+        if (!this.shadowRoot) {
+            return;
+        }
+
+        const styles: HTMLElement = html`
+            <style>
+                header {
+                    height: var(--header-height);
+                    background-color: var(--header-background-color);
+                    border-bottom: 1px solid var(--border-color);
+                    padding: 0 1em;
+                }
+
+                div.wrapper {
+                    max-width: var(--max-width);
+                    width: 100%;
+                    height: 100%;
+                    margin: 0 auto;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                div.wrapper > div {
+                    height: 100%;
+                }
+
+                header img {
+                    box-sizing: border-box;
+                    height: 100%;
+                    padding: 5px 0;
+                }
+            </style>
+        `;
+
+        const element: HTMLElement = html`
+            <header>
+                <div class="wrapper">
+                    <div>
+                        <a href="/index.html">
+                            <img src="/assets/images/logo.png" alt="LucaStars Logo" />
+                        </a>
+                    </div>
+
+                    <webshop-navigation></webshop-navigation>
+                </div>
+            </header>
+        `;
+
+        this.shadowRoot.firstChild?.remove();
+        this.shadowRoot.append(styles, element);
+    }
+}
+
+window.customElements.define("webshop-header", HeaderComponent);
