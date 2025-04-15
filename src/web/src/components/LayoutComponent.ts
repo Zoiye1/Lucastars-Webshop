@@ -20,6 +20,8 @@ export class LayoutComponent extends HTMLElement {
                     display: flex;
                     flex-direction: column;
                     min-height: 100dvh;
+                    width: 100%;
+                    box-sizing: border-box;
                 }
                 
                 main {
@@ -28,6 +30,7 @@ export class LayoutComponent extends HTMLElement {
                     width: 100%;
                     padding: 0 1em;
                     margin: 0 auto;
+                    box-sizing: border-box;
                 }
             </style>
         `;
