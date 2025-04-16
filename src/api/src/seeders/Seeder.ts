@@ -1,6 +1,10 @@
 import { DatabaseService } from "@api/services/DatabaseService";
 import { PoolConnection } from "mysql2/promise";
 
+type IdQueryResult = {
+    id: number;
+};
+
 /**
  * Seeder class to seed the database with test data.
  */
@@ -32,7 +36,7 @@ export abstract class Seeder {
      * @param count The number of records to generate.
      * @remarks return type should match the table columns defined in `_tableColumns`
      */
-    protected abstract getRecords(count: number): object[];
+    protected abstract getRecords(count: number): SyncOrAsync<object[]>;
 
     /**
      * Seed the database with test data.
@@ -42,7 +46,7 @@ export abstract class Seeder {
     public async seed(count: number): Promise<void> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
-        const records: object[] = this.getRecords(count).map((record: object) =>
+        const records: object[] = (await this.getRecords(count)).map((record: object) =>
             Object.values(record as { [key: string]: object })
         );
 
@@ -70,6 +74,27 @@ export abstract class Seeder {
                     ?`,
                 [...records]
             );
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    /**
+     * Get the existing ids from the database.
+     *
+     * @returns The existing game IDs.
+     */
+    protected async getExistingIds(table: string): Promise<number[]> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const rows: IdQueryResult[] = await this._databaseService.query<IdQueryResult[]>(
+                connection,
+                `SELECT \`id\` FROM \`${table}\``
+            );
+
+            return rows.map(row => row.id);
         }
         finally {
             connection.release();

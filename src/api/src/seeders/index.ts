@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import { GameSeeder } from "./GameSeeder";
 import { DatabaseService } from "@api/services/DatabaseService";
+import { GameImagesSeeder } from "./GameImagesSeeder";
 
 async function main(): Promise<void> {
     // Load the .env files
@@ -13,8 +14,13 @@ async function main(): Promise<void> {
 
     // Seeders
     const gameSeeder: GameSeeder = new GameSeeder(databaseService);
+    const gameImagesSeeder: GameImagesSeeder = new GameImagesSeeder(databaseService);
 
+    // Seed 10 random games
     await gameSeeder.seed(10);
+
+    // Seed 3 random images for each game we just created
+    await gameImagesSeeder.seed(3);
 }
 
 main()
