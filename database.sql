@@ -1,5 +1,5 @@
 CREATE TABLE `games` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `sku` varchar(255) UNIQUE,
   `name` varchar(255) NOT NULL,
   `thumbnail` varchar(255) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE `games` (
 );
 
 CREATE TABLE `game_images` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `gameId` integer,
   `imageUrl` varchar(255) NOT NULL,
   `sortOrder` integer NOT NULL DEFAULT 1,
@@ -19,7 +19,7 @@ CREATE TABLE `game_images` (
 );
 
 CREATE TABLE `game_prices` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `gameId` integer,
   `price` decimal(10,2) NOT NULL,
   `currency` varchar(255) NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE `game_prices` (
 );
 
 CREATE TABLE `tags` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `value` varchar(255) NOT NULL
 );
 
@@ -38,7 +38,7 @@ CREATE TABLE `games_tags` (
 );
 
 CREATE TABLE `users` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `firstName` varchar(255) NOT NULL COMMENT 'First name',
   `prefix` varchar(255) COMMENT 'Middle name prefix (optional)',
   `lastName` varchar(255) NOT NULL COMMENT 'Last name',
@@ -51,7 +51,7 @@ CREATE TABLE `users` (
 );
 
 CREATE TABLE `addresses` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `userId` integer NOT NULL,
   `street` varchar(255) NOT NULL,
   `houseNumber` varchar(255) NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE `addresses` (
 );
 
 CREATE TABLE `orders` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `userId` integer NOT NULL,
   `addressId` integer NOT NULL,
   `orderDate` timestamp NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE `orders_games` (
 );
 
 CREATE TABLE `payments` (
-  `orderId` integer PRIMARY KEY NOT NULL,
+  `orderId` integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `provider` varchar(255) NOT NULL,
   `amount` integer NOT NULL,
   `vat` integer NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE `payments` (
 );
 
 CREATE TABLE `cart_items` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `userId` integer NOT NULL,
   `gameId` integer NOT NULL,
   `quantity` integer NOT NULL DEFAULT 1,

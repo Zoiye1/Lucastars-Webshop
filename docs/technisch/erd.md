@@ -12,7 +12,7 @@ Wij hebben de ERD in [dbdiagram](https://dbdiagram.io/) gemaakt.
 // Docs: https://dbml.dbdiagram.io/docs
 
 Table games {
-  id integer [pk] 
+  id integer [not null, pk, increment] 
   sku varchar [unique]
   name varchar [not null]
   thumbnail varchar [not null]
@@ -23,7 +23,7 @@ Table games {
 }
 
 Table game_images {
-  id integer [pk]
+  id integer [not null, pk, increment]
   gameId integer [ref: > games.id]
   imageUrl varchar [not null]
   sortOrder integer [not null, default: 1]
@@ -32,7 +32,7 @@ Table game_images {
 }
 
 Table game_prices {
-  id integer [pk]
+  id integer [not null, pk, increment]
   gameId integer [ref: - games.id]
   price decimal(10, 2) [not null]
   currency varchar [not null]
@@ -40,7 +40,7 @@ Table game_prices {
 }
 
 Table tags {
-  id integer [pk]
+  id integer [not null, pk, increment]
   value varchar [not null]
 }
 
@@ -50,7 +50,7 @@ Table games_tags {
 }
 
 Table users {
-  id integer [primary key]
+  id integer [not null, pk, increment]
   firstName varchar [not null, note: 'First name']
   prefix varchar [note: 'Middle name prefix (optional)']
   lastName varchar [not null, note: 'Last name']
@@ -63,7 +63,7 @@ Table users {
 }
 
 Table addresses {
-  id integer [primary key]
+  id integer [not null, pk, increment]
   userId integer [not null, ref: > users.id]
   street varchar [not null]
   houseNumber varchar [not null]
@@ -76,7 +76,7 @@ Table addresses {
 }
 
 Table orders {
-  id integer [primary key]
+  id integer [not null, pk, increment]
   userId integer [not null, ref: > users.id]
   addressId integer [not null, ref: > addresses.id]
   orderDate timestamp [not null]
@@ -91,7 +91,7 @@ Table orders_games {
 }
 
 Table payments {
-  orderId integer [not null, pk, ref: > orders.id]
+  orderId integer [not null, pk, increment, ref: > orders.id]
   provider varchar [not null]
   amount integer [not null]
   vat integer [not null]
@@ -100,7 +100,7 @@ Table payments {
 }
 
 Table cart_items {
-  id integer [pk]
+  id integer [not null, pk, increment]
   userId integer [not null, ref: > users.id]
   gameId integer [not null, ref: > games.id]
   quantity integer [not null, default: 1]
