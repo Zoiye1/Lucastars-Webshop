@@ -1,6 +1,9 @@
+import "@web/components/NavigationComponent";
+
+import "@web/components/CartPageComponent";
 import { html } from "@web/helpers/webComponents";
 
-export class NavigationComponent extends HTMLElement {
+class CartPageComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
 
@@ -13,11 +16,11 @@ export class NavigationComponent extends HTMLElement {
         }
 
         const element: HTMLElement = html`
-            <nav>
-                <a href="/index.html">Home</a>
-                <a href="/example.html">Example</a>
-                <a href="/cart.html">Winkelmand</a>
-            </nav>
+            <div>
+                <webshop-navigation></webshop-navigation>
+                <webshop-cartpage></webshop-cartpage>
+
+            </div>
         `;
 
         this.shadowRoot.firstChild?.remove();
@@ -25,4 +28,4 @@ export class NavigationComponent extends HTMLElement {
     }
 }
 
-window.customElements.define("webshop-navigation", NavigationComponent);
+window.customElements.define("webshop-page-cart", CartPageComponent);
