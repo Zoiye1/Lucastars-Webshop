@@ -2,8 +2,18 @@ import { config } from "dotenv";
 import { GameSeeder } from "./GameSeeder";
 import { DatabaseService } from "@api/services/DatabaseService";
 import { GameImagesSeeder } from "./GameImagesSeeder";
+import { scanner } from "@hboictcloud/scanner";
 
 async function main(): Promise<void> {
+    const confirmAnswer: boolean = await scanner.promptBoolean(
+        "Het seeden van de database zal meeste tabellen legen. Weet je zeker dat je dit wilt doen? (yes/no) "
+    );
+
+    if (!confirmAnswer) {
+        console.log("Database seeding aborted.");
+        process.exit(0);
+    }
+
     // Load the .env files
     config();
     config({ path: ".env.local", override: true });
