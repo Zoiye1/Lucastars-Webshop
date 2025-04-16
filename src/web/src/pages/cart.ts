@@ -1,31 +1,26 @@
-import "@web/components/NavigationComponent";
-
+// src/pages/cart.ts
+import "@web/components/LayoutComponent";
 import "@web/components/CartPageComponent";
 import { html } from "@web/helpers/webComponents";
 
-class CartPageComponent extends HTMLElement {
+class CartPageWrapperComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
-
         this.render();
     }
 
     private render(): void {
-        if (!this.shadowRoot) {
-            return;
-        }
+        if (!this.shadowRoot) return;
 
         const element: HTMLElement = html`
-            <div>
-                <webshop-navigation></webshop-navigation>
+            <webshop-layout>
                 <webshop-cartpage></webshop-cartpage>
-
-            </div>
+            </webshop-layout>
         `;
 
-        this.shadowRoot.firstChild?.remove();
-        this.shadowRoot.append(element);
+        this.shadowRoot.innerHTML = "";
+        this.shadowRoot.appendChild(element);
     }
 }
 
-window.customElements.define("webshop-page-cart", CartPageComponent);
+window.customElements.define("webshop-page-cart", CartPageWrapperComponent);

@@ -95,7 +95,7 @@ export class NavigationComponent extends HTMLElement {
                     <span>Account</span>
                 </a>
 
-                <a href="/index.html">
+                <a href="/cart.html">
                     <img src="/assets/images/icons/cart.svg" alt="Cart icon" />
                     <span>Winkelmand (0)</span>
                 </a>
