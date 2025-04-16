@@ -19,12 +19,10 @@ describe("Index page", () => {
         const page: IndexPageComponent = new IndexPageComponent();
         document.body.append(page);
 
-        const result1: HTMLElement = deepQuerySelector(document, "nav a:nth-of-type(2)")!;
-        const result2: HTMLElement = deepQuerySelector(document, "h1")!;
+        const result: HTMLElement = deepQuerySelector(document, "h1")!;
 
         // Act / Assert
-        expect(result1.innerHTML.trim()).toEqual("Example");
-        expect(result2.innerHTML.trim()).toEqual("Welkom bij de LucaStars Webshop!");
+        expect(result.innerHTML.trim()).toEqual("Welkom bij de LucaStars Webshop!");
     });
 
     test("public text button should change result and trigger event", async () => {

@@ -1,3 +1,16 @@
+:root {
+    --background-color: #F9FAFC;
+    --border-color: #D8D8D8;
+    --header-height: 64px;
+    --header-background-color: #FFFFFF;
+    --footer-height: 64px;
+    --footer-background-color: #FFFFFF;
+    --max-width: 1200px;
+}
+
 body {
-    font-family: sans-serif;
+    font-family: 'Inter';
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
 }

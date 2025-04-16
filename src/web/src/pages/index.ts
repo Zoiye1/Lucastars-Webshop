@@ -1,4 +1,4 @@
-import "@web/components/NavigationComponent";
+import "@web/components/LayoutComponent";
 import "@web/components/WelcomeComponent";
 import { WebshopEvent } from "@web/enums/WebshopEvent";
 
@@ -25,17 +25,13 @@ export class IndexPageComponent extends HTMLElement {
         }
 
         const element: HTMLElement = html`
-            <div>
-                <webshop-navigation></webshop-navigation>
+            <webshop-layout>
+                <h1>
+                    Welkom bij de LucaStars Webshop!
+                </h1>
 
-                <div>
-                    <h1>
-                        Welkom bij de LucaStars Webshop!
-                    </h1>
-
-                    <webshop-welcome></webshop-welcome>
-                </div>
-            </div>
+                <webshop-welcome></webshop-welcome>
+            </webshop-layout>
         `;
 
         this.shadowRoot.firstChild?.remove();
