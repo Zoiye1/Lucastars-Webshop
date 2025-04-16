@@ -2,7 +2,7 @@ import "../components/RegisterComponent";
 import "@web/components/LayoutComponent";
 
 // Create page content
-const template = document.createElement("template");
+const template: HTMLTemplateElement = document.createElement("template");
 template.innerHTML = `
     <webshop-layout>
         <div class="page-container">
@@ -18,7 +18,7 @@ template.innerHTML = `
 document.body.appendChild(template.content.cloneNode(true));
 
 // Add page-specific styles
-const style = document.createElement("style");
+const style: HTMLStyleElement = document.createElement("style");
 style.textContent = `
     .page-container {
         max-width: 1200px;
