@@ -39,7 +39,7 @@ export abstract class Seeder {
      *
      * @param count The number of records to generate.
      */
-    public async seed(count: number = 10): Promise<void> {
+    public async seed(count: number): Promise<void> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         const records: object[] = this.getRecords(count).map((record: object) =>
