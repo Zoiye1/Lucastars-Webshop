@@ -1,5 +1,9 @@
 import { html } from "@web/helpers/webComponents";
 
+/**
+ * This component is used to display the header of the webshop.
+ * It contains the logo and the navigation bar.
+ */
 export class HeaderComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });

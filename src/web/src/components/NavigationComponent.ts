@@ -1,5 +1,10 @@
 import { html } from "@web/helpers/webComponents";
 
+/**
+ * This component is used to display the navigation bar.
+ *
+ * @remarks On mobile, the navigation bar will be offset by `var(--header-height)` from the top of the page.
+ */
 export class NavigationComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });

@@ -2,6 +2,10 @@ import "@web/components/HeaderComponent";
 import "@web/components/FooterComponent";
 import { html } from "@web/helpers/webComponents";
 
+/**
+ * This component is the main layout for the webshop.
+ * It contains the header, footer and a slot for the main content.
+ */
 export class LayoutComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });

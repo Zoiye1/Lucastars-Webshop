@@ -1,6 +1,9 @@
 import "@web/components/NavigationComponent";
 import { html } from "@web/helpers/webComponents";
 
+/**
+ * This component is the footer for the webshop.
+ */
 export class FooterComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
