@@ -23,7 +23,7 @@ export class SessionService implements ISessionService {
             const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
                 connection,
                 `
-                INSERT INTO session (id, userId)
+                INSERT INTO sessions (id, userId)
                 VALUES (?, ?)
                 `,
                 sessionId,
@@ -48,7 +48,7 @@ export class SessionService implements ISessionService {
                 connection,
                 `
                 SELECT id, userId, created
-                FROM session
+                FROM sessions
                 WHERE id = ?
                 `,
                 sessionId
@@ -86,7 +86,7 @@ export class SessionService implements ISessionService {
             const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
                 connection,
                 `
-                DELETE FROM session
+                DELETE FROM sessions
                 WHERE id = ?
                 `,
                 sessionId
@@ -109,7 +109,7 @@ export class SessionService implements ISessionService {
             await this._databaseService.query<ResultSetHeader>(
                 connection,
                 `
-                DELETE FROM session
+                DELETE FROM sessions
                 WHERE created < ?
                 `,
                 new Date(Date.now() - SessionService.ExpirationTimeInMinutes * SessionService.OneMinuteInMilliseconds)
