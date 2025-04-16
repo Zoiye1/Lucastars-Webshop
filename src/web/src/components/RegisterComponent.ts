@@ -1,9 +1,22 @@
-import { html } from "@web/helpers/webComponents";
+// src/web/src/components/RegisterComponent.ts
+
+import { html } from "../helpers/webComponents";
+import { authService } from "../services/AuthService";
+import { IAuthResponse } from "../../../shared/types";
 
 export class RegisterComponent extends HTMLElement {
+    private _usernameInput: HTMLInputElement | null = null;
+    private _emailInput: HTMLInputElement | null = null;
+    private _firstNameInput: HTMLInputElement | null = null;
+    private _prefixInput: HTMLInputElement | null = null;
+    private _lastNameInput: HTMLInputElement | null = null;
+    private _passwordInput: HTMLInputElement | null = null;
+    private _confirmPasswordInput: HTMLInputElement | null = null;
+    private _errorMessage: HTMLElement | null = null;
+    private _submitButton: HTMLButtonElement | null = null;
+
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
-
         this.render();
     }
 
@@ -32,16 +45,16 @@ export class RegisterComponent extends HTMLElement {
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="first-name">First Name: <span class="required">*</span></label>
-                                <input type="text" id="first-name" name="first_name" required>
+                                <input type="text" id="first-name" name="firstName" required>
                             </div>
                             <div class="form-group">
                                 <label for="prefix">Prefix:</label>
-                                <input type="text" id="prefix" name="prefix" placeholder="e.g. Mr., Mrs., Dr.">
+                                <input type="text" id="prefix" name="prefix">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="last-name">Last Name: <span class="required">*</span></label>
-                            <input type="text" id="last-name" name="last_name" required>
+                            <input type="text" id="last-name" name="lastName" required>
                         </div>
                     </div>
                     
@@ -170,9 +183,121 @@ export class RegisterComponent extends HTMLElement {
                 }
             </style>
         `;
+
+        // Store references to elements
+        this._usernameInput = element.querySelector("#username") as HTMLInputElement;
+        this._emailInput = element.querySelector("#email") as HTMLInputElement;
+        this._firstNameInput = element.querySelector("#first-name") as HTMLInputElement;
+        this._prefixInput = element.querySelector("#prefix") as HTMLInputElement;
+        this._lastNameInput = element.querySelector("#last-name") as HTMLInputElement;
+        this._passwordInput = element.querySelector("#password") as HTMLInputElement;
+        this._confirmPasswordInput = element.querySelector("#confirm-password") as HTMLInputElement;
+        this._errorMessage = element.querySelector("#error-message");
+        this._submitButton = element.querySelector("#submit-button") as HTMLButtonElement;
+
+        // Add event listeners
+        const form: HTMLFormElement | null = element.querySelector("#register-form");
+        form?.addEventListener("submit", this.handleSubmit.bind(this));
+
+        // Append to shadow DOM
         this.shadowRoot.innerHTML = "";
         this.shadowRoot.appendChild(element);
     }
+
+    private async handleSubmit(event: Event): Promise<void> {
+        event.preventDefault();
+
+        if (!this._usernameInput || !this._emailInput || !this._firstNameInput ||
+          !this._lastNameInput || !this._passwordInput ||
+          !this._confirmPasswordInput || !this._errorMessage || !this._submitButton) {
+            return;
+        }
+
+        // Hide error message
+        this._errorMessage.style.display = "none";
+        this._errorMessage.textContent = "";
+
+        // Disable submit button
+        this._submitButton.disabled = true;
+        this._submitButton.textContent = "Registering...";
+
+        try {
+            const username: string = this._usernameInput.value.trim();
+            const email: string = this._emailInput.value.trim();
+            const firstName: string = this._firstNameInput.value.trim();
+            const prefix: string | undefined = this._prefixInput?.value.trim();
+            const lastName: string = this._lastNameInput.value.trim();
+            const password: string = this._passwordInput.value;
+            const confirmPassword: string = this._confirmPasswordInput.value;
+
+            // Basic validation
+            if (!username || !email || !firstName || !lastName || !password || !confirmPassword) {
+                this.showError("Please fill in all required fields");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                this.showError("Passwords do not match");
+                return;
+            }
+
+            if (password.length < 8) {
+                this.showError("Password must be at least 8 characters long");
+                return;
+            }
+
+            // Skip test connection and proceed directly to registration
+            // (The test connection was failing with 404)
+
+            // Register request
+            const result: IAuthResponse = await authService.register({
+                username,
+                email,
+                firstName: firstName,
+                prefix,
+                lastName: lastName,
+                password,
+                confirmPassword,
+            });
+
+            if (result.success) {
+                // Show success message before redirect
+                this._errorMessage.style.display = "block";
+                this._errorMessage.style.backgroundColor = "#d4edda";
+                this._errorMessage.style.color = "#155724";
+                this._errorMessage.textContent = "Registration successful! Redirecting...";
+
+                // Redirect to home page after a short delay
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 1500);
+            }
+            else {
+                this.showError(result.message);
+            }
+        }
+        catch (error: unknown) {
+            console.error("Registration error:", error);
+            this.showError(typeof error === "object" && error !== null && "message" in error
+                ? String(error.message)
+                : "An error occurred during registration");
+        }
+        finally {
+            // Re-enable submit button
+            this._submitButton.disabled = false;
+            this._submitButton.textContent = "Register";
+        }
+    }
+
+    private showError(message: string): void {
+        if (this._errorMessage) {
+            this._errorMessage.textContent = message;
+            this._errorMessage.style.display = "block";
+            this._errorMessage.style.backgroundColor = "#f8d7da";
+            this._errorMessage.style.color = "#dc3545";
+        }
+    }
 }
 
-window.customElements.define("register-component", RegisterComponent);
+// Define custom element
+customElements.define("register-component", RegisterComponent);
