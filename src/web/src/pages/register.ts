@@ -1,14 +1,17 @@
 import "../components/RegisterComponent";
+import "@web/components/LayoutComponent";
 
 // Create page content
 const template = document.createElement("template");
 template.innerHTML = `
-    <div class="page-container">
-        <div class="register-page">
-            <h1>Create an Account</h1>
-            <register-component></register-component>
+    <webshop-layout>
+        <div class="page-container">
+            <div class="register-page">
+                <h1>Create an Account</h1>
+                <register-component></register-component>
+            </div>
         </div>
-    </div>
+    </webshop-layout>
 `;
 
 // Append to document
