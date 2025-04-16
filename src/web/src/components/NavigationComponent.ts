@@ -37,10 +37,48 @@ export class NavigationComponent extends HTMLElement {
                     width: 24px;
                     user-select: none;
                 }
+
+                .hamburger {
+                    display: none;
+                    cursor: pointer;
+                    padding: 10px;
+                }
+
+                .hamburger img {
+                    vertical-align: middle;
+                }
+
+                @media (max-width: 768px) {
+                    nav {
+                        display: none;
+                    }
+
+                    nav.active {
+                        position: absolute;
+                        top: var(--header-height);
+                        left: 0;
+                        display: flex;
+                        flex-direction: column;
+                        background-color: white;
+                        width: 100%;
+                        box-sizing: border-box;
+                        padding: 10px;
+                    }
+
+                    .hamburger {
+                        display: block;
+                    }
+                }
             </style>
         `;
 
-        const element: HTMLElement = html`
+        const hamburgerButton: HTMLElement = html`
+            <div class="hamburger">
+                <img src="/assets/images/icons/hamburger-menu.svg" alt="Hamburger icon" />
+            </div>
+        `;
+
+        const navigation: HTMLElement = html`
             <nav>
                 <a href="/index.html">
                     <img src="/assets/images/icons/gamepad.svg" alt="Gamepad icon" />
@@ -64,8 +102,12 @@ export class NavigationComponent extends HTMLElement {
             </nav>
         `;
 
+        hamburgerButton.addEventListener("click", () => {
+            navigation.classList.toggle("active");
+        });
+
         this.shadowRoot.firstChild?.remove();
-        this.shadowRoot.append(styles, element);
+        this.shadowRoot.append(styles, navigation, hamburgerButton);
     }
 }
 
