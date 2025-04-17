@@ -3,7 +3,7 @@ import "@web/components/LayoutComponent";
 import "@web/components/CartPageComponent";
 import { html } from "@web/helpers/webComponents";
 
-class CartPageWrapperComponent extends HTMLElement {
+class CartPageComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
         this.render();
@@ -23,4 +23,4 @@ class CartPageWrapperComponent extends HTMLElement {
     }
 }
 
-window.customElements.define("webshop-page-cart", CartPageWrapperComponent);
+window.customElements.define("webshop-page-cart", CartPageComponent);

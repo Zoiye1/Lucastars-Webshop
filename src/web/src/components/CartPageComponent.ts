@@ -158,7 +158,7 @@ export class CartPageComponent extends HTMLElement {
         checkoutButton.style.borderRadius = "8px";
         checkoutButton.style.cursor = "pointer";
         checkoutButton.onclick = () => {
-            window.location.href = "/checkout"; // Pas dit pad aan als jouw router iets anders gebruikt
+            window.location.href = "/checkout.html"; // Pas dit pad aan als jouw router iets anders gebruikt
         };
 
         container.appendChild(ul);

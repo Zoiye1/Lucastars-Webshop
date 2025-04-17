@@ -1,5 +1,6 @@
 import "@web/components/LayoutComponent";
-import "@web/components/CartPageComponent";
+
+import "@web/components/CheckoutPageComponent";
 import { html } from "@web/helpers/webComponents";
 
 class CheckoutPageComponent extends HTMLElement {
@@ -13,7 +14,7 @@ class CheckoutPageComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <webshop-layout>
-                <webshop-cartpage></webshop-cartpage>
+                <webshop-checkoutpage></webshop-checkoutpage>
             </webshop-layout>
         `;
 
