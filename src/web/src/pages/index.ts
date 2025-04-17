@@ -1,20 +1,12 @@
 import "@web/components/LayoutComponent";
-import "@web/components/WelcomeComponent";
-import { WebshopEvent } from "@web/enums/WebshopEvent";
+import "@web/components/BannerComponent";
+import "@web/components/TopGamesComponent";
 
 import { html } from "@web/helpers/webComponents";
-import { WebshopEventService } from "@web/services/WebshopEventService";
 
 export class IndexPageComponent extends HTMLElement {
-    private _webshopEventService: WebshopEventService = new WebshopEventService();
-
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
-
-        // NOTE: This is just an example event, remove it!
-        this._webshopEventService.addEventListener<string>(WebshopEvent.Welcome, message => {
-            console.log(`Welcome event triggered: ${message}`);
-        });
 
         this.render();
     }
@@ -26,11 +18,8 @@ export class IndexPageComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <webshop-layout>
-                <h1>
-                    Welkom bij de LucaStars Webshop!
-                </h1>
-
-                <webshop-welcome></webshop-welcome>
+                <webshop-banner></webshop-banner>
+                <webshop-top-games></webshop-top-games>
             </webshop-layout>
         `;
 
