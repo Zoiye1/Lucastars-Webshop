@@ -65,7 +65,8 @@ export abstract class Seeder<T extends { id?: number }> {
             : await this.getRecords(count, ...recordIds);
 
         if (records.length === 0) {
-            throw new Error("No records to insert");
+            console.log(`${COLOR_GRAY}No records to seed for ${this._table}${COLOR_RESET}`);
+            return [];
         }
 
         try {
