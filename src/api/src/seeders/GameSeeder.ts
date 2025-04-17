@@ -1,33 +1,30 @@
 import { Seeder } from "./Seeder";
 import { faker } from "@faker-js/faker";
 
+type GameRecord = {
+    sku: string;
+    name: string;
+    thumbnail: string;
+    description: string;
+    playUrl: string;
+};
+
 /**
  * Seeder for generating test data for the games table.
  *
  * @remarks This should later just import the games from https://lucastars.hbo-ict.cloud/api/games/json
  */
-export class GameSeeder extends Seeder {
+export class GameSeeder extends Seeder<GameRecord> {
     /**
      * @inheritdoc
      */
-    protected _tableName: string = "games";
+    protected _table: string = "games";
 
     /**
      * @inheritdoc
      */
-    protected _tableColumns: string[] = [
-        "sku",
-        "name",
-        "thumbnail",
-        "description",
-        "playUrl",
-    ];
-
-    /**
-     * @inheritdoc
-     */
-    protected getRecords(count: number): object[] {
-        const records: object[] = [];
+    protected getRecords(count: number): GameRecord[] {
+        const records: GameRecord[] = [];
 
         for (let i: number = 0; i < count; i++) {
             records.push({

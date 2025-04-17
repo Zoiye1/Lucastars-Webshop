@@ -7,19 +7,16 @@ type IdQueryResult = {
 
 /**
  * Seeder class to seed the database with test data.
+ *
+ * @remarks The template type T should have all the columns of the table to seed.
  */
-export abstract class Seeder {
+export abstract class Seeder<T extends Record<string, unknown>> {
     protected readonly _databaseService: DatabaseService;
 
     /**
      * The name of the table to seed.
      */
-    protected abstract _tableName: string;
-
-    /**
-     * The columns of the table to seed.
-     */
-    protected abstract _tableColumns: string[];
+    protected abstract _table: string;
 
     /**
      * Constructor for the Seeder class.
@@ -36,7 +33,7 @@ export abstract class Seeder {
      * @param count The number of records to generate.
      * @remarks return type should match the table columns defined in `_tableColumns`
      */
-    protected abstract getRecords(count: number): SyncOrAsync<object[]>;
+    protected abstract getRecords(count: number): SyncOrAsync<T[]>;
 
     /**
      * Seed the database with test data.
@@ -46,33 +43,27 @@ export abstract class Seeder {
     public async seed(count: number): Promise<void> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
-        const records: object[] = (await this.getRecords(count)).map((record: object) =>
-            Object.values(record as { [key: string]: object })
-        );
+        const records: T[] = await this.getRecords(count);
 
-        // If the records are empty, throw an error
         if (records.length === 0) {
             throw new Error("No records to insert");
         }
 
-        // If the record keys dont match the table columns, throw an error
-        const recordKeys: string[] = Object.keys(records[0]);
-        if (recordKeys.length !== this._tableColumns.length) {
-            throw new Error("Record keys do not match table columns");
-        }
-
         try {
             await this._databaseService.query(connection, "SET FOREIGN_KEY_CHECKS = 0");
-            await this._databaseService.query(connection, `TRUNCATE TABLE \`${this._tableName}\``);
+            await this._databaseService.query(connection, `TRUNCATE TABLE \`${this._table}\``);
             await this._databaseService.query(connection, "SET FOREIGN_KEY_CHECKS = 1");
+
+            const columns: string[] = Object.keys(records[0]);
+            const values: unknown[] = records.map(record => Object.values(record));
 
             await this._databaseService.query(
                 connection,
-                `INSERT INTO \`${this._tableName}\`
-                    (${this._tableColumns.join(", ")})
+                `INSERT INTO \`${this._table}\`
+                    (${columns.join(", ")})
                 VALUES
                     ?`,
-                [...records]
+                [...values]
             );
         }
         finally {
