@@ -1,6 +1,6 @@
-import { GamesApiResponse } from "@api/services/ExternalGamesService";
+import { ExternalGamesService, GamesApiResponse } from "@api/services/ExternalGamesService";
 import { Seeder } from "./Seeder";
-// import { faker } from "@faker-js/faker";
+import { faker } from "@faker-js/faker";
 
 export type GameRecord = {
     id?: number;
@@ -12,11 +12,11 @@ export type GameRecord = {
 };
 
 /**
- * Seeder for generating test data for the games table.
- *
- * @remarks This should later just import the games from https://lucastars.hbo-ict.cloud/api/games/json
+ * Seeder for generating data for the games table.
  */
 export class GameSeeder extends Seeder<GameRecord> {
+    private readonly _externalGamesService: ExternalGamesService = new ExternalGamesService();
+
     /**
      * @inheritdoc
      */
@@ -25,7 +25,7 @@ export class GameSeeder extends Seeder<GameRecord> {
     /**
      * @inheritdoc
      */
-    protected async getRecords(_count: number): Promise<GameRecord[]> {
+    protected async getRecords(): Promise<GameRecord[]> {
         const games: GamesApiResponse[] = await this._externalGamesService.getGames();
 
         const records: GameRecord[] = [];
@@ -39,8 +39,16 @@ export class GameSeeder extends Seeder<GameRecord> {
             });
         }
 
-        // Fake data
-        /* for (let i: number = 0; i < count; i++) {
+        return records;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected getRecordsDev(count: number): GameRecord[] {
+        const records: GameRecord[] = [];
+
+        for (let i: number = 0; i < count; i++) {
             records.push({
                 sku: faker.string.uuid(),
                 name: faker.commerce.productName(),
@@ -48,7 +56,7 @@ export class GameSeeder extends Seeder<GameRecord> {
                 description: faker.lorem.paragraph(),
                 playUrl: faker.internet.url(),
             });
-        } */
+        }
 
         return records;
     }

@@ -10,7 +10,8 @@
         "test:watch": "vitest",
         "test:watch-with-coverage": "vitest --coverage",
         "test:ui": "vitest --coverage --ui",
-        "seed:dev": "tsx src/seeders/index.ts"
+        "seed": "tsx src/seeders/index.ts",
+        "seed:dev": "tsx src/seeders/index.ts --dev"
     },
     "dependencies": {
         "cookie-parser": "1.4.7",

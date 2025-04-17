@@ -9,6 +9,8 @@ async function main(): Promise<void> {
         "Het seeden van de database zal de meeste tabellen legen. Weet je zeker dat je dit wilt doen? (yes/no) "
     );
 
+    const devMode: boolean = process.argv.includes("--dev");
+
     if (!confirmAnswer) {
         console.log("Database seeding aborted.");
         process.exit(0);
@@ -23,10 +25,10 @@ async function main(): Promise<void> {
     console.log("Starting database seeding...");
 
     // Seeders
-    const gameSeeder: GameSeeder = new GameSeeder(databaseService);
+    const gameSeeder: GameSeeder = new GameSeeder(devMode, databaseService);
     await gameSeeder.truncate();
 
-    const gameImagesSeeder: GameImagesSeeder = new GameImagesSeeder(databaseService);
+    const gameImagesSeeder: GameImagesSeeder = new GameImagesSeeder(devMode, databaseService);
     await gameImagesSeeder.truncate();
 
     // Seed 10 random games

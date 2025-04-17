@@ -1,5 +1,4 @@
 import { DatabaseService } from "@api/services/DatabaseService";
-import { ExternalGamesService } from "@api/services/ExternalGamesService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 
 /**
@@ -9,30 +8,43 @@ import { PoolConnection, ResultSetHeader } from "mysql2/promise";
  */
 export abstract class Seeder<T extends { id?: number }> {
     protected readonly _databaseService: DatabaseService;
-    protected readonly _externalGamesService: ExternalGamesService;
 
     /**
      * The name of the table to seed.
      */
     protected abstract _table: string;
 
+    private _devMode: boolean;
+
     /**
      * Constructor for the Seeder class.
      *
      * @param databaseService The DatabaseService instance to use for database operations.
      */
-    public constructor(databaseService: DatabaseService = new DatabaseService()) {
+    public constructor(devMode: boolean, databaseService: DatabaseService = new DatabaseService()) {
+        this._devMode = devMode;
         this._databaseService = databaseService;
-        this._externalGamesService = new ExternalGamesService();
     }
 
     /**
      * Get the records to seed the database with.
      *
      * @param count The number of records to generate.
+     * @param recordIds The ids of the records to use for seeding. This is optional.
      * @remarks return type should match the table columns defined in `_tableColumns`
      */
     protected abstract getRecords(count: number, ...recordIds: number[][]): SyncOrAsync<T[]>;
+
+    /**
+     * Get the records to seed the database with in development mode.
+     *
+     * @param count The number of records to generate.
+     * @param recordIds The ids of the records to use for seeding. This is optional.
+     * @remarks Defaults to the same as `getRecords` but can be overridden to provide different data for development.
+     */
+    protected getRecordsDev(count: number, ...recordIds: number[][]): SyncOrAsync<T[]> {
+        return this.getRecords(count, ...recordIds);
+    }
 
     /**
      * Seed the database with test data.
@@ -43,7 +55,10 @@ export abstract class Seeder<T extends { id?: number }> {
     public async seed(count: number, ...recordIds: number[][]): Promise<T[]> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
-        const records: T[] = await this.getRecords(count, ...recordIds);
+        // Get the records to insert. If we are in dev mode, we will use the dev records.
+        const records: T[] = this._devMode
+            ? await this.getRecordsDev(count, ...recordIds)
+            : await this.getRecords(count, ...recordIds);
 
         if (records.length === 0) {
             throw new Error("No records to insert");
