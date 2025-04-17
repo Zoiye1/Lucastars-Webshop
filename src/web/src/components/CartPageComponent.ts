@@ -1,8 +1,11 @@
 import { html } from "@web/helpers/webComponents";
 import "@web/components/CartPageComponent";
+import { html } from "@web/helpers/webComponents";
+import { CartService } from "@web/services/CartService";
 
-// src/components/CartPageComponent.ts
 export class CartPageComponent extends HTMLElement {
+    private _cartService = new CartService();
+
     private items: {
         name: string;
         price: number;
@@ -11,38 +14,25 @@ export class CartPageComponent extends HTMLElement {
         quantity: number;
     }[] = [];
 
-    public connectedCallback(): void {
+    public async connectedCallback(): Promise<void> {
         this.attachShadow({ mode: "open" });
 
-        const savedItems = localStorage.getItem("cart-items");
-        if (savedItems) {
-            this.items = JSON.parse(savedItems);
-        }
-        else {
-            this.items = [
-                {
-                    name: "T-shirt",
-                    price: 19.99,
-                    image: "https://example.com/images/tshirt.jpg",
-                    description: "Comfortabel katoenen T-shirt in verschillende maten.",
-                    quantity: 1,
-                },
-                {
-                    name: "Cap",
-                    price: 9.99,
-                    image: "https://example.com/images/cap.jpg",
-                    description: "Stijlvolle pet, perfect voor zonnige dagen.",
-                    quantity: 1,
-                },
-            ];
-            this.saveToLocalStorage();
+        try {
+            this.items = await this._cartService.getCart();
+        } catch (error) {
+            console.error("Kan winkelwagen niet ophalen:", error);
+            this.items = []; // fallback
         }
 
         this.render();
     }
 
-    private saveToLocalStorage(): void {
-        localStorage.setItem("cart-items", JSON.stringify(this.items));
+    private async updateBackendCart(): Promise<void> {
+        try {
+            await this._cartService.updateCart(this.items);
+        } catch (error) {
+            console.error("Fout bij bijwerken van winkelwagen:", error);
+        }
     }
 
     private render(): void {
@@ -158,7 +148,9 @@ export class CartPageComponent extends HTMLElement {
         checkoutButton.style.borderRadius = "8px";
         checkoutButton.style.cursor = "pointer";
         checkoutButton.onclick = () => {
-            window.location.href = "/checkout.html"; // Pas dit pad aan als jouw router iets anders gebruikt
+            const total = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            localStorage.setItem("cart-total", total.toFixed(2));
+            window.location.href = "/checkout.html";
         };
 
         container.appendChild(ul);
@@ -168,18 +160,18 @@ export class CartPageComponent extends HTMLElement {
         this.shadowRoot.appendChild(container);
     }
 
-    private updateQuantity(index: number, change: number): void {
+    private async updateQuantity(index: number, change: number): Promise<void> {
         this.items[index].quantity += change;
         if (this.items[index].quantity <= 0) {
             this.items.splice(index, 1);
         }
-        this.saveToLocalStorage();
+        await this.updateBackendCart();
         this.render();
     }
 
-    private removeItem(index: number): void {
+    private async removeItem(index: number): Promise<void> {
         this.items.splice(index, 1);
-        this.saveToLocalStorage();
+        await this.updateBackendCart();
         this.render();
     }
 }

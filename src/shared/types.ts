@@ -23,3 +23,11 @@ export type SecretResponse = {
     /** ID of the user */
     userId: string;
 };
+
+export type CartItem = {
+    name: string;
+    price: number;
+    image: string;
+    description: string;
+    quantity: number;
+};

@@ -5,10 +5,12 @@ export class CheckoutPageComponent extends HTMLElement {
     private userData = {
         naam: "Jan Jansen",
         email: "jan@example.com",
-        adres: "Dorpsstraat 1",
-        postcode: "1234 AB",
-        woonplaats: "Amsterdam"
-    };
+        afleveradres: {
+            adres: "Dorpsstraat 1",
+            postcode: "1234 AB",
+            woonplaats: "Amsterdam"
+        }
+    }
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
