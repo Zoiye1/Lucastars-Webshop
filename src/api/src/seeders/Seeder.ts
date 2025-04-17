@@ -1,6 +1,10 @@
 import { DatabaseService } from "@api/services/DatabaseService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 
+const COLOR_GREEN: string = "\x1b[32m";
+const COLOR_GRAY: string = "\x1b[90m";
+const COLOR_RESET: string = "\x1b[0m";
+
 /**
  * Seeder class to seed the database with test data.
  *
@@ -65,6 +69,8 @@ export abstract class Seeder<T extends { id?: number }> {
         }
 
         try {
+            console.log(`${COLOR_GRAY}Seeding ${count} records to ${this._table}...${COLOR_RESET}`);
+
             const columns: string[] = Object.keys(records[0]);
             const values: unknown[] = records.map(record => Object.values(record));
 
@@ -86,6 +92,8 @@ export abstract class Seeder<T extends { id?: number }> {
             for (let i: number = 0; i < records.length; i++) {
                 records[i].id = result.insertId + i;
             }
+
+            console.log(`${COLOR_GREEN}Successfully seeded ${records.length} records${COLOR_RESET}`);
 
             return records;
         }
