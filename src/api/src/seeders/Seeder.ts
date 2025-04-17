@@ -69,7 +69,7 @@ export abstract class Seeder<T extends { id?: number }> {
         }
 
         try {
-            console.log(`${COLOR_GRAY}Seeding ${count} records to ${this._table}...${COLOR_RESET}`);
+            console.log(`${COLOR_GRAY}Seeding records to ${this._table}...${COLOR_RESET}`);
 
             const columns: string[] = Object.keys(records[0]);
             const values: unknown[] = records.map(record => Object.values(record));
