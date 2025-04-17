@@ -2,6 +2,7 @@ import { Seeder } from "./Seeder";
 import { faker } from "@faker-js/faker";
 
 type GameImageRecord = {
+    id?: number;
     gameId: number;
     imageUrl: string;
     sortOrder: number;
@@ -21,19 +22,13 @@ export class GameImagesSeeder extends Seeder<GameImageRecord> {
     /**
      * @inheritdoc
      */
-    protected async getRecords(count: number): Promise<GameImageRecord[]> {
-        const gameIds: number[] = await this.getExistingIds("games");
-
-        if (!gameIds.length) {
-            throw new Error("No game IDs found in the database. Did you run the GameSeeder?");
-        }
-
+    protected getRecords(count: number, gameIds: number[]): GameImageRecord[] {
         const records: GameImageRecord[] = [];
 
-        for (let gameId: number = 0; gameId < gameIds.length; gameId++) {
+        for (const gameId of gameIds) {
             for (let i: number = 0; i < count; i++) {
                 records.push({
-                    gameId: gameIds[gameId],
+                    gameId: gameId,
                     imageUrl: faker.image.url(),
                     sortOrder: i,
                 });

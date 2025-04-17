@@ -1,7 +1,8 @@
 import { Seeder } from "./Seeder";
 import { faker } from "@faker-js/faker";
 
-type GameRecord = {
+export type GameRecord = {
+    id?: number;
     sku: string;
     name: string;
     thumbnail: string;

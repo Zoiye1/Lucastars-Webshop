@@ -1,12 +1,12 @@
 import { config } from "dotenv";
-import { GameSeeder } from "./GameSeeder";
+import { GameRecord, GameSeeder } from "./GameSeeder";
 import { DatabaseService } from "@api/services/DatabaseService";
 import { GameImagesSeeder } from "./GameImagesSeeder";
 import { scanner } from "@hboictcloud/scanner";
 
 async function main(): Promise<void> {
     const confirmAnswer: boolean = await scanner.promptBoolean(
-        "Het seeden van de database zal meeste tabellen legen. Weet je zeker dat je dit wilt doen? (yes/no) "
+        "Het seeden van de database zal de meeste tabellen legen. Weet je zeker dat je dit wilt doen? (yes/no) "
     );
 
     if (!confirmAnswer) {
@@ -24,13 +24,19 @@ async function main(): Promise<void> {
 
     // Seeders
     const gameSeeder: GameSeeder = new GameSeeder(databaseService);
+    await gameSeeder.truncate();
+
     const gameImagesSeeder: GameImagesSeeder = new GameImagesSeeder(databaseService);
+    await gameImagesSeeder.truncate();
 
     // Seed 10 random games
-    await gameSeeder.seed(10);
+    const games: GameRecord[] = await gameSeeder.seed(10);
 
     // Seed 3 random images for each game we just created
-    await gameImagesSeeder.seed(3);
+    await gameImagesSeeder.seed(
+        3,
+        games.map(game => game.id || 0)
+    );
 }
 
 main()
