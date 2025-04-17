@@ -1,4 +1,5 @@
 import { DatabaseService } from "@api/services/DatabaseService";
+import { ExternalGamesService } from "@api/services/ExternalGamesService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 
 /**
@@ -8,6 +9,7 @@ import { PoolConnection, ResultSetHeader } from "mysql2/promise";
  */
 export abstract class Seeder<T extends { id?: number }> {
     protected readonly _databaseService: DatabaseService;
+    protected readonly _externalGamesService: ExternalGamesService;
 
     /**
      * The name of the table to seed.
@@ -21,6 +23,7 @@ export abstract class Seeder<T extends { id?: number }> {
      */
     public constructor(databaseService: DatabaseService = new DatabaseService()) {
         this._databaseService = databaseService;
+        this._externalGamesService = new ExternalGamesService();
     }
 
     /**

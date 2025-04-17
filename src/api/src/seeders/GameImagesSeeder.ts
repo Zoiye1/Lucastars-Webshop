@@ -1,5 +1,6 @@
+import { GamesApiResponse } from "@api/services/ExternalGamesService";
 import { Seeder } from "./Seeder";
-import { faker } from "@faker-js/faker";
+// import { faker } from "@faker-js/faker";
 
 type GameImageRecord = {
     id?: number;
@@ -22,10 +23,29 @@ export class GameImagesSeeder extends Seeder<GameImageRecord> {
     /**
      * @inheritdoc
      */
-    protected getRecords(count: number, gameIds: number[]): GameImageRecord[] {
+    protected async getRecords(_count: number): Promise<GameImageRecord[]> {
         const records: GameImageRecord[] = [];
 
-        for (const gameId of gameIds) {
+        const games: GamesApiResponse[] = await this._externalGamesService.getGames();
+
+        for (let i: number = 0; i < games.length; i++) {
+            const game: GamesApiResponse = games[i];
+
+            if (!game.Images) {
+                continue;
+            }
+
+            for (let j: number = 0; j < game.Images.length; j++) {
+                records.push({
+                    gameId: i,
+                    imageUrl: game.Images[j],
+                    sortOrder: j,
+                });
+            }
+        }
+
+        // Fake data
+        /* for (const gameId of gameIds) {
             for (let i: number = 0; i < count; i++) {
                 records.push({
                     gameId: gameId,
@@ -33,7 +53,7 @@ export class GameImagesSeeder extends Seeder<GameImageRecord> {
                     sortOrder: i,
                 });
             }
-        }
+        } */
 
         return records;
     }

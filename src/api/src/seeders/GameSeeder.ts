@@ -1,5 +1,6 @@
+import { GamesApiResponse } from "@api/services/ExternalGamesService";
 import { Seeder } from "./Seeder";
-import { faker } from "@faker-js/faker";
+// import { faker } from "@faker-js/faker";
 
 export type GameRecord = {
     id?: number;
@@ -24,10 +25,22 @@ export class GameSeeder extends Seeder<GameRecord> {
     /**
      * @inheritdoc
      */
-    protected getRecords(count: number): GameRecord[] {
-        const records: GameRecord[] = [];
+    protected async getRecords(_count: number): Promise<GameRecord[]> {
+        const games: GamesApiResponse[] = await this._externalGamesService.getGames();
 
-        for (let i: number = 0; i < count; i++) {
+        const records: GameRecord[] = [];
+        for (const game of games) {
+            records.push({
+                sku: game.SKU,
+                name: game.Title,
+                thumbnail: game.Thumbnail,
+                description: game.DescriptionHtml,
+                playUrl: game.Url,
+            });
+        }
+
+        // Fake data
+        /* for (let i: number = 0; i < count; i++) {
             records.push({
                 sku: faker.string.uuid(),
                 name: faker.commerce.productName(),
@@ -35,7 +48,7 @@ export class GameSeeder extends Seeder<GameRecord> {
                 description: faker.lorem.paragraph(),
                 playUrl: faker.internet.url(),
             });
-        }
+        } */
 
         return records;
     }
