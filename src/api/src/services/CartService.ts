@@ -14,11 +14,11 @@ export class CartService implements ICartService {
             const result = await this._databaseService.query<CartItem[]>(
                 connection,
                 `
-                SELECT id, userid, gameid, quantity,created
+                SELECT  userid, gameid, quantity,
                 FROM cart_items
                 WHERE userId = ?
                 `,
-                userId
+                1
             );
 
             return result;
@@ -49,14 +49,13 @@ export class CartService implements ICartService {
                 await this._databaseService.query<ResultSetHeader>(
                     connection,
                     `
-                    INSERT INTO cart_items (userId, name, price, image, description, quantity)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    INSERT INTO cart_items (userId, gameId, quantity)
+                    VALUES (?, ?, ?)
+
                     `,
-                    userId,
-                    item.name,
-                    item.price,
-                    item.image,
-                    item.description,
+
+                    item.userId,
+                    item.gameId,
                     item.quantity
                 );
             }
@@ -91,34 +90,33 @@ export class CartService implements ICartService {
     }
 }
 
+// // import { CartItem } from "@shared/types";
 
-// import { CartItem } from "@shared/types";
+// // export class CartService implements ICartService {
+// //    private carts: Map<number, CartItem[]> = new Map([
+//         [1, [
+//             {
+//                 name: "T-shirt",
+//                 price: 19.99,
+//                 image: "https://example.com/images/tshirt.jpg",
+//                 description: "Comfortabel katoenen T-shirt in verschillende maten.",
+//                 quantity: 2,
+//             },
+//             {
+//                 name: "Cap",
+//                 price: 9.99,
+//                 image: "https://example.com/images/cap.jpg",
+//                 description: "Stijlvolle pet, perfect voor zonnige dagen.",
+//                 quantity: 1,
+//             },
+//         ]],
+//    ]);
 
-// export class CartService implements ICartService {
-//    private carts: Map<number, CartItem[]> = new Map([
-        [1, [
-            {
-                name: "T-shirt",
-                price: 19.99,
-                image: "https://example.com/images/tshirt.jpg",
-                description: "Comfortabel katoenen T-shirt in verschillende maten.",
-                quantity: 2,
-            },
-            {
-                name: "Cap",
-                price: 9.99,
-                image: "https://example.com/images/cap.jpg",
-                description: "Stijlvolle pet, perfect voor zonnige dagen.",
-                quantity: 1,
-            },
-        ]],
-    ]);
+// //    public getCart(userId: number): CartItem[] {
+// //       return this.carts.get(userId) ?? [];
+//     }
 
-//    public getCart(userId: number): CartItem[] {
-//       return this.carts.get(userId) ?? [];
-    }
-
-//   public updateCart(userId: number, items: CartItem[]): void {
-//       this.carts.set(userId, items);
-    }
-}
+// //   public updateCart(userId: number, items: CartItem[]): void {
+// //       this.carts.set(userId, items);
+//     }
+// }
