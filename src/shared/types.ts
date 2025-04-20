@@ -32,6 +32,11 @@ export type GamesResponse = {
     games: Game[];
 };
 
+export type OrdersGamesResponse = {
+    /** List of games */
+    ordersGames: OrdersGames[];
+};
+
 /**
  * Represents a game product
  */
@@ -55,4 +60,9 @@ export type Game = {
      * @remarks This will only be filled if the user owns the game
      */
     url?: string;
+};
+
+export type OrdersGames = {
+    gameId: number;
+    orderId: number;
 };

@@ -1,5 +1,6 @@
 import { html } from "@web/helpers/webComponents";
 import "@web/components/GameSelectComponent";
+import { OrdersGamesService } from "@web/services/OrdersGamesService";
 /**
  * This component demonstrates the use of sessions, cookies and Services.
  *
