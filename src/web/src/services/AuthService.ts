@@ -1,9 +1,7 @@
-// src/web/src/services/AuthService.ts
-
 import { IUserRegisterDTO, IAuthResponse } from "../../../shared/types";
 
 export class AuthService {
-    private readonly API_URL: string = "/api";
+    private readonly API_URL: string = "http://localhost:3000";
 
     /**
      * Register a new user
@@ -11,7 +9,6 @@ export class AuthService {
     public async register(userData: IUserRegisterDTO): Promise<IAuthResponse> {
         try {
             console.log("Sending registration data:", userData);
-
             const url: string = `${this.API_URL}/auth/register`;
             console.log("Sending request to:", url);
 
@@ -35,6 +32,7 @@ export class AuthService {
                 };
             }
 
+            // Rest of the method remains the same...
             // Try to read the response text first
             let text: string;
             try {
@@ -59,12 +57,13 @@ export class AuthService {
 
             // Parse the text as JSON
             try {
-                const data: IAuthResponse = JSON.parse(text) as IAuthResponse;
+                const data = JSON.parse(text) as IAuthResponse;
                 console.log("Parsed response data:", data);
                 return data;
             }
             catch (parseError) {
-                console.error("JSON parse error:", parseError);
+                const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
+                console.error("JSON parse error:", errorMessage);
                 console.error("Response text that failed to parse:", text);
                 return {
                     success: false,
@@ -73,7 +72,8 @@ export class AuthService {
             }
         }
         catch (error) {
-            console.error("Registration error:", error);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error("Registration error:", errorMessage);
             return {
                 success: false,
                 message: "An error occurred during registration",

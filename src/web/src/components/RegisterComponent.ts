@@ -1,5 +1,3 @@
-// src/web/src/components/RegisterComponent.ts
-
 import { html } from "../helpers/webComponents";
 import { authService } from "../services/AuthService";
 import { IAuthResponse } from "../../../shared/types";
@@ -246,9 +244,6 @@ export class RegisterComponent extends HTMLElement {
                 return;
             }
 
-            // Skip test connection and proceed directly to registration
-            // (The test connection was failing with 404)
-
             // Register request
             const result: IAuthResponse = await authService.register({
                 username,
@@ -278,9 +273,21 @@ export class RegisterComponent extends HTMLElement {
         }
         catch (error: unknown) {
             console.error("Registration error:", error);
-            this.showError(typeof error === "object" && error !== null && "message" in error
-                ? String(error.message)
-                : "An error occurred during registration");
+            // Fix TypeScript error with proper type handling
+            let errorMessage = "An error occurred during registration";
+
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+            else if (typeof error === "string") {
+                errorMessage = error;
+            }
+            else if (error && typeof error === "object" && "message" in error &&
+              typeof error.message === "string") {
+                errorMessage = error.message;
+            }
+
+            this.showError(errorMessage);
         }
         finally {
             // Re-enable submit button

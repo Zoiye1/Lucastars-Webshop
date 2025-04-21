@@ -1,5 +1,3 @@
-// src/api/src/controllers/AuthController.ts
-
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
 import { SessionService } from "../services/SessionService";

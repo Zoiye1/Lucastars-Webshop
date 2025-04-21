@@ -19,33 +19,6 @@ export class UserService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
     private readonly SALT_ROUNDS: number = 10;
 
-    public async getUserByEmail(email: string): Promise<IUser | undefined> {
-        const connection: PoolConnection = await this._databaseService.openConnection();
-        try {
-            const result: UserQueryResult[] = await this._databaseService.query<UserQueryResult[]>(
-                connection,
-                `
-                SELECT id, username, email, firstName, prefix, lastName, password, created, updated
-                FROM users
-                WHERE email = ?
-                `,
-                email
-            );
-
-            if (result.length !== 1) {
-                return undefined;
-            }
-
-            return result[0];
-        }
-        catch (e: unknown) {
-            throw new Error(`Failed to get user by email: ${e}`);
-        }
-        finally {
-            connection.release();
-        }
-    }
-
     public async getUserByUsername(username: string): Promise<IUser | undefined> {
         const connection: PoolConnection = await this._databaseService.openConnection();
         try {
@@ -58,15 +31,39 @@ export class UserService {
                 `,
                 username
             );
-
             if (result.length !== 1) {
                 return undefined;
             }
-
             return result[0];
         }
         catch (e: unknown) {
             throw new Error(`Failed to get user by username: ${e}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    // Add the missing getUserByEmail method
+    public async getUserByEmail(email: string): Promise<IUser | undefined> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            const result: UserQueryResult[] = await this._databaseService.query<UserQueryResult[]>(
+                connection,
+                `
+                SELECT id, username, email, firstName, prefix, lastName, password, created, updated
+                FROM users
+                WHERE email = ?
+                `,
+                email
+            );
+            if (result.length !== 1) {
+                return undefined;
+            }
+            return result[0];
+        }
+        catch (e: unknown) {
+            throw new Error(`Failed to get user by email: ${e}`);
         }
         finally {
             connection.release();
@@ -85,7 +82,6 @@ export class UserService {
         try {
             // Hash the password
             const hashedPassword: string = await bcrypt.hash(password, this.SALT_ROUNDS);
-
             const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
                 connection,
                 `
@@ -99,7 +95,6 @@ export class UserService {
                 lastName,
                 hashedPassword
             );
-
             return result.insertId > 0 ? result.insertId : undefined;
         }
         catch (e: unknown) {
