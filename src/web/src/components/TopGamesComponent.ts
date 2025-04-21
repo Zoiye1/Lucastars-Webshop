@@ -42,9 +42,11 @@ export class TopGamesComponent extends HTMLElement {
             if (games[i]) {
                 gameElements.push(
                     html`<webshop-select-game
-                    name="${games[i].name}"
-                    image="${games[i].thumbnail}"
-                    price="${games[i].price}"></webshop-select-game>`
+                        name="${games[i].name}"
+                        image="${games[i].thumbnail}"
+                        price="${games[i].price}">
+                        
+                    </webshop-select-game>`
                 );
             }
         }
@@ -74,7 +76,7 @@ export class TopGamesComponent extends HTMLElement {
                     userId,
                     name,
                     thumbnail,
-                    price: price as number,
+                    price: price,
                     users: new Set(),
                 });
             }
