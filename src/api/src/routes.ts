@@ -2,6 +2,7 @@ import { Router } from "express";
 import { WelcomeController } from "./controllers/WelcomeController";
 import { requireValidSessionMiddleware, sessionMiddleware } from "./middleware/sessionMiddleware";
 import { GamesController } from "./controllers/GamesController";
+import { OrdersGamesController } from "@api/controllers/OrdersGamesController";
 
 // Create a router
 export const router: Router = Router();

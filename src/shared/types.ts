@@ -64,5 +64,8 @@ export type Game = {
 
 export type OrdersGames = {
     gameId: number;
-    orderId: number;
+    userId: number;
+    name: string;
+    thumbnail: string;
+    price: number;
 };
