@@ -6,9 +6,9 @@ import { CartItem } from "@shared/types";
 export class CartController {
     private readonly _cartService: ICartService = new CartService();
 
-    public getCart(req: Request, res: Response): void {
+    public async getCart(req: Request, res: Response): Promise<void> {
         const userId: number = req.userId ?? 1; // fallback demo user
-        const items: CartItem[] = this._cartService.getCart(userId);
+        const items: CartItem[] = await this._cartService.getCart(userId);
         res.json(items);
     }
 

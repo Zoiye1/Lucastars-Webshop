@@ -1,5 +1,3 @@
-import { PoolConnection } from "mysql2/promise";
-
 /**
  * Represents a session
  */
@@ -27,11 +25,7 @@ export type SecretResponse = {
 };
 
 export type CartItem = {
-    gameId<T>(connection: PoolConnection, arg1: string, userId: <T>(connection: PoolConnection, arg1: string, userId: any, gameId: any, quantity: number) => unknown, gameId: any, quantity: number): unknown;
-    userId<T>(connection: PoolConnection, arg1: string, userId: any, gameId: any, quantity: number): unknown;
-    name: string;
-    price: number;
-    image: string;
-    description: string;
+    gameId: number;
+    userId: number;
     quantity: number;
 };

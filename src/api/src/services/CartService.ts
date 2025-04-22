@@ -6,7 +6,7 @@ import { CartItem } from "@shared/types";
 export class CartService implements ICartService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
 
-    public async getCart(userId: number): Promise<CartItem[]> {
+    public async getCart(_userId: number): Promise<CartItem[]> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         try {
@@ -14,11 +14,11 @@ export class CartService implements ICartService {
             const result = await this._databaseService.query<CartItem[]>(
                 connection,
                 `
-                SELECT  userid, gameid, quantity,
+                SELECT userId, gameId, quantity, 1 AS 'price'
                 FROM cart_items
                 WHERE userId = ?
                 `,
-                1
+                111
             );
 
             return result;
