@@ -39,14 +39,16 @@ export class TopGamesComponent extends HTMLElement {
 
         const gameElements: HTMLElement[] = [];
         for (let i: number = 0; i < 4; i++) {
-            gameElements.push(
-                html`<webshop-select-game
-                        name="spel naam"
-                        image="https://lucastars.hbo-ict.cloud/media/507393f14b9e41dba88a97c90bdddf0d/00000006000000000000000000000000.png"
-                        price="50">
+            if (games[i]) {
+                gameElements.push(
+                    html`<webshop-select-game
+                        name="${games[i].name}"
+                        image="${games[i].thumbnail}"
+                        price="${games[i].price}">
                         
                     </webshop-select-game>`
-            );
+                );
+            }
         }
 
         const element: HTMLElement = html`
@@ -57,43 +59,6 @@ export class TopGamesComponent extends HTMLElement {
 
         this.shadowRoot.firstChild?.remove();
         this.shadowRoot.append(styles, element);
-    }
-
-    private getTopGames(purchases: OrdersGames[], topN: number = 4): { gameId: number; name: string; thumbnail: string; price: number; uniqueBuyers: number }[] {
-        const seenPairs: Set<string> = new Set();
-        const gameMap: Map<number, { userId: number; name: string; thumbnail: string; price: number; users: Set<number> }> = new Map();
-
-        for (const { gameId, userId, name, thumbnail, price } of purchases) {
-            const key: string = `${userId}-${gameId}`;
-            if (seenPairs.has(key)) continue;
-
-            seenPairs.add(key);
-
-            if (!gameMap.has(gameId)) {
-                gameMap.set(gameId, {
-                    userId,
-                    name,
-                    thumbnail,
-                    price: price,
-                    users: new Set(),
-                });
-            }
-
-            gameMap.get(gameId)!.users.add(userId);
-        }
-
-        const topGames: { gameId: number; name: string; thumbnail: string; price: number; uniqueBuyers: number }[] = Array.from(gameMap.entries())
-            .map(([gameId, { name, thumbnail, price, users }]) => ({
-                gameId,
-                name,
-                thumbnail,
-                price,
-                uniqueBuyers: users.size,
-            }))
-            .sort((a, b) => b.uniqueBuyers - a.uniqueBuyers)
-            .slice(0, topN);
-
-        return topGames;
     }
 }
 

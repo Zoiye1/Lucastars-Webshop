@@ -35,6 +35,11 @@ export class GameSelectComponent extends HTMLElement {
                     flex-direction: column;
                     align-items: center;
                 }
+                
+                a {
+                    text-decoration: none;
+                    color: black;
+                }
 
                 .game-img {
                     aspect-ratio: 9 / 5;
@@ -86,14 +91,16 @@ export class GameSelectComponent extends HTMLElement {
             </style>
         `;
         const element: HTMLElement = html`
-            <article class="select-game-container">
-                <header class="game-img"><img src="/assets/images/${this._image}" /></header>
-                <p class="game-title">${this._name}</p>
-                <p class="game-price">€${this._price}</p>
-                <button class="add-button" id="add-button">
-                    Winkelmand
-                </button>
-            </article>
+            <a href="/game.html?name=${this._name}">
+                <article class="select-game-container">
+                    <header class="game-img"><img src="${this._image}" /></header>
+                    <p class="game-title">${this._name}</p>
+                    <p class="game-price">€${this._price}</p>
+                    <button class="add-button" id="add-button">
+                        Winkelmand
+                    </button>
+                </article>
+            </a>
         `;
 
         this.shadowRoot.firstChild?.remove();
