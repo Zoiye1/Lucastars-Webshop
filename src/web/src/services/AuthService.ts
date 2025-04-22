@@ -1,15 +1,13 @@
 import { IUserRegisterDTO, IAuthResponse } from "../../../shared/types";
 
 export class AuthService {
-    private readonly API_URL: string = "http://localhost:3000";
-
     /**
      * Register a new user
      */
     public async register(userData: IUserRegisterDTO): Promise<IAuthResponse> {
         try {
             console.log("Sending registration data:", userData);
-            const url: string = `${this.API_URL}/auth/register`;
+            const url: string = `${VITE_API_URL}auth/register`;
             console.log("Sending request to:", url);
 
             const response: Response = await fetch(url, {

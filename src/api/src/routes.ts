@@ -19,6 +19,8 @@ router.get("/test", (_, res) => {
 const welcomeController: WelcomeController = new WelcomeController();
 const authController: AuthController = new AuthController();
 
+router.post("/auth/register", authController.register);
+
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
 
@@ -26,7 +28,6 @@ router.get("/session", (req, res) => welcomeController.getSession(req, res));
 router.delete("/session", (req, res) => welcomeController.deleteSession(req, res));
 router.delete("/session/expired", (req, res) => welcomeController.deleteExpiredSessions(req, res));
 router.get("/welcome", (req, res) => welcomeController.getWelcome(req, res));
-router.post("/auth/register", authController.register);
 
 // NOTE: After this line, all endpoints will require a valid session.
 router.use(requireValidSessionMiddleware);

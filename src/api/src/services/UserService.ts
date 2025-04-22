@@ -1,7 +1,7 @@
 import { IUser } from "../../../shared/types";
 import { DatabaseService } from "./DatabaseService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
-import * as bcrypt from "bcrypt";
+import { hash } from "bcrypt-ts";
 
 type UserQueryResult = {
     id: number;
@@ -81,7 +81,8 @@ export class UserService {
         const connection: PoolConnection = await this._databaseService.openConnection();
         try {
             // Hash the password
-            const hashedPassword: string = await bcrypt.hash(password, this.SALT_ROUNDS);
+            const hashedPassword: string = await hash(password, this.SALT_ROUNDS);
+            // const hashedPassword: string = password;
             const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
                 connection,
                 `

@@ -3,6 +3,12 @@ import { UserService } from "../services/UserService";
 import { SessionService } from "../services/SessionService";
 import { IUser, IUserRegisterDTO } from "../../../shared/types";
 
+type AuthReponse = {
+    success: boolean;
+    message: string;
+    sessionId?: string;
+};
+
 export class AuthController {
     private readonly _userService: UserService = new UserService();
     private readonly _sessionService: SessionService = new SessionService();
@@ -18,7 +24,7 @@ export class AuthController {
             // Basic validation
             if (!userData.username || !userData.email || !userData.password ||
               !userData.confirmPassword || !userData.firstName || !userData.lastName) {
-                const errorResponse = {
+                const errorResponse: AuthReponse = {
                     success: false,
                     message: "All required fields must be filled in",
                 };
@@ -28,7 +34,7 @@ export class AuthController {
             }
 
             if (userData.password !== userData.confirmPassword) {
-                const errorResponse = {
+                const errorResponse: AuthReponse = {
                     success: false,
                     message: "Passwords do not match",
                 };
@@ -40,7 +46,7 @@ export class AuthController {
             // Check if user already exists
             const existingUserByEmail: IUser | undefined = await this._userService.getUserByEmail(userData.email);
             if (existingUserByEmail) {
-                const errorResponse = {
+                const errorResponse: AuthReponse = {
                     success: false,
                     message: "Email already in use",
                 };
@@ -51,7 +57,7 @@ export class AuthController {
 
             const existingUserByUsername: IUser | undefined = await this._userService.getUserByUsername(userData.username);
             if (existingUserByUsername) {
-                const errorResponse = {
+                const errorResponse: AuthReponse = {
                     success: false,
                     message: "Username already taken",
                 };
@@ -71,7 +77,7 @@ export class AuthController {
             );
 
             if (!userId) {
-                const errorResponse = {
+                const errorResponse: AuthReponse = {
                     success: false,
                     message: "Failed to create user",
                 };
@@ -84,7 +90,7 @@ export class AuthController {
             const sessionId: string | undefined = await this._sessionService.createSession(userId);
 
             if (!sessionId) {
-                const errorResponse = {
+                const errorResponse: AuthReponse = {
                     success: false,
                     message: "Failed to create session",
                 };
@@ -100,7 +106,7 @@ export class AuthController {
                 secure: process.env.NODE_ENV === "production",
             });
 
-            const successResponse = {
+            const successResponse: AuthReponse = {
                 success: true,
                 message: "User registered successfully",
                 sessionId,
@@ -110,7 +116,7 @@ export class AuthController {
         }
         catch (error) {
             console.error("Registration error:", error);
-            const errorResponse = {
+            const errorResponse: AuthReponse = {
                 success: false,
                 message: "Internal server error",
             };
