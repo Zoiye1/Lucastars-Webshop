@@ -1,4 +1,4 @@
-import { IUserRegisterDTO, IAuthResponse } from "../../../shared/types";
+import { IUserRegisterDTO, IAuthResponse } from "@shared/types";
 
 export class AuthService {
     /**
@@ -6,9 +6,7 @@ export class AuthService {
      */
     public async register(userData: IUserRegisterDTO): Promise<IAuthResponse> {
         try {
-            console.log("Sending registration data:", userData);
             const url: string = `${VITE_API_URL}auth/register`;
-            console.log("Sending request to:", url);
 
             const response: Response = await fetch(url, {
                 method: "POST",
@@ -55,12 +53,12 @@ export class AuthService {
 
             // Parse the text as JSON
             try {
-                const data = JSON.parse(text) as IAuthResponse;
+                const data: IAuthResponse = JSON.parse(text) as IAuthResponse;
                 console.log("Parsed response data:", data);
                 return data;
             }
             catch (parseError) {
-                const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
+                const errorMessage: string = parseError instanceof Error ? parseError.message : String(parseError);
                 console.error("JSON parse error:", errorMessage);
                 console.error("Response text that failed to parse:", text);
                 return {
@@ -70,7 +68,7 @@ export class AuthService {
             }
         }
         catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
+            const errorMessage: string = error instanceof Error ? error.message : String(error);
             console.error("Registration error:", errorMessage);
             return {
                 success: false,

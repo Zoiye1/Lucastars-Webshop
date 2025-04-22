@@ -51,3 +51,9 @@ export interface IAuthResponse {
     message: string;
     sessionId?: string;
 }
+
+export type AuthReponse = {
+    success: boolean;
+    message: string;
+    sessionId?: string;
+};

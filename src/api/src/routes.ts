@@ -11,10 +11,6 @@ router.get("/", (_, res) => {
     res.send("Welcome to the API!");
 });
 
-router.get("/test", (_, res) => {
-    res.json({ message: "API is working!" });
-});
-
 // Initialize controllers
 const welcomeController: WelcomeController = new WelcomeController();
 const authController: AuthController = new AuthController();

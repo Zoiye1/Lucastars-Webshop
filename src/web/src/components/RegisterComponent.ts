@@ -274,7 +274,7 @@ export class RegisterComponent extends HTMLElement {
         catch (error: unknown) {
             console.error("Registration error:", error);
             // Fix TypeScript error with proper type handling
-            let errorMessage = "An error occurred during registration";
+            let errorMessage: string = "An error occurred during registration";
 
             if (error instanceof Error) {
                 errorMessage = error.message;

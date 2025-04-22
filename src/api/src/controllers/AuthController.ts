@@ -1,13 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
 import { SessionService } from "../services/SessionService";
-import { IUser, IUserRegisterDTO } from "../../../shared/types";
-
-type AuthReponse = {
-    success: boolean;
-    message: string;
-    sessionId?: string;
-};
+import { AuthReponse, IUserRegisterDTO, IUser } from "@shared/types";
 
 export class AuthController {
     private readonly _userService: UserService = new UserService();
