@@ -19,9 +19,6 @@ router.get("/test", (_, res) => {
 const welcomeController: WelcomeController = new WelcomeController();
 const authController: AuthController = new AuthController();
 
-// Auth endpoints (before session middleware - registration doesn't need a session)
-router.post("/auth/register", authController.register);
-
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
 
@@ -29,6 +26,7 @@ router.get("/session", (req, res) => welcomeController.getSession(req, res));
 router.delete("/session", (req, res) => welcomeController.deleteSession(req, res));
 router.delete("/session/expired", (req, res) => welcomeController.deleteExpiredSessions(req, res));
 router.get("/welcome", (req, res) => welcomeController.getWelcome(req, res));
+router.post("/auth/register", authController.register);
 
 // NOTE: After this line, all endpoints will require a valid session.
 router.use(requireValidSessionMiddleware);
@@ -50,12 +48,4 @@ router.post("/cart/add", (_req, _res) => {
 
 router.get("/cart", (_req, _res) => {
     throw new Error("Return a list of products in the cart and the total price");
-});
-
-router.use("*", (req, res) => {
-    console.log(`Received request to: ${req.method} ${req.originalUrl}`);
-    res.status(404).json({
-        success: false,
-        message: `Path not found: ${req.method} ${req.originalUrl}`
-    });
 });
