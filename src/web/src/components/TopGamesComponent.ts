@@ -39,14 +39,16 @@ export class TopGamesComponent extends HTMLElement {
 
         const gameElements: HTMLElement[] = [];
         for (let i: number = 0; i < 4; i++) {
-            gameElements.push(
-                html`<webshop-select-game
-                        name="spel naam"
-                        image="https://lucastars.hbo-ict.cloud/media/507393f14b9e41dba88a97c90bdddf0d/00000006000000000000000000000000.png"
-                        price="50">
-                        
-                    </webshop-select-game>`
-            );
+            if (games[i]) {
+                gameElements.push(
+                    html`
+                        <webshop-select-game
+                            name="${games[i].name}"
+                            image="${games[i].thumbnail}"
+                            price="${games[i].price}">
+                        </webshop-select-game>`
+                );
+            }
         }
 
         const element: HTMLElement = html`
