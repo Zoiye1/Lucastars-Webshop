@@ -4,6 +4,7 @@ CREATE TABLE `games` (
   `name` varchar(255) NOT NULL,
   `thumbnail` varchar(255) NOT NULL,
   `description` text,
+  `price` decimal(10,2) NOT NULL COMMENT 'Price in Euros',
   `playUrl` varchar(255) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -15,14 +16,6 @@ CREATE TABLE `game_images` (
   `imageUrl` varchar(255) NOT NULL,
   `sortOrder` integer NOT NULL DEFAULT 1,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE `game_prices` (
-  `id` integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `gameId` integer,
-  `price` decimal(10,2) NOT NULL,
-  `currency` varchar(255) NOT NULL,
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -111,8 +104,6 @@ CREATE TABLE `sessions` (
 );
 
 ALTER TABLE `game_images` ADD FOREIGN KEY (`gameId`) REFERENCES `games` (`id`);
-
-ALTER TABLE `game_prices` ADD FOREIGN KEY (`gameId`) REFERENCES `games` (`id`);
 
 ALTER TABLE `games_tags` ADD FOREIGN KEY (`gameId`) REFERENCES `games` (`id`);
 

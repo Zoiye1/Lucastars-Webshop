@@ -8,6 +8,7 @@ export type GameRecord = {
     name: string;
     thumbnail: string;
     description: string;
+    price: number;
     playUrl: string;
 };
 
@@ -35,6 +36,8 @@ export class GameSeeder extends Seeder<GameRecord> {
                 name: game.Title,
                 thumbnail: game.Thumbnail,
                 description: game.DescriptionHtml,
+                // Random price for now.
+                price: faker.number.float({ min: 0, max: 100, fractionDigits: 2 }),
                 playUrl: game.Url,
             });
         }
@@ -54,6 +57,7 @@ export class GameSeeder extends Seeder<GameRecord> {
                 name: faker.commerce.productName(),
                 thumbnail: faker.image.url(),
                 description: faker.lorem.paragraph(),
+                price: faker.number.float({ min: 0, max: 100, fractionDigits: 2 }),
                 playUrl: faker.internet.url(),
             });
         }
