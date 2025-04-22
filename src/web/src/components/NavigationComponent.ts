@@ -100,9 +100,12 @@ export class NavigationComponent extends HTMLElement {
                     <span>Winkelmand (0)</span>
                 </a>
 
-                <a href="/example.html">
+                <a href="/register.html">
+                    <span>Login</span>
+                </a>
+                <a href="/register.html">
                     <img src="/assets/images/icons/question.svg" alt="Question icon" />
-                    <span>Example</span>
+                    <span>Register</span>
                 </a>
             </nav>
         `;
