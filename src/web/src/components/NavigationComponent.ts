@@ -79,30 +79,33 @@ export class NavigationComponent extends HTMLElement {
 
         const hamburgerButton: HTMLElement = html`
             <div class="hamburger">
-                <img src="/assets/images/icons/hamburger-menu.svg" alt="Hamburger icon" />
+                <img src="/images/icons/hamburger-menu.svg" alt="Hamburger icon" />
             </div>
         `;
 
         const navigation: HTMLElement = html`
             <nav>
                 <a href="/index.html">
-                    <img src="/assets/images/icons/gamepad.svg" alt="Gamepad icon" />
+                    <img src="/images/icons/gamepad.svg" alt="Gamepad icon" />
                     <span>Mijn spellen</span>
                 </a>
 
                 <a href="/index.html">
-                    <img src="/assets/images/icons/account.svg" alt="Account icon" />
+                    <img src="/images/icons/account.svg" alt="Account icon" />
                     <span>Account</span>
                 </a>
 
                 <a href="/index.html">
-                    <img src="/assets/images/icons/cart.svg" alt="Cart icon" />
+                    <img src="/images/icons/cart.svg" alt="Cart icon" />
                     <span>Winkelmand (0)</span>
                 </a>
 
-                <a href="/example.html">
-                    <img src="/assets/images/icons/question.svg" alt="Question icon" />
-                    <span>Example</span>
+                <a href="/register.html">
+                    <span>Login</span>
+                </a>
+                <a href="/register.html">
+                    <img src="/images/icons/question.svg" alt="Question icon" />
+                    <span>Register</span>
                 </a>
             </nav>
         `;

@@ -56,3 +56,37 @@ export type Game = {
      */
     url?: string;
 };
+
+export interface IUser {
+    id: number;
+    username: string;
+    email: string;
+    firstName: string;
+    prefix: string | null;
+    lastName: string;
+    password: string;
+    created: Date;
+    updated: Date;
+}
+
+export interface IUserRegisterDTO {
+    username: string;
+    email: string;
+    firstName: string;
+    prefix?: string;
+    lastName: string;
+    password: string;
+    confirmPassword: string;
+}
+
+export interface IAuthResponse {
+    success: boolean;
+    message: string;
+    sessionId?: string;
+}
+
+export type AuthReponse = {
+    success: boolean;
+    message: string;
+    sessionId?: string;
+};

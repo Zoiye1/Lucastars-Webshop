@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { WelcomeController } from "./controllers/WelcomeController";
 import { requireValidSessionMiddleware, sessionMiddleware } from "./middleware/sessionMiddleware";
+import { AuthController } from "./controllers/AuthController";
 import { GamesController } from "./controllers/GamesController";
 
 // Create a router
@@ -11,9 +12,12 @@ router.get("/", (_, res) => {
     res.send("Welcome to the API!");
 });
 
-// Forward endpoints to other routers
+// Initialize controllers
 const welcomeController: WelcomeController = new WelcomeController();
 const gamesController: GamesController = new GamesController();
+const authController: AuthController = new AuthController();
+
+router.post("/auth/register", authController.register);
 
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
