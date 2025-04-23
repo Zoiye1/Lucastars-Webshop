@@ -8,11 +8,13 @@ import { html } from "@web/helpers/webComponents";
 export class GameSelectComponent extends HTMLElement {
     private _name: string = "";
     private _image: string = "";
+    private _price: number = 0;
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
         this._name = this.getAttribute("name") ?? "";
         this._image = this.getAttribute("image") ?? "";
+        this._price = Number(this.getAttribute("price") ?? 0.00);
         this.render();
     }
 
@@ -33,6 +35,11 @@ export class GameSelectComponent extends HTMLElement {
                     flex-direction: column;
                     align-items: center;
                 }
+                
+                a {
+                    text-decoration: none;
+                    color: black;
+                }
 
                 .game-img {
                     aspect-ratio: 9 / 5;
@@ -50,14 +57,21 @@ export class GameSelectComponent extends HTMLElement {
                     display: block;
                 }
 
-                .game-title {
+                .game-title, .game-price {
                     margin: 0;
                     display: flex;
                     justify-content: center;
-                    height: 69px;
+                    height: 39px;
                     font-size: 18px;
                     font-weight: bold;
                     align-items: center;
+                }
+                
+                .game-price {
+                    height: 30px;
+                    margin-bottom: 9px;
+                    font-size: 14px;
+                    color: #e80000;
                 }
 
                 .add-button {
@@ -76,15 +90,17 @@ export class GameSelectComponent extends HTMLElement {
                 }
             </style>
         `;
-
         const element: HTMLElement = html`
-            <article class="select-game-container">
-                <header class="game-img"><img src="/assets/images/${this._image}" /></header>
-                <p class="game-title">${this._name}</p>
-                <button class="add-button" id="add-button">
-                    Winkelmand
-                </button>
-            </article>
+            <a href="/game.html?name=${this._name}">
+                <article class="select-game-container">
+                    <header class="game-img"><img src="${this._image}" /></header>
+                    <p class="game-title">${this._name}</p>
+                    <p class="game-price">€${this._price}</p>
+                    <button class="add-button" id="add-button">
+                        Winkelmand
+                    </button>
+                </article>
+            </a>
         `;
 
         this.shadowRoot.firstChild?.remove();

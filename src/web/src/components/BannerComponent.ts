@@ -63,9 +63,6 @@ export class BannerComponent extends HTMLElement {
                 </div>
             </section>
         `;
-
-
-
         this.shadowRoot.firstChild?.remove();
         this.shadowRoot.append(styles, element);
     }

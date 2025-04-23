@@ -32,6 +32,11 @@ export type GamesResponse = {
     games: Game[];
 };
 
+export type OrdersGamesResponse = {
+    /** List of games */
+    ordersGames: OrdersGames[];
+};
+
 /**
  * Represents a game product
  */
@@ -55,4 +60,46 @@ export type Game = {
      * @remarks This will only be filled if the user owns the game
      */
     url?: string;
+};
+
+export type OrdersGames = {
+    gameId: number;
+    userId: number;
+    name: string;
+    thumbnail: string;
+    price: number;
+};
+
+export interface IUser {
+    id: number;
+    username: string;
+    email: string;
+    firstName: string;
+    prefix: string | null;
+    lastName: string;
+    password: string;
+    created: Date;
+    updated: Date;
+}
+
+export interface IUserRegisterDTO {
+    username: string;
+    email: string;
+    firstName: string;
+    prefix?: string;
+    lastName: string;
+    password: string;
+    confirmPassword: string;
+}
+
+export interface IAuthResponse {
+    success: boolean;
+    message: string;
+    sessionId?: string;
+}
+
+export type AuthReponse = {
+    success: boolean;
+    message: string;
+    sessionId?: string;
 };

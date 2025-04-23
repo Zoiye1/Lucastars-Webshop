@@ -52,7 +52,7 @@ export class HeaderComponent extends HTMLElement {
                 <div class="wrapper">
                     <div>
                         <a href="/index.html">
-                            <img src="/assets/images/logo.png" alt="LucaStars Logo" />
+                            <img src="/images/logo.png" alt="LucaStars Logo" />
                         </a>
                     </div>
 
