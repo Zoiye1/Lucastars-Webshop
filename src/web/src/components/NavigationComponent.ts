@@ -68,6 +68,8 @@ export class NavigationComponent extends HTMLElement {
                         width: 100%;
                         box-sizing: border-box;
                         padding: 10px;
+                        border-top: 1px solid var(--border-color);
+                        border-bottom: 1px solid var(--border-color);
                     }
 
                     .hamburger {

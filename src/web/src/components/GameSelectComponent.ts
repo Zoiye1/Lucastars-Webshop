@@ -79,7 +79,7 @@ export class GameSelectComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <article class="select-game-container">
-                <header class="game-img"><img src="/assets/images/${this._image}" /></header>
+                <header class="game-img"><img src="${this._image}" /></header>
                 <p class="game-title">${this._name}</p>
                 <button class="add-button" id="add-button">
                     Winkelmand

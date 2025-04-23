@@ -29,7 +29,7 @@ export class TopGamesComponent extends HTMLElement {
         `;
         const games: HTMLElement[] = [];
         for (let i: number = 0; i < 4; i++) {
-            games.push(html`<webshop-select-game name="dark souls" image="dark-souls.jpg"></webshop-select-game>`);
+            games.push(html`<webshop-select-game name="dark souls" image="assets/images/dark-souls.jpg"></webshop-select-game>`);
         }
         const element: HTMLElement = html`
             <section class="top-games">
