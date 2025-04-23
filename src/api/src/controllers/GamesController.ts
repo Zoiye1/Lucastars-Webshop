@@ -21,4 +21,16 @@ export class GamesController {
             games: games,
         });
     }
+
+    public async getGameByName(req: Request, res: Response): Promise<void> {
+        const name: string = req.query.name as string;
+
+        if (!name) {
+            res.status(400).json({ error: "Missing 'name' parameter" });
+            return;
+        }
+
+        const game: Game[] = await this._gameService.getGameByName(name);
+        res.status(200).json({ games: game });
+    }
 }

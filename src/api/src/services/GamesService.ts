@@ -16,6 +16,10 @@ export class GameService implements IGamesService {
         return this.executeGamesQuery();
     }
 
+    public async getGameByName(name: string): Promise<Game[]> {
+        return this.executeGameByNameQuery(name);
+    }
+
     /**
      * Execute the games query.
      */
@@ -50,6 +54,28 @@ export class GameService implements IGamesService {
             }));
 
             return games;
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    private async executeGameByNameQuery(name: string): Promise<Game[]> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const query: string = `
+            SELECT 
+                name,
+                thumbnail,
+                description,
+                price
+            FROM GAMES
+            WHERE
+                name = "${name}"
+        `;
+
+            return await this._databaseService.query<Game[]>(connection, query);
         }
         finally {
             connection.release();

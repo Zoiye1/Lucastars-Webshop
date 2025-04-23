@@ -27,6 +27,7 @@ router.delete("/session", (req, res) => welcomeController.deleteSession(req, res
 router.delete("/session/expired", (req, res) => welcomeController.deleteExpiredSessions(req, res));
 router.get("/welcome", (req, res) => welcomeController.getWelcome(req, res));
 router.get("/games", (req, res) => gamesController.getGames(req, res));
+router.get("/game-info", (req, res) => gamesController.getGameByName(req, res));
 
 // NOTE: After this line, all endpoints will require a valid session.
 router.use(requireValidSessionMiddleware);
