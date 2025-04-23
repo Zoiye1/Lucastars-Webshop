@@ -22,7 +22,6 @@ export class RegisterComponent extends HTMLElement {
         if (!this.shadowRoot) {
             return;
         }
-
         const element: HTMLElement = html`
             <div class="register-form">
                 <h2>Create Account</h2>
@@ -70,6 +69,9 @@ export class RegisterComponent extends HTMLElement {
                     </div>
                 </form>
             </div>
+        `;
+
+        const styles: HTMLElement = html`
 
             <style>
                 .register-form {
@@ -197,9 +199,8 @@ export class RegisterComponent extends HTMLElement {
         const form: HTMLFormElement | null = element.querySelector("#register-form");
         form?.addEventListener("submit", this.handleSubmit.bind(this));
 
-        // Append to shadow DOM
-        this.shadowRoot.innerHTML = "";
-        this.shadowRoot.appendChild(element);
+        this.shadowRoot.firstChild?.remove();
+        this.shadowRoot.append(styles, element);
     }
 
     private async handleSubmit(event: Event): Promise<void> {

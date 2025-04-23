@@ -7,7 +7,6 @@ template.innerHTML = `
     <webshop-layout>
         <div class="page-container">
             <div class="register-page">
-                <h1>Create an Account</h1>
                 <register-component></register-component>
             </div>
         </div>
