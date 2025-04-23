@@ -67,6 +67,9 @@ export class RegisterComponent extends HTMLElement {
                     <div class="form-group">
                         <button type="submit" id="submit-button">Register</button>
                     </div>
+                    <div class="form-group">
+                        <p>Already have an account? Log in <a href = "/login.html" >here</a>.</p>
+                    </div>
                 </form>
             </div>
         `;
@@ -149,7 +152,7 @@ export class RegisterComponent extends HTMLElement {
                 button {
                     width: 100%;
                     padding: 12px;
-                    background-color: #4CAF50;
+                    background-color: #159eff;
                     color: white;
                     border: none;
                     border-radius: 4px;
@@ -158,7 +161,7 @@ export class RegisterComponent extends HTMLElement {
                 }
                 
                 button:hover {
-                    background-color: #45a049;
+                    background-color: #0078cd;
                 }
                 
                 button:disabled {
