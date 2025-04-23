@@ -1,4 +1,4 @@
-import { IGamesService } from "@api/interfaces/IGamesService";
+import { IGameService } from "@api/interfaces/IGamesService";
 import { PoolConnection } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
 import { Game } from "@shared/types";
@@ -6,7 +6,7 @@ import { Game } from "@shared/types";
 /**
  * Service to retrieve games from the database.
  */
-export class GameService implements IGamesService {
+export class GameService implements IGameService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
 
     /**

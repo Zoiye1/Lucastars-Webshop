@@ -1,4 +1,4 @@
-import { IGamesService } from "@api/interfaces/IGamesService";
+import { IGameService } from "@api/interfaces/IGamesService";
 import { GameService } from "@api/services/GamesService";
 import { Game } from "@shared/types";
 import { Request, Response } from "express";
@@ -7,7 +7,7 @@ import { Request, Response } from "express";
  * This controller is responsible for handling requests related to games.
  */
 export class GamesController {
-    private readonly _gameService: IGamesService = new GameService();
+    private readonly _gameService: IGameService = new GameService();
 
     /**
      * Handles the request to get all games.
