@@ -85,7 +85,7 @@ export class NavigationComponent extends HTMLElement {
 
         const navigation: HTMLElement = html`
             <nav>
-                <a href="/index.html">
+                <a href="/my-games.html">
                     <img src="/images/icons/gamepad.svg" alt="Gamepad icon" />
                     <span>Mijn spellen</span>
                 </a>
