@@ -16,7 +16,7 @@ const welcomeController: WelcomeController = new WelcomeController();
 const authController: AuthController = new AuthController();
 
 router.post("/auth/register", authController.register);
-
+router.post("/auth/login", authController.login);
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
 
@@ -46,3 +46,5 @@ router.post("/cart/add", (_req, _res) => {
 router.get("/cart", (_req, _res) => {
     throw new Error("Return a list of products in the cart and the total price");
 });
+
+export default router;
