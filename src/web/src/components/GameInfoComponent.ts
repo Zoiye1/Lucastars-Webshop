@@ -3,6 +3,8 @@ import "@web/components/LinkButtonComponent";
 import { GameService } from "@web/services/GameService";
 import { IGameService } from "@web/interfaces/IGameService";
 import { Game } from "@shared/types";
+import { CartService } from "@web/services/CartService";
+import { ICartService } from "@web/interfaces/ICartService";
 /**
  * This component demonstrates the use of sessions, cookies and Services.
  *
@@ -10,6 +12,7 @@ import { Game } from "@shared/types";
  */
 export class GameInfoComponent extends HTMLElement {
     private gameService: IGameService = new GameService();
+    private cartService: ICartService = new CartService();
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -23,7 +26,7 @@ export class GameInfoComponent extends HTMLElement {
         }
 
         const params: URLSearchParams = new URLSearchParams(window.location.search);
-        const id: string | null = params.get("id");
+        const id: number = Number(params.get("id") ?? 0);
         let game: Game[] = [];
         if (id) {
             game = await this.gameService.getGameById(id);
@@ -71,8 +74,9 @@ export class GameInfoComponent extends HTMLElement {
                 }
 
                 .game-info {
-                    margin-left: 280px;
-                    width: 300px;
+                    margin-left: 200px;
+                    min-width: 300px;
+                    max-width: 500px;
                     height: 450px;
                 }
 
@@ -81,10 +85,15 @@ export class GameInfoComponent extends HTMLElement {
                     font-size: 23px;
                     text-align: center;
                     font-weight: bold;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
 
                 .game-info .description {
                     margin: 0 50px;
+                    width: 100%;
+                    height: 300px;
                 }
 
                 .quantity-selector {
@@ -143,14 +152,19 @@ export class GameInfoComponent extends HTMLElement {
                 </div>
                 <div class="game-info">
                     <p class="price">${game[0].price}</p>
-                    <p class="description">${game[0].description}</p>
+                    <div class="description">${game[0].description}</div>
                     <div class="quantity-selector">
                         <div class="quantity">1x</div>
                     </div>
-                    <div class="cart-button">In winkelwagen</div>
+                    <div id="add-to-cart-button" class="cart-button">In winkelwagen</div>
                 </div>
             </div>
         `;
+
+        const cartButton: HTMLElement = element.querySelector("#add-to-cart-button")!;
+        cartButton.addEventListener("click", async () => {
+            await this.cartService.createCart({ userId: 1, gameId: id, quantity: 1 });
+        });
 
         this.shadowRoot.firstChild?.remove();
         this.shadowRoot.append(styles, element);
