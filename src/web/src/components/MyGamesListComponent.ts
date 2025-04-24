@@ -1,7 +1,7 @@
 import { html } from "@web/helpers/webComponents";
 import { Game } from "@shared/types";
 import { GameService } from "@web/services/GameService";
-import "@web/components/GameSelectComponent";
+import "@web/components/MyGameComponent";
 
 export class MyGamesListComponent extends HTMLElement {
     private _gameService: GameService = new GameService();
@@ -64,7 +64,7 @@ export class MyGamesListComponent extends HTMLElement {
             <style>
                 .games {
                     display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
                     gap: 20px;
                     margin: 20px 0;
                 }
@@ -76,12 +76,12 @@ export class MyGamesListComponent extends HTMLElement {
                 <h1>Mijn spellen</h1>
                 <div class="games">
                     ${games.map(game => html`
-                        <webshop-select-game
+                        <webshop-my-game
                             gameId="${game.id}"
                             name="${game.name}"
                             image="${game.thumbnail}"
-                            price="${game.price}"
-                        ></webshop-select-game>
+                            url="${game.url ?? ""}"
+                        ></webshop-my-game>
                     `)}
                 </div>
             </div>
