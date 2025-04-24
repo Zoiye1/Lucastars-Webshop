@@ -16,8 +16,8 @@ export class GameService implements IGamesService {
         return this.executeGamesQuery();
     }
 
-    public async getGameByName(name: string): Promise<Game[]> {
-        return this.executeGameByNameQuery(name);
+    public async getGameById(id: number): Promise<Game[]> {
+        return this.executeGameByNameQuery(id);
     }
 
     /**
@@ -60,7 +60,7 @@ export class GameService implements IGamesService {
         }
     }
 
-    private async executeGameByNameQuery(name: string): Promise<Game[]> {
+    private async executeGameByNameQuery(id: number): Promise<Game[]> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         try {
@@ -72,7 +72,7 @@ export class GameService implements IGamesService {
                 price
             FROM GAMES
             WHERE
-                name = "${name}"
+                id = "${id}"
         `;
 
             return await this._databaseService.query<Game[]>(connection, query);

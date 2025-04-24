@@ -23,10 +23,10 @@ export class GameInfoComponent extends HTMLElement {
         }
 
         const params: URLSearchParams = new URLSearchParams(window.location.search);
-        const name: string | null = params.get("name");
+        const id: string | null = params.get("id");
         let game: Game[] = [];
-        if (name) {
-            game = await this.gameService.getGameByName(name);
+        if (id) {
+            game = await this.gameService.getGameById(id);
         }
 
         const styles: HTMLElement = html`

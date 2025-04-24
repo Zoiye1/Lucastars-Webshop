@@ -10,8 +10,8 @@ export class GameService implements IGameService {
         return gamesReponse.games;
     }
 
-    public async getGameByName(name: string): Promise<Game[]> {
-        const url: string = `${VITE_API_URL}game-info?name=${encodeURIComponent(name)}`;
+    public async getGameById(id: number): Promise<Game[]> {
+        const url: string = `${VITE_API_URL}game-info?id=${encodeURIComponent(id)}`;
         const response: Response = await fetch(url);
 
         const gamesResponse: GamesResponse = await response.json() as unknown as GamesResponse;
