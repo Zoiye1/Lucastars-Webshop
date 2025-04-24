@@ -4,7 +4,6 @@ import { requireValidSessionMiddleware, sessionMiddleware } from "./middleware/s
 import { GamesController } from "./controllers/GamesController";
 import { OrdersGamesController } from "@api/controllers/OrdersGamesController";
 import { AuthController } from "./controllers/AuthController";
-import { GamesController } from "./controllers/GamesController";
 
 // Create a router
 export const router: Router = Router();
@@ -16,7 +15,6 @@ router.get("/", (_, res) => {
 
 // Initialize controllers
 const welcomeController: WelcomeController = new WelcomeController();
-const gamesController: GamesController = new GamesController();
 const gamesController: GamesController = new GamesController();
 const ordersGamesController: OrdersGamesController = new OrdersGamesController();
 const authController: AuthController = new AuthController();
@@ -31,6 +29,7 @@ router.delete("/session", (req, res) => welcomeController.deleteSession(req, res
 router.delete("/session/expired", (req, res) => welcomeController.deleteExpiredSessions(req, res));
 router.get("/welcome", (req, res) => welcomeController.getWelcome(req, res));
 router.get("/games", (req, res) => gamesController.getGames(req, res));
+router.get("/game-info", (req, res) => gamesController.getGameById(req, res));
 router.get("/game-info", (req, res) => gamesController.getGameByName(req, res));
 router.get("/games", (req, res) => gamesController.getGames(req, res));
 router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));

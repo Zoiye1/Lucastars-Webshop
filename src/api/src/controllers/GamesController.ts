@@ -22,15 +22,15 @@ export class GamesController {
         });
     }
 
-    public async getGameByName(req: Request, res: Response): Promise<void> {
-        const name: string = req.query.name as string;
+    public async getGameById(req: Request, res: Response): Promise<void> {
+        const id: number = Number(req.query.id as string);
 
-        if (!name) {
-            res.status(400).json({ error: "Missing 'name' parameter" });
+        if (!id) {
+            res.status(400).json({ error: "Missing 'id' parameter" });
             return;
         }
 
-        const game: Game[] = await this._gameService.getGameByName(name);
+        const game: Game[] = await this._gameService.getGameById(id);
         res.status(200).json({ games: game });
     }
 }
