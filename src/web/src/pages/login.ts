@@ -1,4 +1,4 @@
-import "../components/RegisterComponent";
+import "../components/LoginComponent";
 import "@web/components/LayoutComponent";
 
 // Create page content
@@ -6,8 +6,8 @@ const template: HTMLTemplateElement = document.createElement("template");
 template.innerHTML = `
     <webshop-layout>
         <div class="page-container">
-            <div class="register-page">
-                <register-component></register-component>
+            <div class="login-page">
+                <login-component></login-component>
             </div>
         </div>
     </webshop-layout>
@@ -25,7 +25,7 @@ style.textContent = `
         padding: 20px;
     }
     
-    .register-page {
+    .login-page {
         padding: 40px 20px;
         max-width: 600px;
         margin: 0 auto;

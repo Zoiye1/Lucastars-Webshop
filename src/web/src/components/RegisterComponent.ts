@@ -22,7 +22,6 @@ export class RegisterComponent extends HTMLElement {
         if (!this.shadowRoot) {
             return;
         }
-
         const element: HTMLElement = html`
             <div class="register-form">
                 <h2>Create Account</h2>
@@ -68,8 +67,14 @@ export class RegisterComponent extends HTMLElement {
                     <div class="form-group">
                         <button type="submit" id="submit-button">Register</button>
                     </div>
+                    <div class="form-group">
+                        <p>Already have an account? Log in <a href = "/login.html" >here</a>.</p>
+                    </div>
                 </form>
             </div>
+        `;
+
+        const styles: HTMLElement = html`
 
             <style>
                 .register-form {
@@ -147,7 +152,7 @@ export class RegisterComponent extends HTMLElement {
                 button {
                     width: 100%;
                     padding: 12px;
-                    background-color: #4CAF50;
+                    background-color: #159eff;
                     color: white;
                     border: none;
                     border-radius: 4px;
@@ -156,7 +161,7 @@ export class RegisterComponent extends HTMLElement {
                 }
                 
                 button:hover {
-                    background-color: #45a049;
+                    background-color: #0078cd;
                 }
                 
                 button:disabled {
@@ -197,9 +202,8 @@ export class RegisterComponent extends HTMLElement {
         const form: HTMLFormElement | null = element.querySelector("#register-form");
         form?.addEventListener("submit", this.handleSubmit.bind(this));
 
-        // Append to shadow DOM
-        this.shadowRoot.innerHTML = "";
-        this.shadowRoot.appendChild(element);
+        this.shadowRoot.firstChild?.remove();
+        this.shadowRoot.append(styles, element);
     }
 
     private async handleSubmit(event: Event): Promise<void> {

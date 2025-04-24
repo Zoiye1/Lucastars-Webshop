@@ -100,7 +100,7 @@ export class NavigationComponent extends HTMLElement {
                     <span>Winkelmand (0)</span>
                 </a>
 
-                <a href="/register.html">
+                <a href="/login.html">
                     <span>Login</span>
                 </a>
                 <a href="/register.html">
