@@ -16,7 +16,6 @@ class MyGamesPageComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <webshop-layout>
-                <h2>Mijn spellen</h2>
                 <webshop-my-games-list></webshop-my-games-list>
             </webshop-layout>
         `;

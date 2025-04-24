@@ -72,15 +72,18 @@ export class MyGamesListComponent extends HTMLElement {
         `;
 
         const element: HTMLElement = html`
-            <div class="games">
-                ${games.map(game => html`
-                    <webshop-select-game
-                        gameId="${game.id}"
-                        name="${game.name}"
-                        image="${game.thumbnail}"
-                        price="${game.price}"
-                    ></webshop-select-game>
-                `)}
+            <div>
+                <h1>Mijn spellen</h1>
+                <div class="games">
+                    ${games.map(game => html`
+                        <webshop-select-game
+                            gameId="${game.id}"
+                            name="${game.name}"
+                            image="${game.thumbnail}"
+                            price="${game.price}"
+                        ></webshop-select-game>
+                    `)}
+                </div>
             </div>
         `;
 

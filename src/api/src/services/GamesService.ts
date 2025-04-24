@@ -39,7 +39,7 @@ export class GameService implements IGameService {
                 GROUP BY g.id
             `;
 
-            const ownedGames: Game[] = await this._databaseService.query<Game[]>(connection, query, [userId]);
+            const ownedGames: Game[] = await this._databaseService.query<Game[]>(connection, query, userId);
 
             return ownedGames;
         }
