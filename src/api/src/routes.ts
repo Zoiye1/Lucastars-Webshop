@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { WelcomeController } from "./controllers/WelcomeController";
 import { requireValidSessionMiddleware, sessionMiddleware } from "./middleware/sessionMiddleware";
+import { GamesController } from "./controllers/GamesController";
+import { OrdersGamesController } from "@api/controllers/OrdersGamesController";
 import { AuthController } from "./controllers/AuthController";
 
 // Create a router
@@ -13,6 +15,8 @@ router.get("/", (_, res) => {
 
 // Initialize controllers
 const welcomeController: WelcomeController = new WelcomeController();
+const gamesController: GamesController = new GamesController();
+const ordersGamesController: OrdersGamesController = new OrdersGamesController();
 const authController: AuthController = new AuthController();
 
 router.post("/auth/register", authController.register);
@@ -24,6 +28,8 @@ router.get("/session", (req, res) => welcomeController.getSession(req, res));
 router.delete("/session", (req, res) => welcomeController.deleteSession(req, res));
 router.delete("/session/expired", (req, res) => welcomeController.deleteExpiredSessions(req, res));
 router.get("/welcome", (req, res) => welcomeController.getWelcome(req, res));
+router.get("/games", (req, res) => gamesController.getGames(req, res));
+router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));
 
 // NOTE: After this line, all endpoints will require a valid session.
 router.use(requireValidSessionMiddleware);
