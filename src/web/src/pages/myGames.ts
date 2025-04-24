@@ -1,4 +1,5 @@
 import "@web/components/LayoutComponent";
+import "@web/components/MyGamesListComponent";
 import { html } from "@web/helpers/webComponents";
 
 class MyGamesPageComponent extends HTMLElement {
@@ -15,15 +16,8 @@ class MyGamesPageComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <webshop-layout>
-                <div>
-                    <h1>
-                        Welkom bij de LucaStars Webshop!
-                    </h1>
-
-                    <p>
-                        Dit is my-games.html!
-                    </p>
-                </div>
+                <h2>Mijn spellen</h2>
+                <webshop-my-games-list></webshop-my-games-list>
             </webshop-layout>
         `;
 
