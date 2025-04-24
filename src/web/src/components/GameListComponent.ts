@@ -34,9 +34,10 @@ class GameListComponent extends HTMLElement {
             <div class="games">
                 ${games.map(game => html`
                     <webshop-select-game
-                        id="${game.id}"
+                        gameId="${game.id}"
                         name="${game.name}"
                         image="${game.thumbnail}"
+                        price="${game.price}"
                     ></webshop-select-game>
                 `)}
             </div>

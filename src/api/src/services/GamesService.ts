@@ -30,6 +30,7 @@ export class GameService implements IGameService {
                     g.name,
                     g.thumbnail,
                     g.description,
+                    g.price,
                     IF(
                         COUNT(gi.imageUrl) = 0, 
                         JSON_ARRAY(), 

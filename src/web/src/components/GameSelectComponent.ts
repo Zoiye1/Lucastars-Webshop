@@ -103,7 +103,7 @@ export class GameSelectComponent extends HTMLElement {
                 <article class="select-game-container">
                     <header class="game-img"><img src="${this._image}" /></header>
                     <p class="game-title">${this._name}</p>
-                    <p class="game-price">€${this._price}</p>
+                    <p class="game-price">€${this._price.toFixed(2)}</p>
                     <button class="add-button" id="add-button">
                         Winkelmand
                     </button>
