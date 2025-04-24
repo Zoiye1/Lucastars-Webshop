@@ -1,20 +1,20 @@
 import { html } from "@web/helpers/webComponents";
+import "@web/components/GameInfoModalComponent";
+import { GameInfoModalComponent } from "@web/components/GameInfoModalComponent";
 
 /**
- * This component demonstrates the use of sessions, cookies and Services.
- *
- * @remarks This class should be removed from the final product!
+ * This component represents a single game card in the my games page.
  */
 export class MyGameComponent extends HTMLElement {
-    private _gameId: number = 0;
     private _name: string = "";
+    private _description: string = "";
     private _image: string = "";
     private _url: string = "";
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
-        this._gameId = Number(this.getAttribute("gameId") ?? 0);
         this._name = this.getAttribute("name") ?? "";
+        this._description = this.getAttribute("description") ?? "";
         this._image = this.getAttribute("image") ?? "";
         this._url = this.getAttribute("url") ?? "";
         this.render();
@@ -115,13 +115,43 @@ export class MyGameComponent extends HTMLElement {
                     cursor: pointer;
                     padding: 3px;
                 }
+
+                .info-button:hover {
+                    background: #f0f0f0;
+                }
+
+                .info-button img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center;
+                    display: block;
+                }
             </style>
         `;
+
+        const infoButton: HTMLElement = html`
+            <button class="info-button">
+                <img src="/images/icons/eye.svg" alt="Info" />
+            </button>
+        `;
+
+        const infoModal: GameInfoModalComponent = document.createElement("game-info-modal") as GameInfoModalComponent;
+        infoModal.setAttribute("name", this._name);
+        infoModal.setAttribute("image", this._image);
+        infoModal.setAttribute("description", this._description);
+        infoModal.setAttribute("url", this._url);
+
+        infoButton.addEventListener("click", () => {
+            infoModal.showModal();
+        });
 
         const element: HTMLElement = html`
                 <article class="game-card">
                     <header>
                         <img src="${this._image}" class="game-image" />
+
+                        ${infoButton}
                     </header>
                     <main>
                         <p class="game-title">${this._name}</p>
@@ -133,7 +163,7 @@ export class MyGameComponent extends HTMLElement {
         `;
 
         this.shadowRoot.firstChild?.remove();
-        this.shadowRoot.append(styles, element);
+        this.shadowRoot.append(styles, element, infoModal);
     }
 }
 

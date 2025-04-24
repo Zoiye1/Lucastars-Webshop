@@ -3,6 +3,9 @@ import { Game } from "@shared/types";
 import { GameService } from "@web/services/GameService";
 import "@web/components/MyGameComponent";
 
+/**
+ * This component represents a list of games owned by the user.
+ */
 export class MyGamesListComponent extends HTMLElement {
     private _gameService: GameService = new GameService();
 
@@ -18,7 +21,6 @@ export class MyGamesListComponent extends HTMLElement {
         }
 
         const games: Game[] = await this._gameService.getOwnedGames();
-        // const games: Game[] = await this._gameService.getGames();
 
         if (games.length === 0) {
             const styles: HTMLElement = html`
@@ -64,7 +66,7 @@ export class MyGamesListComponent extends HTMLElement {
             <style>
                 .games {
                     display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+                    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
                     gap: 20px;
                     margin: 20px 0;
                 }
@@ -79,6 +81,7 @@ export class MyGamesListComponent extends HTMLElement {
                         <webshop-my-game
                             gameId="${game.id}"
                             name="${game.name}"
+                            description="${game.description}"
                             image="${game.thumbnail}"
                             url="${game.url ?? ""}"
                         ></webshop-my-game>
