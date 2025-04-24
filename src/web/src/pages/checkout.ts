@@ -23,4 +23,4 @@ class CheckoutPageComponent extends HTMLElement {
     }
 }
 
-window.customElements.define("webshop-checkoutpage", CheckoutPageComponent);
+window.customElements.define("webshop-checkout-page", CheckoutPageComponent);

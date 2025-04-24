@@ -18,7 +18,7 @@ export class CartService implements ICartService {
                 FROM cart_items
                 WHERE userId = ?
                 `,
-                111
+                1
             );
 
             return result;

@@ -1,18 +1,11 @@
-import { html } from "@web/helpers/webComponents";
+import { CartItem } from "@shared/types";
 import "@web/components/CartPageComponent";
-import { html } from "@web/helpers/webComponents";
 import { CartService } from "@web/services/CartService";
 
 export class CartPageComponent extends HTMLElement {
     private _cartService = new CartService();
 
-    private items: {
-        name: string;
-        price: number;
-        image: string;
-        description: string;
-        quantity: number;
-    }[] = [];
+    private items: CartItem[] = [];
 
     public async connectedCallback(): Promise<void> {
         this.attachShadow({ mode: "open" });

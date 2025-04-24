@@ -24,8 +24,21 @@ export type SecretResponse = {
     userId: string;
 };
 
-export type CartItem = {
-    gameId: number;
+export type CheckoutItem = {
     userId: number;
+    street: string;
+    houseNumber: string;
+    postalCode: string;
+    city: string;
+    totalPrice: number;
+};
+
+export type CartItem = {
+    userId: number;
+    gameid: number;
     quantity: number;
+    image: string;
+    name: string;
+    description: string;
+    price: number;
 };

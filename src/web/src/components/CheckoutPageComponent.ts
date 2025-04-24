@@ -1,27 +1,33 @@
+import { CheckoutItem } from "@shared/types";
 import "@web/components/CheckoutPageComponent";
-import { html } from "@web/helpers/";
+import { CheckoutService } from "@web/services/CheckoutService";
 
 export class CheckoutPageComponent extends HTMLElement {
-    private userData = {
-        naam: "Jan Jansen",
-        email: "jan@example.com",
-        afleveradres: {
-            adres: "Dorpsstraat 1",
-            postcode: "1234 AB",
-            woonplaats: "Amsterdam"
-        }
-    }
+    private _checkoutService = new CheckoutService();
 
-    public connectedCallback(): void {
+    private item?: CheckoutItem;
+
+    public async connectedCallback(): Promise<void> {
         this.attachShadow({ mode: "open" });
+
+        try {
+            this.item = await this._checkoutService.getCheckoutData();
+            console.log(this.item);
+        }
+        catch (error) {
+            console.error("Fout bij ophalen van checkoutgegevens:", error);
+        }
+
         this.render();
     }
 
     private render(): void {
         if (!this.shadowRoot) return;
+        if (!this.item) return;
 
         this.shadowRoot.innerHTML = "";
 
+        // eslint-disable-next-line @typescript-eslint/typedef
         const container = document.createElement("section");
         container.style.maxWidth = "700px";
         container.style.margin = "2rem auto";
@@ -30,20 +36,15 @@ export class CheckoutPageComponent extends HTMLElement {
         container.style.flexDirection = "column";
         container.style.gap = "2rem";
 
-        // 🔹 Gebruikersgegevens als tekst
+        // eslint-disable-next-line @typescript-eslint/typedef
         const userInfo = document.createElement("div");
         userInfo.innerHTML = `
-            <h2>👤 Jouw Gegevens</h2>
-            <ul style="list-style: none; padding: 0; margin: 0;">
-                <li><strong>Naam:</strong> ${this.userData.naam}</li>
-                <li><strong>Email:</strong> ${this.userData.email}</li>
-                <li><strong>Adres:</strong> ${this.userData.adres}</li>
-                <li><strong>Postcode:</strong> ${this.userData.postcode}</li>
-                <li><strong>Woonplaats:</strong> ${this.userData.woonplaats}</li>
-            </ul>
+            <h2>👤 Bezorginformatie</h2>
+            <p><strong>Adres:</strong> ${this.item.street} ${this.item.houseNumber}, ${this.item.postalCode} ${this.item.city}</p>
+            <p><strong>Totaal:</strong> €${this.item.totalPrice.toFixed(2)}</p>
         `;
 
-        // 🔹 Betaalmethode
+        // eslint-disable-next-line @typescript-eslint/typedef
         const payment = document.createElement("div");
         payment.innerHTML = `
             <h2>💳 Betaalmethode</h2>
@@ -54,7 +55,7 @@ export class CheckoutPageComponent extends HTMLElement {
             </form>
         `;
 
-        // 🔘 Bestelling plaatsen knop
+        // eslint-disable-next-line @typescript-eslint/typedef
         const submitButton = document.createElement("button");
         submitButton.textContent = "Bestelling plaatsen";
         submitButton.style.padding = "0.75rem";
@@ -66,7 +67,7 @@ export class CheckoutPageComponent extends HTMLElement {
         submitButton.style.cursor = "pointer";
         submitButton.onclick = () => {
             alert("Bestelling geplaatst!");
-            // hier kun je nog data verzenden als je wil
+            // eventueel data verzenden naar backend hier
         };
 
         container.appendChild(userInfo);
