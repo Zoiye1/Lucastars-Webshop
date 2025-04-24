@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { IGameService } from "@api/interfaces/IGamesService";
-import { GameService } from "@api/services/GamesService";
+import { IGameService } from "@api/interfaces/IGameService";
+import { GameService } from "@api/services/GameService";
 import { Game } from "@shared/types";
 import { createMockDatabaseService, MockDatabaseService } from "../__helpers__/databaseService.helpers";
 
@@ -11,7 +11,7 @@ beforeEach(() => {
     vi.resetAllMocks();
 });
 
-describe("GamesService", () => {
+describe("GameService", () => {
     test("getGames should return properly structured game objects", async () => {
         // Arrange
         const gameService: IGameService = new GameService();

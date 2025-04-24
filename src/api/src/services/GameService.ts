@@ -1,4 +1,4 @@
-import { IGameService } from "@api/interfaces/IGamesService";
+import { IGameService } from "@api/interfaces/IGameService";
 import { PoolConnection } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
 import { Game } from "@shared/types";

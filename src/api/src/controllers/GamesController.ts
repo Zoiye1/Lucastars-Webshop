@@ -1,5 +1,5 @@
-import { IGameService } from "@api/interfaces/IGamesService";
-import { GameService } from "@api/services/GamesService";
+import { IGameService } from "@api/interfaces/IGameService";
+import { GameService } from "@api/services/GameService";
 import { Game } from "@shared/types";
 import { Request, Response } from "express";
 
