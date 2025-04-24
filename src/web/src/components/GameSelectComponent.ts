@@ -9,10 +9,12 @@ export class GameSelectComponent extends HTMLElement {
     private _name: string = "";
     private _image: string = "";
     private _price: number = 0;
+    private _gameId: number = 0;
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
         this._name = this.getAttribute("name") ?? "";
+        this._gameId = Number(this.getAttribute("id") ?? 0);
         this._image = this.getAttribute("image") ?? "";
         this._price = Number(this.getAttribute("price") ?? 0.00);
         this.render();
@@ -59,17 +61,23 @@ export class GameSelectComponent extends HTMLElement {
 
                 .game-title, .game-price {
                     margin: 0;
-                    display: flex;
                     justify-content: center;
-                    height: 39px;
                     font-size: 18px;
                     font-weight: bold;
                     align-items: center;
                 }
                 
+                .game-title {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    width: 85%;
+                    text-align: center;
+                    margin: 10px auto;
+                }
+                
                 .game-price {
                     height: 30px;
-                    margin-bottom: 9px;
                     font-size: 14px;
                     color: #e80000;
                 }
@@ -91,7 +99,7 @@ export class GameSelectComponent extends HTMLElement {
             </style>
         `;
         const element: HTMLElement = html`
-            <a href="/game.html?name=${this._name}">
+            <a href="/game.html?name=${this._gameId}">
                 <article class="select-game-container">
                     <header class="game-img"><img src="${this._image}" /></header>
                     <p class="game-title">${this._name}</p>

@@ -26,7 +26,7 @@ export class OrdersGamesService implements IOrdersGamesService {
                 o.userId,
                 g.name,
                 g.thumbnail,
-                og.price
+                g.price
             FROM orders_games og
             JOIN orders o ON og.orderId = o.id
             JOIN games g ON g.id = og.gameId
