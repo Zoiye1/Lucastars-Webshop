@@ -18,12 +18,9 @@ build:
         # Copy the .env.example file to .env
         - cp .env.example .env
         # Set the environment variables for the database so that API can connect to it
-        - |
-            cat <<EOF >> .env
-            DB_DATABASE=$DB_DATABASE
-            DB_USER=$DB_USER
-            DB_PASS=$DB_PASS
-            EOF
+        - sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_DATABASE/" .env
+        - sed -i "s/DB_USER=.*/DB_USER=$DB_USER/" .env
+        - sed -i "s/DB_PASS=.*/DB_PASS=$DB_PASS/" .env
         - cd ../../
     script:
         - npm install
