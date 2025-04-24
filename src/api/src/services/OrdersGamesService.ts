@@ -22,14 +22,15 @@ export class OrdersGamesService implements IOrdersGamesService {
         try {
             const query: string = `
             SELECT 
-                og.gameId,
-                o.userId,
+                g.id as 'gameId',
                 g.name,
                 g.thumbnail,
                 g.price
-            FROM orders_games og
-            JOIN orders o ON og.orderId = o.id
-            JOIN games g ON g.id = og.gameId
+            FROM games g
+            LEFT JOIN orders_games og ON og.gameId = g.id
+            GROUP BY g.id
+            ORDER BY COUNT(og.gameId) DESC, g.name
+            LIMIT 10
         `;
 
             const result: OrdersGames[] = await this._databaseService.query<OrdersGames[]>(connection, query);
