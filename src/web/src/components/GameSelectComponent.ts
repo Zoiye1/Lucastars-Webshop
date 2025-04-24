@@ -14,7 +14,7 @@ export class GameSelectComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
         this._name = this.getAttribute("name") ?? "";
-        this._gameId = Number(this.getAttribute("id") ?? 0);
+        this._gameId = Number(this.getAttribute("gameId") ?? 0);
         this._image = this.getAttribute("image") ?? "";
         this._price = Number(this.getAttribute("price") ?? 0.00);
         this.render();

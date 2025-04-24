@@ -43,6 +43,7 @@ export class TopGamesComponent extends HTMLElement {
                 gameElements.push(
                     html`
                         <webshop-select-game
+                            gameId="${games[i].gameId}"
                             name="${games[i].name}"
                             image="${games[i].thumbnail}"
                             price="${games[i].price}">
