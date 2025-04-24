@@ -99,7 +99,7 @@ export class GameSelectComponent extends HTMLElement {
             </style>
         `;
         const element: HTMLElement = html`
-            <a href="/game.html?id=${this._gameId}">
+            <a href="/game-info.html?id=${this._gameId}">
                 <article class="select-game-container">
                     <header class="game-img"><img src="${this._image}" /></header>
                     <p class="game-title">${this._name}</p>
