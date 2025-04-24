@@ -1,7 +1,7 @@
 import { IUser } from "../../../shared/types";
 import { DatabaseService } from "./DatabaseService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
-import { hash } from "bcrypt-ts";
+import { hash, compare } from "bcrypt-ts";
 
 type UserQueryResult = {
     id: number;
@@ -103,6 +103,16 @@ export class UserService {
         }
         finally {
             connection.release();
+        }
+    }
+
+    public async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+        try {
+            return await compare(password, hashedPassword);
+        }
+        catch (error) {
+            console.error("Password verification error:", error);
+            return false;
         }
     }
 }

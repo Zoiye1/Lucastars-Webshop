@@ -1,4 +1,4 @@
-import { IGamesService } from "@api/interfaces/IGamesService";
+import { IGameService } from "@api/interfaces/IGamesService";
 import { PoolConnection } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
 import { Game } from "@shared/types";
@@ -6,7 +6,7 @@ import { Game } from "@shared/types";
 /**
  * Service to retrieve games from the database.
  */
-export class GameService implements IGamesService {
+export class GameService implements IGameService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
 
     /**
@@ -34,10 +34,11 @@ export class GameService implements IGamesService {
                     g.name,
                     g.thumbnail,
                     g.description,
+                    g.price,
                     IF(
                         COUNT(gi.imageUrl) = 0, 
                         JSON_ARRAY(), 
-                        JSON_ARRAYAGG(gi.imageUrl ORDER BY gi.sortOrder)
+                        JSON_ARRAYAGG(gi.imageUrl)
                     ) AS images
                 FROM games g
                 LEFT JOIN game_images gi ON g.id = gi.gameId
@@ -45,13 +46,7 @@ export class GameService implements IGamesService {
                 ORDER BY g.name
             `;
 
-            const result: Game[] = await this._databaseService.query<Game[]>(connection, query);
-
-            // Images are returned as a JSON string from the database, so we need to parse it to a string array
-            const games: Game[] = result.map(row => ({
-                ...row,
-                images: JSON.parse(row.images as unknown as string) as string[],
-            }));
+            const games: Game[] = await this._databaseService.query<Game[]>(connection, query);
 
             return games;
         }

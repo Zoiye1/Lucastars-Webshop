@@ -25,6 +25,7 @@ class GameListComponent extends HTMLElement {
                     display: grid;
                     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                     gap: 20px;
+                    margin: 20px 0;
                 }
             </style>
         `;
@@ -33,9 +34,10 @@ class GameListComponent extends HTMLElement {
             <div class="games">
                 ${games.map(game => html`
                     <webshop-select-game
+                        gameId="${game.id}"
                         name="${game.name}"
                         image="${game.thumbnail}"
-                        id="${game.id}"
+                        price="${game.price}"
                     ></webshop-select-game>
                 `)}
             </div>

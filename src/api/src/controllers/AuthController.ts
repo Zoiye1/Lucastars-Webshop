@@ -118,4 +118,86 @@ export class AuthController {
             res.status(500).json(errorResponse);
         }
     };
+
+    /**
+ * Login a user
+ */
+    public login = async (req: Request, res: Response): Promise<void> => {
+        try {
+            console.log("Login request received:", req.body);
+            const { email, password } = req.body as { email: string; password: string };
+
+            // Basic validation
+            if (!email || !password) {
+                const errorResponse: AuthReponse = {
+                    success: false,
+                    message: "Email and password are required",
+                };
+                console.log("Sending error response:", errorResponse);
+                res.status(400).json(errorResponse);
+                return;
+            }
+
+            // Check if user exists
+            const user: IUser | undefined = await this._userService.getUserByEmail(email);
+            if (!user) {
+                const errorResponse: AuthReponse = {
+                    success: false,
+                    message: "Invalid email or password",
+                };
+                console.log("Sending error response:", errorResponse);
+                res.status(401).json(errorResponse);
+                return;
+            }
+
+            // Check password
+            const isPasswordCorrect: boolean = await this._userService.verifyPassword(password, user.password);
+            if (!isPasswordCorrect) {
+                const errorResponse: AuthReponse = {
+                    success: false,
+                    message: "Invalid email or password",
+                };
+                console.log("Sending error response:", errorResponse);
+                res.status(401).json(errorResponse);
+                return;
+            }
+
+            // Create session
+            const sessionId: string | undefined = await this._sessionService.createSession(user.id);
+
+            if (!sessionId) {
+                const errorResponse: AuthReponse = {
+                    success: false,
+                    message: "Failed to create session",
+                };
+                console.log("Sending error response:", errorResponse);
+                res.status(500).json(errorResponse);
+                return;
+            }
+
+            // Set session cookie
+            res.cookie("session", sessionId, {
+                httpOnly: true,
+                sameSite: "strict",
+                secure: process.env.NODE_ENV === "production",
+            });
+
+            const successResponse: AuthReponse = {
+                success: true,
+                message: "Login successful",
+                sessionId,
+            };
+            console.log("Sending success response:", successResponse);
+            res.status(200).json(successResponse);
+        }
+        catch (error) {
+            console.error("Login error:", error);
+            const errorResponse: AuthReponse = {
+                success: false,
+                message: "Internal server error",
+            };
+            console.log("Sending error response:", errorResponse);
+            res.status(500).json(errorResponse);
+        }
+    };
 }

@@ -1,10 +1,73 @@
 import { html } from "@web/helpers/webComponents";
+import { authService } from "../services/AuthService";
+import { IAuthResponse } from "@shared/types";
 
 export class LoginComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
 
         this.render();
+        this.addEventListeners();
+    }
+
+    private addEventListeners(): void {
+        if (!this.shadowRoot) {
+            return;
+        }
+
+        const form: HTMLFormElement = this.shadowRoot.getElementById("login-form") as HTMLFormElement;
+        form.addEventListener("submit", this.handleSubmit.bind(this));
+    }
+
+    private async handleSubmit(event: Event): Promise<void> {
+        event.preventDefault();
+
+        if (!this.shadowRoot) {
+            return;
+        }
+
+        const form: HTMLFormElement = event.target as HTMLFormElement;
+        const email: string = (form.elements.namedItem("email") as HTMLInputElement).value;
+        const password: string = (form.elements.namedItem("password") as HTMLInputElement).value;
+
+        // Disable the submit button and show loading state
+        const submitButton: HTMLButtonElement = this.shadowRoot.getElementById("submit-button") as HTMLButtonElement;
+        const originalButtonText: string | null = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = "Logging in...";
+
+        // Hide any previous error messages
+        const errorElement: HTMLElement = this.shadowRoot.getElementById("error-message") as HTMLDivElement;
+        errorElement.style.display = "none";
+        errorElement.textContent = "";
+
+        try {
+            const response: IAuthResponse = await authService.login(email, password);
+
+            if (response.success) {
+                window.location.href = "/index.html";
+            }
+            else {
+                // Show error message
+                errorElement.textContent = response.message;
+                errorElement.style.display = "block";
+
+                // Reset the submit button
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        }
+        catch (error) {
+            // Show generic error message
+            errorElement.textContent = "An unexpected error occurred. Please try again.";
+            errorElement.style.display = "block";
+
+            // Reset the submit button
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+
+            console.error("Login error:", error);
+        }
     }
 
     private render(): void {
