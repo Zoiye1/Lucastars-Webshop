@@ -20,7 +20,7 @@ build:
         # Set the environment variables for the database so that API can connect to it
         - sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_DATABASE/" .env
         - sed -i "s/DB_USER=.*/DB_USER=$DB_USER/" .env
-        - sed -i "s/DB_PASS=.*/DB_PASS=$DB_PASS/" .env
+        - sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" .env
         - cd ../../
     script:
         - npm install
