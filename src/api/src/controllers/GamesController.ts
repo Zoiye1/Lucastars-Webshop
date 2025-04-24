@@ -21,4 +21,22 @@ export class GamesController {
             games: games,
         });
     }
+
+    /**
+     * Handles the request to get all owned games for a user.
+     */
+    public async getOwnedGames(req: Request, res: Response): Promise<void> {
+        const userId: number | undefined = req.userId;
+
+        if (!userId) {
+            res.status(401);
+            return;
+        }
+
+        const ownedGames: Game[] = await this._gameService.getOwnedGames(userId);
+
+        res.json({
+            games: ownedGames,
+        });
+    }
 }
