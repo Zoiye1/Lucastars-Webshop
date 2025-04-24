@@ -24,7 +24,7 @@ export class TopGamesComponent extends HTMLElement {
         const ordersGames: OrdersGames[] = await this._ordersGamesService.getOrdersGames();
 
         // Use the OrdersGames type directly
-        const games: { gameId: number; name: string; thumbnail: string; price: number; uniqueBuyers: number }[] = this.getTopGames(ordersGames);
+        const games: { gameId: number; name: string; thumbnail: string; price: number }[] = this.getTopGames(ordersGames, 5);
 
         const styles: HTMLElement = html`
             <style>
@@ -32,25 +32,21 @@ export class TopGamesComponent extends HTMLElement {
                     width: 100%;
                     margin: 50px 0;
                     display: flex;
-                    justify-content: space-evenly;
+                    justify-content: space-between;
                 }
             </style>
         `;
 
-        const gameElements: HTMLElement[] = [];
-        for (let i: number = 0; i < 4; i++) {
-            if (games[i]) {
-                gameElements.push(
-                    html`
-                        <webshop-select-game
-                            gameId="${games[i].gameId}"
-                            name="${games[i].name}"
-                            image="${games[i].thumbnail}"
-                            price="${games[i].price}">
-                        </webshop-select-game>`
-                );
-            }
-        }
+        const gameElements: HTMLElement[] = games.map(game => {
+            return html`
+                <webshop-select-game
+                    gameId="${game.gameId}"
+                    name="${game.name}"
+                    image="${game.thumbnail}"
+                    price="${game.price}">
+                </webshop-select-game>
+            `;
+        });
 
         const element: HTMLElement = html`
             <section class="top-games">
@@ -62,7 +58,7 @@ export class TopGamesComponent extends HTMLElement {
         this.shadowRoot.append(styles, element);
     }
 
-    private getTopGames(purchases: OrdersGames[], topN: number = 4): { gameId: number; name: string; thumbnail: string; price: number; uniqueBuyers: number }[] {
+    private getTopGames(purchases: OrdersGames[], topN: number = 5): { gameId: number; name: string; thumbnail: string; price: number }[] {
         const seenPairs: Set<string> = new Set();
         const gameMap: Map<number, { userId: number; name: string; thumbnail: string; price: number; users: Set<number> }> = new Map();
 
@@ -85,15 +81,13 @@ export class TopGamesComponent extends HTMLElement {
             gameMap.get(gameId)!.users.add(userId);
         }
 
-        const topGames: { gameId: number; name: string; thumbnail: string; price: number; uniqueBuyers: number }[] = Array.from(gameMap.entries())
-            .map(([gameId, { name, thumbnail, price, users }]) => ({
+        const topGames: { gameId: number; name: string; thumbnail: string; price: number }[] = Array.from(gameMap.entries())
+            .map(([gameId, { name, thumbnail, price }]) => ({
                 gameId,
                 name,
                 thumbnail,
                 price,
-                uniqueBuyers: users.size,
             }))
-            .sort((a, b) => b.uniqueBuyers - a.uniqueBuyers)
             .slice(0, topN);
 
         return topGames;
