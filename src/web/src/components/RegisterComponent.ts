@@ -259,6 +259,8 @@ export class RegisterComponent extends HTMLElement {
                 confirmPassword,
             });
 
+            console.log(result);
+
             if (result.success) {
                 // Show success message before redirect
                 this._errorMessage.style.display = "block";

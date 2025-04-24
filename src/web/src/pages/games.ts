@@ -1,10 +1,8 @@
 import "@web/components/LayoutComponent";
-import "@web/components/BannerComponent";
-import "@web/components/TopGamesComponent";
-
+import "@web/components/GameListComponent";
 import { html } from "@web/helpers/webComponents";
 
-export class IndexPageComponent extends HTMLElement {
+class GamesPageComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
 
@@ -18,8 +16,9 @@ export class IndexPageComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <webshop-layout>
-                <webshop-banner></webshop-banner>
-                <webshop-top-games></webshop-top-games>
+                <h1>All onze games!</h1>
+
+                <webshop-list-games></webshop-list-games>
             </webshop-layout>
         `;
 
@@ -28,4 +27,4 @@ export class IndexPageComponent extends HTMLElement {
     }
 }
 
-window.customElements.define("webshop-page-index", IndexPageComponent);
+window.customElements.define("webshop-page-games", GamesPageComponent);
