@@ -1,4 +1,4 @@
-import { IGameService } from "@api/interfaces/IGamesService";
+import { IGameService } from "@api/interfaces/IGameService";
 import { PoolConnection } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
 import { Game } from "@shared/types";
@@ -14,6 +14,38 @@ export class GameService implements IGameService {
      */
     public async getGames(): Promise<Game[]> {
         return this.executeGamesQuery();
+    }
+
+    /**
+     * Retrieves all games owned by a specific user.
+     */
+    public async getOwnedGames(userId: number): Promise<Game[]> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const query: string = `
+                SELECT 
+                    g.id,
+                    g.sku,
+                    g.name,
+                    g.thumbnail,
+                    g.description,
+                    g.price,
+                    g.playUrl AS url
+                FROM games g
+                JOIN orders_games og ON g.id = og.gameId
+                JOIN orders o ON og.orderId = o.id
+                WHERE o.userId = ? AND o.status = "paid" 
+                GROUP BY g.id
+            `;
+
+            const ownedGames: Game[] = await this._databaseService.query<Game[]>(connection, query, userId);
+
+            return ownedGames;
+        }
+        finally {
+            connection.release();
+        }
     }
 
     /**

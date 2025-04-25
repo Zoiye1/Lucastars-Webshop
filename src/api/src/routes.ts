@@ -34,6 +34,7 @@ router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(r
 // NOTE: After this line, all endpoints will require a valid session.
 router.use(requireValidSessionMiddleware);
 
+router.get("/owned-games", (req, res) => gamesController.getOwnedGames(req, res));
 router.get("/secret", (req, res) => welcomeController.getSecret(req, res));
 
 // TODO: The following endpoints have to be implemented in their own respective controller

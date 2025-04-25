@@ -1,5 +1,5 @@
-import { IGameService } from "@api/interfaces/IGamesService";
-import { GameService } from "@api/services/GamesService";
+import { IGameService } from "@api/interfaces/IGameService";
+import { GameService } from "@api/services/GameService";
 import { Game } from "@shared/types";
 import { Request, Response } from "express";
 
@@ -19,6 +19,24 @@ export class GamesController {
 
         res.json({
             games: games,
+        });
+    }
+
+    /**
+     * Handles the request to get all owned games for a user.
+     */
+    public async getOwnedGames(req: Request, res: Response): Promise<void> {
+        const userId: number | undefined = req.userId;
+
+        if (!userId) {
+            res.status(401);
+            return;
+        }
+
+        const ownedGames: Game[] = await this._gameService.getOwnedGames(userId);
+
+        res.json({
+            games: ownedGames,
         });
     }
 }
