@@ -3,6 +3,10 @@ import { WelcomeController } from "./controllers/WelcomeController";
 import { requireValidSessionMiddleware, sessionMiddleware } from "./middleware/sessionMiddleware";
 import { CartController } from "./controllers/CartController";
 import { CheckoutController } from "@api/controllers/CheckoutController";
+import { GamesController } from "./controllers/GamesController";
+import { OrdersGamesController } from "@api/controllers/OrdersGamesController";
+import { AuthController } from "./controllers/AuthController";
+
 // Create a router
 export const router: Router = Router();
 
@@ -11,11 +15,16 @@ router.get("/", (_, res) => {
     res.send("Welcome to the API!");
 });
 
-// Forward endpoints to other routers
+// Initialize controllers
 const welcomeController: WelcomeController = new WelcomeController();
 const checkoutController: CheckoutController = new CheckoutController();
 const cartController: CartController = new CartController();
+const gamesController: GamesController = new GamesController();
+const ordersGamesController: OrdersGamesController = new OrdersGamesController();
+const authController: AuthController = new AuthController();
 
+router.post("/auth/register", authController.register);
+router.post("/auth/login", authController.login);
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
 
@@ -23,6 +32,8 @@ router.get("/session", (req, res) => welcomeController.getSession(req, res));
 router.delete("/session", (req, res) => welcomeController.deleteSession(req, res));
 router.delete("/session/expired", (req, res) => welcomeController.deleteExpiredSessions(req, res));
 router.get("/welcome", (req, res) => welcomeController.getWelcome(req, res));
+router.get("/games", (req, res) => gamesController.getGames(req, res));
+router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));
 
 router.get("/checkout", (req, res) => checkoutController.getCheckout(req, res));
 router.get("/cart", (req, res) => cartController.getCart(req, res));
@@ -48,3 +59,5 @@ router.post("/cart/add", (_req, _res) => {
 router.post("/Checkout/add", (_req, _res) => {
     throw new Error("Add a product to the cart");
 });
+
+export default router;

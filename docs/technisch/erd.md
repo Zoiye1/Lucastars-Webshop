@@ -17,6 +17,7 @@ Table games {
   name varchar [not null]
   thumbnail varchar [not null]
   description text
+  price decimal(10, 2) [not null, note: "Price in Euros"]
   playUrl varchar [not null]
   created timestamp [not null, default: `now()`]
   updated timestamp [not null, default: `now()`]
@@ -28,14 +29,6 @@ Table game_images {
   imageUrl varchar [not null]
   sortOrder integer [not null, default: 1]
   created timestamp [not null, default: `now()`]
-  updated timestamp [not null, default: `now()`]
-}
-
-Table game_prices {
-  id integer [not null, pk, increment]
-  gameId integer [ref: - games.id]
-  price decimal(10, 2) [not null]
-  currency varchar [not null]
   updated timestamp [not null, default: `now()`]
 }
 

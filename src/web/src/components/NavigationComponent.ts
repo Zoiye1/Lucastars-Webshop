@@ -68,6 +68,8 @@ export class NavigationComponent extends HTMLElement {
                         width: 100%;
                         box-sizing: border-box;
                         padding: 10px;
+                        border-top: 1px solid var(--border-color);
+                        border-bottom: 1px solid var(--border-color);
                     }
 
                     .hamburger {
@@ -79,19 +81,19 @@ export class NavigationComponent extends HTMLElement {
 
         const hamburgerButton: HTMLElement = html`
             <div class="hamburger">
-                <img src="/assets/images/icons/hamburger-menu.svg" alt="Hamburger icon" />
+                <img src="/images/icons/hamburger-menu.svg" alt="Hamburger icon" />
             </div>
         `;
 
         const navigation: HTMLElement = html`
             <nav>
                 <a href="/index.html">
-                    <img src="/assets/images/icons/gamepad.svg" alt="Gamepad icon" />
+                    <img src="/images/icons/gamepad.svg" alt="Gamepad icon" />
                     <span>Mijn spellen</span>
                 </a>
 
                 <a href="/index.html">
-                    <img src="/assets/images/icons/account.svg" alt="Account icon" />
+                    <img src="/images/icons/account.svg" alt="Account icon" />
                     <span>Account</span>
                 </a>
 
@@ -100,9 +102,12 @@ export class NavigationComponent extends HTMLElement {
                     <span>Winkelmand (0)</span>
                 </a>
 
-                <a href="/example.html">
-                    <img src="/assets/images/icons/question.svg" alt="Question icon" />
-                    <span>Example</span>
+                <a href="/login.html">
+                    <span>Login</span>
+                </a>
+                <a href="/register.html">
+                    <img src="/images/icons/question.svg" alt="Question icon" />
+                    <span>Register</span>
                 </a>
             </nav>
         `;
