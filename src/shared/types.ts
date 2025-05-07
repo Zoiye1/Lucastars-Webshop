@@ -90,7 +90,6 @@ export type OrdersGames = {
 };
 
 export type CartItem = {
-    userId: number;
     gameId: number;
     quantity: number;
 };
@@ -132,7 +131,6 @@ export interface IAuthResponse {
 
 export interface ICartResponse {
     success: boolean;
-    message: string;
 }
 
 export type AuthReponse = {

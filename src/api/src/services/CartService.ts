@@ -6,7 +6,7 @@ export class CartService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
 
     public async createCart(
-        userId: number,
+        userId: number | undefined,
         gameId: number,
         quantity: number
     ): Promise<Cart[] | undefined> {

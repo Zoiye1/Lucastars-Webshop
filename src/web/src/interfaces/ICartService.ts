@@ -1,5 +1,5 @@
-import { Cart, CartItem } from "@shared/types";
+import { CartItem, ICartResponse } from "@shared/types";
 
 export abstract class ICartService {
-    public abstract createCart(data: CartItem): Promise<Cart[]>;
+    public abstract createCart(data: CartItem): Promise<ICartResponse>;
 }

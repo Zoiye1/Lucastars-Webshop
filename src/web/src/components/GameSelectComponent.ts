@@ -66,6 +66,32 @@ export class GameSelectComponent extends HTMLElement {
                     font-weight: bold;
                     align-items: center;
                 }
+
+                #message-container {
+                    display: none;
+                    width: 100%;
+                    height: 100vh;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    z-index: 1;
+                    pointer-events: none;
+                    justify-content: end;
+                }
+
+                #message {
+                    transition: 0.3s;
+                    height: 50px;
+                    padding: 0 20px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 15px;
+                    position: relative;
+                    top: 68px;
+                }
                 
                 .game-title {
                     overflow: hidden;
@@ -99,20 +125,33 @@ export class GameSelectComponent extends HTMLElement {
             </style>
         `;
         const element: HTMLElement = html`
-            <a href="/game-info.html?id=${this._gameId}">
-                <article class="select-game-container">
-                    <header class="game-img"><img src="${this._image}" /></header>
-                    <p class="game-title">${this._name}</p>
-                    <p class="game-price">€${this._price.toFixed(2)}</p>
-                    <button class="add-button" id="add-button">
-                        Winkelmand
-                    </button>
-                </article>
-            </a>
+            <article class="select-game-container">
+                <a href="/game-info.html?id=${this._gameId}">
+                    <header class="game-img"><img src="${this._image}"/></header>
+                </a>
+                <p class="game-title">${this._name}</p>
+                <p class="game-price">€${this._price.toFixed(2)}</p>
+                <button class="add-button" id="add-button-${this._gameId}">
+                    Winkelmand
+                </button>
+            </article>
         `;
 
         this.shadowRoot.firstChild?.remove();
         this.shadowRoot.append(styles, element);
+
+        const addButton: HTMLButtonElement = this.shadowRoot.querySelector(`#add-button-${this._gameId}`)!;
+        addButton.addEventListener("click", () => {
+            this.dispatchEvent(new CustomEvent("add-to-cart", {
+                bubbles: true, // ← allow the event to bubble up to parent elements
+                composed: true, // ← allow it to pass out of shadow DOM
+                detail: {
+                    gameId: this._gameId,
+                    name: this._name,
+                    price: this._price,
+                },
+            }));
+        });
     }
 }
 
