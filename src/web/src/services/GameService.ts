@@ -18,4 +18,20 @@ export class GameService implements IGameService {
 
         return gamesResponse.games;
     }
+
+    public async getOwnedGames(): Promise<Game[]> {
+        try {
+            const response: Response = await fetch(`${VITE_API_URL}owned-games`, {
+                credentials: "include",
+            });
+
+            const gamesReponse: GamesResponse = await response.json() as unknown as GamesResponse;
+
+            return gamesReponse.games;
+        }
+        catch (error) {
+            console.error("Error fetching owned games:", error);
+            return [];
+        }
+    }
 }

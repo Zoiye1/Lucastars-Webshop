@@ -270,7 +270,7 @@ export class RegisterComponent extends HTMLElement {
 
                 // Redirect to home page after a short delay
                 setTimeout(() => {
-                    window.location.href = "/";
+                    window.location.href = "/login.html";
                 }, 1500);
             }
             else {

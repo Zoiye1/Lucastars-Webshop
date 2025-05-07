@@ -13,6 +13,15 @@ build:
             prefix: npm
         paths:
             - node_modules/
+    before_script:
+        - cd src/api
+        # Copy the .env.example file to .env
+        - cp .env.example .env
+        # Set the environment variables for the database so that API can connect to it
+        - sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_DATABASE/" .env
+        - sed -i "s/DB_USER=.*/DB_USER=$DB_USER/" .env
+        - sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" .env
+        - cd ../../
     script:
         - npm install
         # Build the documentation site
