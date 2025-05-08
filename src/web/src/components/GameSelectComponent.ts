@@ -36,6 +36,7 @@ export class GameSelectComponent extends HTMLElement {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
+                    margin: 10px;
                 }
                 
                 a {

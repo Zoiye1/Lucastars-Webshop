@@ -35,7 +35,8 @@ export class TopGamesComponent extends HTMLElement {
                     width: 100%;
                     margin: 50px 0;
                     display: flex;
-                    justify-content: space-between;
+                    justify-content: space-evenly;
+                    flex-wrap: wrap;
                 }
 
                 #message-container {

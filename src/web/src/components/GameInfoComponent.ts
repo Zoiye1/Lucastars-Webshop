@@ -42,7 +42,7 @@ export class GameInfoComponent extends HTMLElement {
 
                 .container header {
                     margin-left: 85px;
-                    margin-top: 100px;
+                    margin-top: 11px;
                     width: 100%;
                 }
 
@@ -156,6 +156,47 @@ export class GameInfoComponent extends HTMLElement {
 
                 .cart-button:hover {
                     background: #1083d5;
+                }
+                
+                @media only screen and (max-width: 1168px) {
+                    .game-info {
+                        margin-left: 0;
+                    }
+                }
+
+                @media only screen and (max-width: 968px) {
+                    .container {
+                        justify-content: center;
+                        height: 1043px;
+                    }
+                    .container header {
+                        height: 20px;
+                    }
+                }
+
+                @media only screen and (max-width: 606px) {
+                    .image-container {
+                        width: 250px;
+                        height: 250px;
+                    }
+                    .game-info {
+                        width: 250px;
+                        min-width: auto;
+                        max-width: none;
+                        margin-left: 73px;
+                    }
+                    .image-container {
+                        margin-left: 0;
+                    }
+                    .game-info .description {
+                        margin: 0;
+                    }
+                    .container header {
+                        margin-left: 0;
+                    }
+                    .container header h2 {
+                        text-align: center;
+                    }
                 }
             </style>
         `;
