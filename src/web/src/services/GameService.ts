@@ -1,13 +1,13 @@
-import { Game, GamesResponse } from "@shared/types";
+import { Game, GamesResponse, PaginatedResponse } from "@shared/types";
 import { IGameService } from "@web/interfaces/IGameService";
 
 export class GameService implements IGameService {
-    public async getGames(): Promise<Game[]> {
-        const response: Response = await fetch(`${VITE_API_URL}games`);
+    public async getGames(page?: number, limit?: number): Promise<PaginatedResponse<Game>> {
+        const response: Response = await fetch(`${VITE_API_URL}games?page=${page}&limit=${limit}`);
 
-        const gamesReponse: GamesResponse = await response.json() as unknown as GamesResponse;
+        const gamesResponse: PaginatedResponse<Game> = await response.json() as unknown as PaginatedResponse<Game>;
 
-        return gamesReponse.games;
+        return gamesResponse;
     }
 
     public async getOwnedGames(): Promise<Game[]> {
@@ -16,9 +16,9 @@ export class GameService implements IGameService {
                 credentials: "include",
             });
 
-            const gamesReponse: GamesResponse = await response.json() as unknown as GamesResponse;
+            const gamesResponse: GamesResponse = await response.json() as unknown as GamesResponse;
 
-            return gamesReponse.games;
+            return gamesResponse.games;
         }
         catch (error) {
             console.error("Error fetching owned games:", error);
