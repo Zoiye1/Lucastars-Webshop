@@ -7,14 +7,14 @@ export class CartController {
     /**
      * Cart
      */
-    public createCart = async (req: Request, _res: Response): Promise<void> => {
+    public createCart = async (req: Request, res: Response): Promise<void> => {
         const data: Cart = req.body as Cart;
-        console.log("we zijn hier");
-        console.log(data);
         await this._cartService.createCart(
-            1,
+            req.userId,
             data.gameId,
             data.quantity
         );
+
+        res.status(201).json({ success: true });
     };
 }

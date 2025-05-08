@@ -2,7 +2,7 @@ import { html } from "@web/helpers/webComponents";
 import "@web/components/LinkButtonComponent";
 import { GameService } from "@web/services/GameService";
 import { IGameService } from "@web/interfaces/IGameService";
-import { Game } from "@shared/types";
+import { Game, ICartResponse } from "@shared/types";
 import { CartService } from "@web/services/CartService";
 import { ICartService } from "@web/interfaces/ICartService";
 /**
@@ -94,10 +94,37 @@ export class GameInfoComponent extends HTMLElement {
                     margin: 0 50px;
                     width: 100%;
                     height: 300px;
+                    overflow-y: auto;
                 }
 
                 .quantity-selector {
                     width: 100%;
+                }
+                
+                #message-container {
+                    display: none;
+                    width: 100%;
+                    height: 100vh;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    z-index: 1;
+                    pointer-events: none;
+                    justify-content: end;
+                }
+                
+                #message {
+                    transition: 0.3s;
+                    height: 50px;
+                    padding: 0 20px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 15px;
+                    position: relative;
+                    top: 68px;
                 }
 
                 .quantity {
@@ -135,16 +162,12 @@ export class GameInfoComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <div class="container">
+                <div id="message-container">
+                    <p id="message">Toegevoegd aan de winkelmand</p>
+                </div>
                 <header>
                     <h2>${game[0].name}</h2>
                     <div class="stars-container">
-                        <div class="star">
-                            <img src="/images/icons/star-full.svg" alt="Stars Logo" />
-                            <img src="/images/icons/star-full.svg" alt="Stars Logo" />
-                            <img src="/images/icons/star-full.svg" alt="Stars Logo" />
-                            <img src="/images/icons/star-full.svg" alt="Stars Logo" />
-                            <img src="/images/icons/star-full.svg" alt="Stars Logo" />
-                        </div>
                     </div>
                 </header>
                 <div class="image-container">
@@ -163,11 +186,60 @@ export class GameInfoComponent extends HTMLElement {
 
         const cartButton: HTMLElement = element.querySelector("#add-to-cart-button")!;
         cartButton.addEventListener("click", async () => {
-            await this.cartService.createCart({ userId: 1, gameId: id, quantity: 1 });
+            const cartResponse: ICartResponse = await this.cartService.createCart({ gameId: id, quantity: 1 });
+            if (cartResponse.success) {
+                this.showPopup(
+                    "Toegevoegd aan de winkelmand",
+                    "success"
+                );
+            }
+            else {
+                this.showPopup(
+                    "Je bent niet ingelogd",
+                    "warning"
+                );
+            }
         });
 
         this.shadowRoot.firstChild?.remove();
         this.shadowRoot.append(styles, element);
+    }
+
+    private showPopup(message: string, type: string = "warning"): void {
+        const messageContainerElement: HTMLElement = this.shadowRoot!.querySelector("#message-container")!;
+        const messageElement: HTMLElement = this.shadowRoot!.querySelector("#message")!;
+
+        // Reset position & show container
+        messageElement.style.right = "-200px";
+        messageContainerElement.style.display = "flex";
+
+        // Slide in after a tiny delay to trigger CSS transition
+        setTimeout(() => {
+            messageElement.style.right = "18px";
+        }, 20);
+
+        // Set message and background color
+        messageElement.innerHTML = message;
+        switch (type) {
+            case "success":
+                messageElement.style.backgroundColor = "#159eff";
+                break;
+            case "warning":
+                messageElement.style.backgroundColor = "orange";
+                break;
+            case "error":
+                messageElement.style.backgroundColor = "red";
+                break;
+        }
+
+        // Auto-hide after 4 seconds
+        setTimeout(() => {
+            messageElement.style.right = "-400px";
+
+            setTimeout(() => {
+                messageContainerElement.style.display = "none";
+            }, 300);
+        }, 2000);
     }
 }
 

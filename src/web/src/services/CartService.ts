@@ -1,4 +1,4 @@
-import { Cart, CartItem, CartResponse } from "@shared/types";
+import { CartItem, ICartResponse } from "@shared/types";
 
 export class CartService {
     public async getCart(): Promise<CartItem[]> {
@@ -15,7 +15,7 @@ export class CartService {
         });
     }
 
-    public async createCart(data: CartItem): Promise<Cart[]> {
+    public async createCart(data: CartItem): Promise<ICartResponse> {
         const url: string = `${VITE_API_URL}create-cart`;
         const response: Response = await fetch(url, {
             method: "POST",
@@ -26,7 +26,14 @@ export class CartService {
             credentials: "include", // Include cookies for session
         });
 
-        const cartResponse: CartResponse = await response.json();
-        return cartResponse.cart;
+        if (!response.ok) {
+            return {
+                success: false,
+            };
+        }
+
+        return {
+            success: true,
+        };
     }
 }
