@@ -1,6 +1,6 @@
 import { IGameService } from "@api/interfaces/IGameService";
 import { GameService } from "@api/services/GameService";
-import { Game } from "@shared/types";
+import { Game, PaginatedResponse } from "@shared/types";
 import { Request, Response } from "express";
 
 /**
@@ -12,14 +12,28 @@ export class GamesController {
     /**
      * Handles the request to get all games.
      *
-     * @remarks This will later be paginated and will handle filtering and/or sorting.
+     * @remarks This will later handle filtering and/or sorting.
      */
-    public async getGames(_req: Request, res: Response): Promise<void> {
-        const games: Game[] = await this._gameService.getGames();
+    public async getGames(req: Request, res: Response): Promise<void> {
+        const page: number = parseInt(req.query.page as string) || 1;
+        const limit: number = parseInt(req.query.limit as string) || 10;
 
-        res.json({
-            games: games,
-        });
+        if (page < 1) {
+            res.status(400).json({
+                error: "Page must be greater than 0",
+            });
+            return;
+        }
+
+        if (limit < 1) {
+            res.status(400).json({
+                error: "Limit must be greater than 0",
+            });
+            return;
+        }
+
+        const paginatedResult: PaginatedResponse<Game> = await this._gameService.getGames(page, limit);
+        res.json(paginatedResult);
     }
 
     /**

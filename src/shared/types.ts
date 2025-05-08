@@ -103,3 +103,22 @@ export type AuthReponse = {
     message: string;
     sessionId?: string;
 };
+
+/**
+ * Generic paginated response type
+ */
+export interface PaginatedResponse<T> {
+    /** Actual data items */
+    items: T[];
+    /** Pagination data */
+    pagination: {
+        /** Total number of items across all pages */
+        totalItems: number;
+        /** Number of items per page */
+        itemsPerPage: number;
+        /** Current page number */
+        currentPage: number;
+        /** Total number of pages */
+        totalPages: number;
+    };
+}
