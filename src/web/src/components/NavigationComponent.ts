@@ -31,10 +31,32 @@ export class NavigationComponent extends HTMLElement {
                     padding: 10px 0;
                     text-decoration: none;
                     color: black;
+                    text-decoration: none;
+                    position: relative;
+                    transition: all 0.3s ease;
+                    transform: translateY(-3px);
                 }
 
                 nav a:hover {
-                    text-decoration: underline;
+                    transform: translateY(-3px);
+                }
+
+                nav a::before {
+                    content: "";
+                    position: absolute;
+                    z-index: -1;
+                    bottom: -1px;
+                    left: 0;
+                    right: 0;
+                    height: 5px;
+                    background-color: #d6d6d6;
+                    transform: scaleY(0);
+                    transform-origin: bottom;
+                    transition: transform 0.3s ease;
+                }
+
+                a:hover::before {
+                    transform: scaleY(1);
                 }
 
                 nav img {
