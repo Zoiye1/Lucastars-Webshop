@@ -66,3 +66,63 @@
     nee
 
 
+## Naam: Miguel
+
+### Wat heb je gedaan:
+
+    Bezig geweest met pagineren van games pagina
+
+### Wat ga je doen:
+
+    testen code
+
+### Loop je ergens tegen aan:
+
+    nee
+
+## Naam: Omar
+
+### Wat heb je gedaan:
+
+    gesprek product
+    voorbereiden voortgangsevaluatie
+    gewerkt aan checkout
+
+### Wat ga je doen:
+
+    voortgangsevaluatie
+    verder werken aan checkout
+
+### Loop je ergens tegen aan:
+
+    nee
+
+## Naam: Akif
+
+### Wat heb je gedaan:
+
+    paginas responsive gedaan
+
+### Wat ga je doen:
+
+    beginnen aan review pagina
+
+### Loop je ergens tegen aan:
+
+    nee
+
+## Naam: Zoiye
+
+### Wat heb je gedaan:
+
+    begonnen met de component
+
+### Wat ga je doen:
+
+    Sprint poker
+    Beginnen met profielpagina frontend
+    Expert review
+
+### Loop je ergens tegen aan:
+
+    nee
