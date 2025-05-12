@@ -81,13 +81,13 @@ export class LoginComponent extends HTMLElement {
                 <div id="error-message" class="error-message" style="display: none;"></div>
                 <form id="login-form">
                     <div class="form-group">
-                        <label for="email">Email: <span class="required">*</span></label>
+                        <label for="email">E-mail: <span class="required">*</span></label>
                         <input type="email" id="email" name="email" required>
                     </div>
                 
                     
                     <div class="form-group">
-                        <label for="password">Password: <span class="required">*</span></label>
+                        <label for="password">Wachtwoord: <span class="required">*</span></label>
                         <input type="password" id="password" name="password" required>
                     </div>
 
@@ -96,7 +96,7 @@ export class LoginComponent extends HTMLElement {
                     </div>
 
                     <div class="form-group">
-                        <p>Don't have an account? Register <a href = "/register.html" >here</a>.</p>
+                        <p>Heeft u nog geen account? Registreer <a href = "/register.html" >hier</a>.</p>
                     </div>
                 </form>
             </div>
