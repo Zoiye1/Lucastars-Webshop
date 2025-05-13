@@ -56,7 +56,7 @@ export class RegisterComponent extends HTMLElement {
                     </div>
                     
                     <div class="form-group">
-                        <label for="password">Wact: <span class="required">*</span></label>
+                        <label for="password">Wachtwoord: <span class="required">*</span></label>
                         <input type="password" id="password" name="password" required>
                         <p class="password-hint">Wachtwoord moet minimaal 8 tekens zijn</p>
                     </div>
@@ -82,7 +82,7 @@ export class RegisterComponent extends HTMLElement {
                     margin: 0 auto;
                     padding: 20px;
                     background-color: #f8f9fa;
-                    border-radius: 8px;
+                    border-radius: 30px;
                     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
                 }
                 
@@ -105,7 +105,7 @@ export class RegisterComponent extends HTMLElement {
                     margin: 20px 0;
                     padding: 15px;
                     background-color: #f0f0f0;
-                    border-radius: 6px;
+                    border-radius: 15px;
                 }
                 
                 .form-group {
@@ -131,14 +131,14 @@ export class RegisterComponent extends HTMLElement {
                 }
                 
                 .required {
-                    color: #dc3545;
+                    color: #ecae20;
                 }
                 
                 input {
                     width: 100%;
                     padding: 10px;
                     border: 1px solid #ddd;
-                    border-radius: 4px;
+                    border-radius: 15px;
                     font-size: 16px;
                     box-sizing: border-box;
                 }
@@ -155,9 +155,10 @@ export class RegisterComponent extends HTMLElement {
                     background-color: #159eff;
                     color: white;
                     border: none;
-                    border-radius: 4px;
+                    border-radius: 15px;
                     cursor: pointer;
                     font-size: 16px;
+                    font-weight: bold;
                 }
                 
                 button:hover {
@@ -174,7 +175,7 @@ export class RegisterComponent extends HTMLElement {
                     margin: 10px 0;
                     padding: 10px;
                     background-color: #f8d7da;
-                    border-radius: 4px;
+                    border-radius: 15px;
                     font-size: 14px;
                 }
                 
