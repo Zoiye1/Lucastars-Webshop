@@ -37,7 +37,7 @@ export type CartItem = {
     userId: number;
     gameid: number;
     quantity: number;
-    image: string;
+    thumbnail: string;
     name: string;
     description: string;
     price: number;

@@ -14,9 +14,17 @@ export class CartService implements ICartService {
             const result = await this._databaseService.query<CartItem[]>(
                 connection,
                 `
-                SELECT userId, gameId, quantity, 1 AS 'price'
-                FROM cart_items
-                WHERE userId = ?
+                SELECT 
+                    ci.userId,
+                    ci.gameId,
+                    g.name,
+                    g.thumbnail,
+                    g.price,
+                    ci.quantity
+                FROM cart_items ci
+                JOIN games g ON ci.gameId = g.id
+                WHERE ci.userId = ?
+
                 `,
                 1
             );
@@ -55,7 +63,7 @@ export class CartService implements ICartService {
                     `,
 
                     item.userId,
-                    item.gameId,
+                    item.gameid,
                     item.quantity
                 );
             }

@@ -65,7 +65,7 @@ export class CartPageComponent extends HTMLElement {
 
             // eslint-disable-next-line @typescript-eslint/typedef
             const img = document.createElement("img");
-            img.src = item.image;
+            img.src = item.thumbnail;
             img.alt = item.name;
             img.style.width = "100px";
             img.style.height = "100px";
@@ -90,7 +90,7 @@ export class CartPageComponent extends HTMLElement {
 
             // eslint-disable-next-line @typescript-eslint/typedef
             const price = document.createElement("p");
-            price.innerHTML = `<strong>Prijs:</strong> €${item.price.toFixed(2)}`;
+            price.innerHTML = `<strong>Prijs:</strong> €${Number(item.price).toFixed(2)}`;
             price.style.margin = "0.25rem 0";
 
             // eslint-disable-next-line @typescript-eslint/typedef
@@ -100,22 +100,8 @@ export class CartPageComponent extends HTMLElement {
             quantityDiv.style.gap = "0.5rem";
 
             // eslint-disable-next-line @typescript-eslint/typedef
-            const btnMinus = document.createElement("button");
-            btnMinus.textContent = "➖";
-            btnMinus.onclick = () => this.updateQuantity(index, -1);
-
-            // eslint-disable-next-line @typescript-eslint/typedef
             const qty = document.createElement("span");
             qty.textContent = item.quantity.toString();
-
-            // eslint-disable-next-line @typescript-eslint/typedef
-            const btnPlus = document.createElement("button");
-            btnPlus.textContent = "➕";
-            btnPlus.onclick = () => this.updateQuantity(index, 1);
-
-            quantityDiv.appendChild(btnMinus);
-            quantityDiv.appendChild(qty);
-            quantityDiv.appendChild(btnPlus);
 
             details.appendChild(name);
             details.appendChild(desc);
@@ -171,15 +157,6 @@ export class CartPageComponent extends HTMLElement {
         container.appendChild(checkoutButton);
 
         this.shadowRoot.appendChild(container);
-    }
-
-    private async updateQuantity(index: number, change: number): Promise<void> {
-        this.items[index].quantity += change;
-        if (this.items[index].quantity <= 0) {
-            this.items.splice(index, 1);
-        }
-        await this.updateBackendCart();
-        this.render();
     }
 
     private async removeItem(index: number): Promise<void> {
