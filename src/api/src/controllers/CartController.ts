@@ -7,7 +7,7 @@ export class CartController {
     /**
      * Cart
      */
-    public createCart = async (req: Request, res: Response): Promise<void> => {
+    public async createCart(req: Request, res: Response): Promise<void> {
         const data: Cart = req.body as Cart;
         await this._cartService.createCart(
             req.userId,

@@ -30,7 +30,6 @@ export type SecretResponse = {
 export type GamesResponse = {
     /** List of games */
     games: Game[];
-    game: Game;
 };
 
 /**
