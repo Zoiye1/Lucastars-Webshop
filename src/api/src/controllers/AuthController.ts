@@ -200,4 +200,10 @@ export class AuthController {
             res.status(500).json(errorResponse);
         }
     };
+
+    public verify(req: Request, res: Response): void {
+        res.status(200).json({
+            loggedIn: req.userId !== undefined,
+        });
+    }
 }
