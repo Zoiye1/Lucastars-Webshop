@@ -39,7 +39,6 @@ export class CartPageComponent extends HTMLElement {
         const container = document.createElement("section");
         container.style.maxWidth = "700px";
         container.style.margin = "2rem auto";
-        container.style.fontFamily = "sans-serif";
 
         // eslint-disable-next-line @typescript-eslint/typedef
         const title = document.createElement("h2");

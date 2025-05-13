@@ -31,7 +31,6 @@ export class CheckoutPageComponent extends HTMLElement {
         const container = document.createElement("section");
         container.style.maxWidth = "700px";
         container.style.margin = "2rem auto";
-        container.style.fontFamily = "sans-serif";
         container.style.display = "flex";
         container.style.flexDirection = "column";
         container.style.gap = "2rem";
