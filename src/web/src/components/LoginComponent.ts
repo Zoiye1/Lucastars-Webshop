@@ -92,7 +92,7 @@ export class LoginComponent extends HTMLElement {
                     </div>
 
                     <div class="form-group">
-                        <button type="submit" id="submit-button">Login</button>
+                        <button type="submit" id="submit-button">Inloggen</button>
                     </div>
 
                     <div class="form-group">
