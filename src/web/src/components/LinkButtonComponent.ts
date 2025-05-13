@@ -28,6 +28,7 @@ export class LinkButtonComponent extends HTMLElement {
                     border-radius: 15px;
                     font-weight: bold;
                     width: 220px;
+                    margin: 10px;
                 }
                 
                 .link-button:hover {

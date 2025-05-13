@@ -32,9 +32,12 @@ export type GamesResponse = {
     games: Game[];
 };
 
-export type OrdersGamesResponse = {
+/**
+ * Represents a list of games
+ */
+export type CartResponse = {
     /** List of games */
-    ordersGames: OrdersGames[];
+    cart: Cart[];
 };
 
 /**
@@ -62,12 +65,32 @@ export type Game = {
     url?: string;
 };
 
+/**
+ * Represents a game product
+ */
+export type Cart = {
+    id: number;
+    userId: number;
+    gameId: number;
+    quantity: number;
+};
+
+export type OrdersGamesResponse = {
+    /** List of games */
+    ordersGames: OrdersGames[];
+};
+
 export type OrdersGames = {
     gameId: number;
     userId: number;
     name: string;
     thumbnail: string;
     price: number;
+};
+
+export type CartItem = {
+    gameId: number;
+    quantity: number;
 };
 
 export interface IUser {
@@ -92,10 +115,21 @@ export interface IUserRegisterDTO {
     confirmPassword: string;
 }
 
+export interface ICartData {
+    id: number;
+    userId: number;
+    gameId: number;
+    quantity: number;
+}
+
 export interface IAuthResponse {
     success: boolean;
     message: string;
     sessionId?: string;
+}
+
+export interface ICartResponse {
+    success: boolean;
 }
 
 export type AuthReponse = {
