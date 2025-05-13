@@ -31,10 +31,32 @@ export class NavigationComponent extends HTMLElement {
                     padding: 10px 0;
                     text-decoration: none;
                     color: black;
+                    text-decoration: none;
+                    position: relative;
+                    transition: all 0.3s ease;
+                    transform: translateY(-3px);
                 }
 
                 nav a:hover {
-                    text-decoration: underline;
+                    transform: translateY(-3px);
+                }
+
+                nav a::before{
+                    content: "";
+                    position: absolute;
+                    z-index: -1;
+                    bottom: -1px;
+                    left: 0;
+                    right: 0;
+                    height: 5px;
+                    background-color: #d6d6d6;
+                    transform: scaleY(0);
+                    transform-origin: bottom;
+                    transition: transform 0.3s ease;
+                }
+
+                a:hover::before {
+                    transform: scaleY(1);
                 }
 
                 nav img {
@@ -42,6 +64,48 @@ export class NavigationComponent extends HTMLElement {
                     width: 24px;
                     user-select: none;
                 }
+
+                .dropbtn {
+                    padding: 16px;
+                    font-size: 16px;
+                    border: none;
+                    cursor: pointer;
+                    background-color: transparent;
+                }
+
+                .dropbtn:hover {
+                    background-color: #d6d6d6;
+                }
+
+                .dropdown {
+                    position: relative;
+                    display: inline-block;
+                }
+
+                .dropdown-content {
+                    display: none;
+                    position: absolute;
+                    background-color: #f9f9f9;
+                    min-width: 160px;
+                    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                    z-index: 1;
+                }
+
+                .dropdown-content a {
+                    color: black;
+                    padding: 12px 16px;
+                    text-decoration: none;
+                    display: block;
+                }
+
+                .dropdown-content a:hover {
+                    background-color: #d2d2d2
+                }
+
+                .dropdown:hover .dropdown-content {
+                    display: block;
+                }
+
 
                 .hamburger {
                     display: none;
@@ -93,22 +157,20 @@ export class NavigationComponent extends HTMLElement {
                 </a>
 
                 <a href="/index.html">
-                    <img src="/images/icons/account.svg" alt="Account icon" />
-                    <span>Account</span>
-                </a>
-
-                <a href="/index.html">
                     <img src="/images/icons/cart.svg" alt="Cart icon" />
                     <span>Winkelmand (0)</span>
                 </a>
 
-                <a href="/login.html">
-                    <span>Login</span>
-                </a>
-                <a href="/register.html">
-                    <img src="/images/icons/question.svg" alt="Question icon" />
-                    <span>Register</span>
-                </a>
+                <div class ="dropdown">
+                    <button class ="dropbtn">
+                        <img src="/images/icons/account.svg" />
+                    </button>
+                    <div class ="dropdown-content">
+                        <a href="/login.html">Inloggen</a>
+                        <a href="/register.html">Registreren</a>
+                        <a href="/index.html">Account</a>
+                    </div>
+                </div>
             </nav>
         `;
 
