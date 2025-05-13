@@ -1,6 +1,33 @@
 import { IUserRegisterDTO, IAuthResponse } from "@shared/types";
 
 export class AuthService {
+    private _isLoggedIn: boolean = false;
+
+    public async isLoggedIn(): Promise<boolean> {
+        if (this._isLoggedIn) {
+            return true;
+        }
+
+        try {
+            const url: string = `${VITE_API_URL}auth/verify`;
+            const response: Response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include", // Include cookies for session
+            });
+
+            const successResponse: { loggedIn: boolean } = await response.json() as { loggedIn: boolean };
+            this._isLoggedIn = successResponse.loggedIn;
+            return this._isLoggedIn;
+        }
+        catch {
+            this._isLoggedIn = false;
+            return false;
+        }
+    }
+
     /**
      * Register a new user
      */
