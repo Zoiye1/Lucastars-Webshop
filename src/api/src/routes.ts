@@ -37,6 +37,7 @@ router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(r
 
 router.get("/checkout", (req, res) => checkoutController.getCheckout(req, res));
 router.get("/cart", (req, res) => cartController.getCart(req, res));
+router.delete("/cart/:gameId", (req, res) => cartController.deleteCartItem(req, res));
 
 // NOTE: After this line, all endpoints will require a valid session.
 router.use(requireValidSessionMiddleware);

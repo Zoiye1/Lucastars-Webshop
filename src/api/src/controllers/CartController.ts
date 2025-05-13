@@ -18,4 +18,11 @@ export class CartController {
         this._cartService.updateCart(userId, items);
         res.status(204).end();
     }
+
+    public async deleteCartItem(req: Request, res: Response): Promise<void> {
+        const userId: number = req.userId ?? 1;
+        const gameId: number = Number(req.params.gameId);
+        await this._cartService.deleteCartItem(userId, gameId);
+        res.status(204).end();
+    }
 }

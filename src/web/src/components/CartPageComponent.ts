@@ -160,7 +160,16 @@ export class CartPageComponent extends HTMLElement {
     }
 
     private async removeItem(index: number): Promise<void> {
+        const item: CartItem = this.items[index];
         this.items.splice(index, 1);
+
+        try {
+            // Delete from backend as well
+            await this._cartService.deleteCartItem(item.gameId);
+        }
+        catch (error) {
+            console.error("Fout bij verwijderen van item uit winkelwagen:", error);
+        }
         await this.updateBackendCart();
         this.render();
     }

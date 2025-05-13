@@ -63,7 +63,7 @@ export class CartService implements ICartService {
                     `,
 
                     item.userId,
-                    item.gameid,
+                    item.gameId,
                     item.quantity
                 );
             }
@@ -91,6 +91,25 @@ export class CartService implements ICartService {
         }
         catch (e: unknown) {
             throw new Error(`Failed to clear cart: ${e}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    public async deleteCartItem(userId: number, gameId: number): Promise<void> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            await this._databaseService.query<ResultSetHeader>(
+                connection,
+                "DELETE FROM cart_items WHERE userId = ? AND gameId = ?",
+                userId,
+                gameId
+            );
+        }
+        catch (e: unknown) {
+            console.log(gameId, userId);
+            throw new Error(`Failed to delete cart item: ${e}`);
         }
         finally {
             connection.release();

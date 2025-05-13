@@ -14,4 +14,11 @@ export class CartService {
             body: JSON.stringify(items),
         });
     }
+
+    public async deleteCartItem(gameId: number): Promise<void> {
+        await fetch(`${VITE_API_URL}cart/${gameId}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+    }
 }
