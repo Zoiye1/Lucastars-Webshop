@@ -3,18 +3,6 @@ import { DatabaseService } from "./DatabaseService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { hash, compare } from "bcrypt-ts";
 
-type UserQueryResult = {
-    id: number;
-    username: string;
-    email: string;
-    firstName: string;
-    prefix: string | null;
-    lastName: string;
-    password: string;
-    created: Date;
-    updated: Date;
-};
-
 type UserPasswordQueryResult = {
     password: string;
 };
@@ -23,15 +11,35 @@ export class UserService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
     private readonly SALT_ROUNDS: number = 10;
 
+    private _getUserBaseQuery(): string {
+        return `
+            SELECT
+                u.id,
+                u.username,
+                u.email,
+                u.firstName,
+                u.prefix,
+                u.lastName,
+                a.street,
+                a.houseNumber,
+                a.postalCode,
+                a.city,
+                a.country,
+                u.created,
+                u.updated
+            FROM users u
+            LEFT JOIN addresses a ON u.id = a.userId
+        `;
+    }
+
     public async getUserByUsername(username: string): Promise<IUser | undefined> {
         const connection: PoolConnection = await this._databaseService.openConnection();
         try {
-            const result: UserQueryResult[] = await this._databaseService.query<UserQueryResult[]>(
+            const result: IUser[] = await this._databaseService.query<IUser[]>(
                 connection,
                 `
-                SELECT id, username, email, firstName, prefix, lastName, password, created, updated
-                FROM users
-                WHERE username = ?
+                ${this._getUserBaseQuery()}
+                WHERE u.username = ?
                 `,
                 username
             );
@@ -48,16 +56,14 @@ export class UserService {
         }
     }
 
-    // Add the missing getUserByEmail method
     public async getUserByEmail(email: string): Promise<IUser | undefined> {
         const connection: PoolConnection = await this._databaseService.openConnection();
         try {
-            const result: UserQueryResult[] = await this._databaseService.query<UserQueryResult[]>(
+            const result: IUser[] = await this._databaseService.query<IUser[]>(
                 connection,
                 `
-                SELECT id, username, email, firstName, prefix, lastName, password, created, updated
-                FROM users
-                WHERE email = ?
+                ${this._getUserBaseQuery()}
+                WHERE u.email = ?
                 `,
                 email
             );
@@ -68,6 +74,32 @@ export class UserService {
         }
         catch (e: unknown) {
             throw new Error(`Failed to get user by email: ${e}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    public async getUserById(userId: number): Promise<IUser | undefined> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            const result: IUser[] = await this._databaseService.query<IUser[]>(
+                connection,
+                `
+                ${this._getUserBaseQuery()}
+                WHERE u.id = ?
+                `,
+                userId
+            );
+
+            if (result.length !== 1) {
+                return undefined;
+            }
+
+            return result[0];
+        }
+        catch (e: unknown) {
+            throw new Error(`Failed to get user from session: ${e}`);
         }
         finally {
             connection.release();

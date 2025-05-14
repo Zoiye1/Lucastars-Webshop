@@ -100,7 +100,11 @@ export interface IUser {
     firstName: string;
     prefix: string | null;
     lastName: string;
-    password: string;
+    street: string | null;
+    houseNumber: string | null;
+    postalCode: string | null;
+    city: string | null;
+    country: string | null;
     created: Date;
     updated: Date;
 }
