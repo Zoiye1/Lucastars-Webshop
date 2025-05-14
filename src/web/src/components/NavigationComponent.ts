@@ -18,6 +18,8 @@ export class NavigationComponent extends HTMLElement {
             return;
         }
 
+        const isLoggedIn: boolean = await authService.isLoggedIn();
+
         const styles: HTMLElement = html`
             <style>
                 nav {
@@ -103,7 +105,7 @@ export class NavigationComponent extends HTMLElement {
                     <span>Winkelmand (0)</span>
                 </a>
 
-                ${!(await authService.isLoggedIn())
+                ${!isLoggedIn
 ? `
                 <a href="/login.html">
                     <span>Login</span>
