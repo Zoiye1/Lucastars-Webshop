@@ -1,4 +1,5 @@
 import { html } from "@web/helpers/webComponents";
+import { authService } from "@web/services/AuthService";
 
 /**
  * This component is used to display the navigation bar.
@@ -9,13 +10,15 @@ export class NavigationComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
 
-        this.render();
+        void this.render();
     }
 
-    private render(): void {
+    private async render(): Promise<void> {
         if (!this.shadowRoot) {
             return;
         }
+
+        const isLoggedIn: boolean = await authService.isLoggedIn();
 
         const styles: HTMLElement = html`
             <style>
@@ -166,9 +169,14 @@ export class NavigationComponent extends HTMLElement {
                         <img src="/images/icons/account.svg" />
                     </button>
                     <div class ="dropdown-content">
-                        <a href="/login.html">Inloggen</a>
-                        <a href="/register.html">Registreren</a>
-                        <a href="/index.html">Account</a>
+                        ${!isLoggedIn
+? `
+                            <a href="/login.html">Inloggen</a>
+                            <a href="/register.html">Registreren</a>
+                        `
+: `
+                            <a href="/index.html">Account</a>
+                        `}
                     </div>
                 </div>
             </nav>

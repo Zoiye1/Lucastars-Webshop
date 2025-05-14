@@ -1,6 +1,60 @@
-import { IUserRegisterDTO, IAuthResponse } from "@shared/types";
+import { IUserRegisterDTO, IAuthResponse, AuthVerifyResponse } from "@shared/types";
 
-export class AuthService {
+class AuthService {
+    private _isLoggedIn: boolean = false;
+    private _isLoggedInPromise: Promise<boolean> | null = null;
+
+    public constructor() {
+        void this.isLoggedIn();
+    }
+
+    /**
+     * Checks if the user is logged in by checking the with the API
+     */
+    public async isLoggedIn(): Promise<boolean> {
+        // If a request is already in progress return the same promise to avoid multiple calls to our api
+        if (this._isLoggedInPromise) {
+            return this._isLoggedInPromise;
+        }
+
+        // If we already know the user is logged in return true
+        if (this._isLoggedIn) {
+            return true;
+        }
+
+        // If we don't know if the user is logged in then make a request to the api
+        this._isLoggedInPromise = (async () => {
+            try {
+                const successResponse: AuthVerifyResponse = await this.verifyLoggedIn();
+                this._isLoggedIn = successResponse.loggedIn;
+                return this._isLoggedIn;
+            }
+            catch {
+                this._isLoggedIn = false;
+                return false;
+            }
+            finally {
+                // Clear the cached promise once the request is complete
+                this._isLoggedInPromise = null;
+            }
+        })();
+
+        return this._isLoggedInPromise;
+    }
+
+    private async verifyLoggedIn(): Promise<AuthVerifyResponse> {
+        const url: string = `${VITE_API_URL}auth/verify`;
+        const response: Response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include", // Include cookies for session
+        });
+
+        return response.json() as Promise<AuthVerifyResponse>;
+    }
+
     /**
      * Register a new user
      */

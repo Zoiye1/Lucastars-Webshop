@@ -26,6 +26,7 @@ router.post("/auth/login", authController.login);
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
 
+router.get("/auth/verify", (req, res) => authController.verify(req, res));
 router.get("/session", (req, res) => welcomeController.getSession(req, res));
 router.delete("/session", (req, res) => welcomeController.deleteSession(req, res));
 router.delete("/session/expired", (req, res) => welcomeController.deleteExpiredSessions(req, res));

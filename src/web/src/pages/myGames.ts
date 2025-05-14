@@ -1,5 +1,6 @@
 import "@web/components/LayoutComponent";
 import "@web/components/MyGamesListComponent";
+import "@web/components/AuthProviderComponent";
 import { html } from "@web/helpers/webComponents";
 
 class MyGamesPageComponent extends HTMLElement {
@@ -16,7 +17,9 @@ class MyGamesPageComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <webshop-layout>
-                <webshop-my-games-list></webshop-my-games-list>
+                <webshop-auth-provider>
+                    <webshop-my-games-list></webshop-my-games-list>
+                </webshop-auth-provider>
             </webshop-layout>
         `;
 
