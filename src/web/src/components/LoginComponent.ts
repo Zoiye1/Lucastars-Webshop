@@ -77,26 +77,26 @@ export class LoginComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <div class="register-form">
-                <h2>Login</h2>
+                <h2>Inloggen</h2>
                 <div id="error-message" class="error-message" style="display: none;"></div>
                 <form id="login-form">
                     <div class="form-group">
-                        <label for="email">Email: <span class="required">*</span></label>
+                        <label for="email">E-mail: <span class="required">*</span></label>
                         <input type="email" id="email" name="email" required>
                     </div>
                 
                     
                     <div class="form-group">
-                        <label for="password">Password: <span class="required">*</span></label>
+                        <label for="password">Wachtwoord: <span class="required">*</span></label>
                         <input type="password" id="password" name="password" required>
                     </div>
 
                     <div class="form-group">
-                        <button type="submit" id="submit-button">Login</button>
+                        <button type="submit" id="submit-button">Inloggen</button>
                     </div>
 
                     <div class="form-group">
-                        <p>Don't have an account? Register <a href = "/register.html" >here</a>.</p>
+                        <p>Heeft u nog geen account? Registreer <a href = "/register.html" >hier</a>.</p>
                     </div>
                 </form>
             </div>
@@ -109,12 +109,12 @@ export class LoginComponent extends HTMLElement {
                     margin: 0 auto;
                     padding: 20px;
                     background-color: #f8f9fa;
-                    border-radius: 8px;
+                    border-radius: 30px;
                     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
                 }
                 
                 h2, h3 {
-                    color: #333;
+                    color: #000000;
                 }
                 
                 h2 {
@@ -132,7 +132,7 @@ export class LoginComponent extends HTMLElement {
                     margin: 20px 0;
                     padding: 15px;
                     background-color: #f0f0f0;
-                    border-radius: 6px;
+                    border-radius: 30px;
                 }
                 
                 .form-group {
@@ -158,14 +158,14 @@ export class LoginComponent extends HTMLElement {
                 }
                 
                 .required {
-                    color: #dc3545;
+                    color: #ecae20;
                 }
                 
                 input {
                     width: 100%;
                     padding: 10px;
                     border: 1px solid #ddd;
-                    border-radius: 4px;
+                    border-radius: 15px;
                     font-size: 16px;
                     box-sizing: border-box;
                 }
@@ -182,9 +182,10 @@ export class LoginComponent extends HTMLElement {
                     background-color: #159eff;
                     color: white;
                     border: none;
-                    border-radius: 4px;
+                    border-radius: 15px;
                     cursor: pointer;
                     font-size: 16px;
+                    font-weight: bold;
                 }
                 
                 button:hover {
@@ -201,7 +202,7 @@ export class LoginComponent extends HTMLElement {
                     margin: 10px 0;
                     padding: 10px;
                     background-color: #f8d7da;
-                    border-radius: 4px;
+                    border-radius: 15px;
                     font-size: 14px;
                 }
                 
