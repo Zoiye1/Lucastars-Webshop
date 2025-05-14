@@ -141,3 +141,7 @@ export type AuthReponse = {
     message: string;
     sessionId?: string;
 };
+
+export type AuthVerifyResponse = {
+    loggedIn: boolean;
+};

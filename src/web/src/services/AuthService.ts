@@ -1,8 +1,4 @@
-import { IUserRegisterDTO, IAuthResponse } from "@shared/types";
-
-type AuthVerifyResponse = {
-    loggedIn: boolean;
-};
+import { IUserRegisterDTO, IAuthResponse, AuthVerifyResponse } from "@shared/types";
 
 class AuthService {
     private _isLoggedIn: boolean = false;

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
 import { SessionService } from "../services/SessionService";
-import { AuthReponse, IUserRegisterDTO, IUser } from "@shared/types";
+import { AuthReponse, IUserRegisterDTO, IUser, AuthVerifyResponse } from "@shared/types";
 
 export class AuthController {
     private readonly _userService: UserService = new UserService();
@@ -202,8 +202,10 @@ export class AuthController {
     };
 
     public verify(req: Request, res: Response): void {
-        res.status(200).json({
+        const response: AuthVerifyResponse = {
             loggedIn: req.userId !== undefined,
-        });
+        };
+
+        res.status(200).json(response);
     }
 }
