@@ -15,6 +15,10 @@ type UserQueryResult = {
     updated: Date;
 };
 
+type UserPasswordQueryResult = {
+    password: string;
+};
+
 export class UserService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
     private readonly SALT_ROUNDS: number = 10;
@@ -106,13 +110,33 @@ export class UserService {
         }
     }
 
-    public async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+    public async verifyPassword(email: string, password: string): Promise<boolean> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
         try {
+            const result: UserPasswordQueryResult[] = await this._databaseService.query<UserPasswordQueryResult[]>(
+                connection,
+                `
+                SELECT password
+                FROM users
+                WHERE email = ?
+                `,
+                email
+            );
+
+            if (result.length !== 1) {
+                return false;
+            }
+
+            const hashedPassword: string = result[0].password;
+
             return await compare(password, hashedPassword);
         }
         catch (error) {
             console.error("Password verification error:", error);
             return false;
+        }
+        finally {
+            connection.release();
         }
     }
 }

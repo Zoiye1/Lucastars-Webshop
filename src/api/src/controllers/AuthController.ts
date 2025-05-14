@@ -151,7 +151,7 @@ export class AuthController {
             }
 
             // Check password
-            const isPasswordCorrect: boolean = await this._userService.verifyPassword(password, user.password);
+            const isPasswordCorrect: boolean = await this._userService.verifyPassword(user.email, password);
             if (!isPasswordCorrect) {
                 const errorResponse: AuthReponse = {
                     success: false,
