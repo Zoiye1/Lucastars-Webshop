@@ -51,4 +51,21 @@ export class GamesController {
             games: ownedGames,
         });
     }
+
+    /**
+     * Handles the request to search for games.
+     *
+     * @remarks This will later be paginated.
+     */
+    public async searchGames(req: Request, res: Response): Promise<void> {
+        const query: string | undefined = req.query.q as string || undefined;
+
+        if (!query) {
+            res.json({ games: [] });
+            return;
+        }
+
+        const games: Game[] = await this._gameService.searchGames(query);
+        res.json({ games });
+    }
 }
