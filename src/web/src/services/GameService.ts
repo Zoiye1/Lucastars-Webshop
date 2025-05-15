@@ -34,4 +34,13 @@ export class GameService implements IGameService {
             return [];
         }
     }
+
+    public async searchGames(query: string): Promise<Game[]> {
+        const url: string = `${VITE_API_URL}games/search?q=${encodeURIComponent(query)}`;
+        const response: Response = await fetch(url);
+
+        const gamesResponse: GamesResponse = await response.json() as unknown as GamesResponse;
+
+        return gamesResponse.games;
+    }
 }
