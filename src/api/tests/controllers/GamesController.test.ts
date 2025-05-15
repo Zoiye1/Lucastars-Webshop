@@ -15,6 +15,7 @@ vi.mock("@api/services/GameService", () => {
         GameService: vi.fn().mockImplementation(() => ({
             getGames: vi.fn(),
             getOwnedGames: vi.fn(),
+            getGameById: vi.fn(),
         })),
     };
 });
@@ -107,12 +108,49 @@ describe("GamesController", () => {
 
             const gamesController: GamesController = new GamesController();
 
-            const userId: number = 1337;
+            const userId: number = 10;
             const request: MockRequest = createMockRequest({ userId });
             const response: MockResponse = createMockResponse();
 
             // Act
             await gamesController.getOwnedGames(request, response);
+
+            // Assert
+            expect(response.statusCode).toBe(200);
+
+            const responseJson: GamesResponse = response._getJSONData() as GamesResponse;
+            expect(responseJson).toHaveProperty("games");
+            expect(Array.isArray(responseJson.games)).toBe(true);
+            expect(responseJson.games.length).toBe(mockedGames.length);
+        });
+    });
+
+    describe("getGameById", () => {
+        test("should return a game with status 200 when gameId is present", async () => {
+            // Arrange
+            const mockedGames: Game[] = [
+                {
+                    id: "16",
+                    sku: "game-sku-1",
+                    name: "Game 1",
+                    thumbnail: "https://example.com/thumbnail1.jpg",
+                    description: "Description 1",
+                    price: 19.99,
+                    images: ["https://example.com/image1.jpg"],
+                },
+            ];
+
+            (GameService as unknown as Mock).mockImplementation(() => ({
+                getGameById: vi.fn().mockResolvedValue([mockedGames[0]]),
+            }));
+
+            const gamesController: GamesController = new GamesController();
+
+            const request: MockRequest = createMockRequest({ query: { id: "1" } });
+            const response: MockResponse = createMockResponse();
+
+            // Act
+            await gamesController.getGameById(request, response);
 
             // Assert
             expect(response.statusCode).toBe(200);
