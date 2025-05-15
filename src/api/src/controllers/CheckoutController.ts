@@ -7,7 +7,7 @@ export class CheckoutController {
     private readonly _checkoutService: ICheckoutService = new CheckoutService();
 
     public async getCheckout(req: Request, res: Response): Promise<void> {
-        const userId: number = req.userId ?? 1; // fallback demo user
+        const userId: number = req.userId;
         const item: CheckoutItem | null = await this._checkoutService.getCheckout(userId);
         res.json(item);
     }

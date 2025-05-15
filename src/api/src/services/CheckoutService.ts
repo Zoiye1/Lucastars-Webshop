@@ -6,7 +6,7 @@ import { ICheckoutService } from "@api/interfaces/ICheckoutService";
 export class CheckoutService implements ICheckoutService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
 
-    public async getCheckout(_userId: number): Promise<CheckoutItem | null> {
+    public async getCheckout(userId: number): Promise<CheckoutItem | null> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         try {
@@ -26,7 +26,7 @@ export class CheckoutService implements ICheckoutService {
                 WHERE cart_items.userId = ?
                 GROUP BY cart_items.userId
                 `,
-                1
+                userId
             ))[0];
 
             result.totalPrice = Number(result.totalPrice);

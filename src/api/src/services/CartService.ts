@@ -6,7 +6,35 @@ import { CartItem } from "@shared/types";
 export class CartService implements ICartService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
 
-    public async getCart(_userId: number): Promise<CartItem[]> {
+    public async createCart(
+        userId: number | undefined,
+        gameId: number,
+        quantity: number
+    ): Promise<Cart[] | undefined> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            // const hashedPassword: string = password;
+            await this._databaseService.query<Cart>(
+                connection,
+                `
+                INSERT INTO cart_items (userId, gameId, quantity)
+                VALUES (?, ?, ?)
+                `,
+                userId,
+                gameId,
+                quantity
+            );
+            return undefined;
+        }
+        catch (e: unknown) {
+            throw new Error(`Failed to create user: ${e}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    public async getCart(userId: number): Promise<CartItem[]> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         try {
@@ -26,7 +54,7 @@ export class CartService implements ICartService {
                 WHERE ci.userId = ?
 
                 `,
-                1
+                userId
             );
 
             return result;
@@ -110,72 +138,6 @@ export class CartService implements ICartService {
         catch (e: unknown) {
             console.log(gameId, userId);
             throw new Error(`Failed to delete cart item: ${e}`);
-        }
-        finally {
-            connection.release();
-        }
-    }
-}
-
-// // import { CartItem } from "@shared/types";
-
-// // export class CartService implements ICartService {
-// //    private carts: Map<number, CartItem[]> = new Map([
-//         [1, [
-//             {
-//                 name: "T-shirt",
-//                 price: 19.99,
-//                 image: "https://example.com/images/tshirt.jpg",
-//                 description: "Comfortabel katoenen T-shirt in verschillende maten.",
-//                 quantity: 2,
-//             },
-//             {
-//                 name: "Cap",
-//                 price: 9.99,
-//                 image: "https://example.com/images/cap.jpg",
-//                 description: "Stijlvolle pet, perfect voor zonnige dagen.",
-//                 quantity: 1,
-//             },
-//         ]],
-//    ]);
-
-// //    public getCart(userId: number): CartItem[] {
-// //       return this.carts.get(userId) ?? [];
-//     }
-
-// //   public updateCart(userId: number, items: CartItem[]): void {
-// //       this.carts.set(userId, items);
-//     }
-// }
-import { Cart } from "../../../shared/types";
-import { DatabaseService } from "./DatabaseService";
-import { PoolConnection } from "mysql2/promise";
-
-export class CartService {
-    private readonly _databaseService: DatabaseService = new DatabaseService();
-
-    public async createCart(
-        userId: number | undefined,
-        gameId: number,
-        quantity: number
-    ): Promise<Cart[] | undefined> {
-        const connection: PoolConnection = await this._databaseService.openConnection();
-        try {
-            // const hashedPassword: string = password;
-            await this._databaseService.query<Cart>(
-                connection,
-                `
-                INSERT INTO cart_items (userId, gameId, quantity)
-                VALUES (?, ?, ?)
-                `,
-                userId,
-                gameId,
-                quantity
-            );
-            return undefined;
-        }
-        catch (e: unknown) {
-            throw new Error(`Failed to create user: ${e}`);
         }
         finally {
             connection.release();

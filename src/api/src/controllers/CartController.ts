@@ -21,20 +21,20 @@ export class CartController {
     };
 
     public async getCart(req: Request, res: Response): Promise<void> {
-        const userId: number = req.userId ?? 1; // fallback demo user
+        const userId: number = req.userId; // fallback demo user
         const items: CartItem[] = await this._cartService.getCart(userId);
         res.json(items);
     }
 
     public updateCart(req: Request, res: Response): void {
-        const userId: number = req.userId ?? 1;
+        const userId: number = req.userId;
         const items: CartItem[] = req.body as CartItem[];
         this._cartService.updateCart(userId, items);
         res.status(204).end();
     }
 
     public async deleteCartItem(req: Request, res: Response): Promise<void> {
-        const userId: number = req.userId ?? 1;
+        const userId: number = req.userId;
         const gameId: number = Number(req.params.gameId);
         await this._cartService.deleteCartItem(userId, gameId);
         res.status(204).end();

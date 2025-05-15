@@ -19,7 +19,6 @@ router.get("/", (_, res) => {
 // Initialize controllers
 const welcomeController: WelcomeController = new WelcomeController();
 const checkoutController: CheckoutController = new CheckoutController();
-const cartController: CartController = new CartController();
 const gamesController: GamesController = new GamesController();
 const ordersGamesController: OrdersGamesController = new OrdersGamesController();
 const authController: AuthController = new AuthController();
@@ -35,18 +34,16 @@ router.get("/session", (req, res) => welcomeController.getSession(req, res));
 router.delete("/session", (req, res) => welcomeController.deleteSession(req, res));
 router.delete("/session/expired", (req, res) => welcomeController.deleteExpiredSessions(req, res));
 router.get("/welcome", (req, res) => welcomeController.getWelcome(req, res));
-router.get("/games", (req, res) => gamesController.getGames(req, res));
 router.get("/game-info", (req, res) => gamesController.getGameById(req, res));
 router.get("/games", (req, res) => gamesController.getGames(req, res));
 router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));
 
-router.get("/checkout", (req, res) => checkoutController.getCheckout(req, res));
-router.get("/cart", (req, res) => cartController.getCart(req, res));
-router.delete("/cart/:gameId", (req, res) => cartController.deleteCartItem(req, res));
-
 // NOTE: After this line, all endpoints will require a valid session.
 router.use(requireValidSessionMiddleware);
 router.post("/create-cart", (req, res) => cartController.createCart(req, res));
+router.get("/cart", (req, res) => cartController.getCart(req, res));
+router.delete("/cart/:gameId", (req, res) => cartController.deleteCartItem(req, res));
+router.get("/checkout", (req, res) => checkoutController.getCheckout(req, res));
 
 router.get("/owned-games", (req, res) => gamesController.getOwnedGames(req, res));
 router.get("/secret", (req, res) => welcomeController.getSecret(req, res));

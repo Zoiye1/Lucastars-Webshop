@@ -159,7 +159,7 @@ export class NavigationComponent extends HTMLElement {
                     <span>Mijn spellen</span>
                 </a>
 
-                <a href="/index.html">
+                <a href="/cart.html">
                     <img src="/images/icons/cart.svg" alt="Cart icon" />
                     <span>Winkelmand (0)</span>
                 </a>

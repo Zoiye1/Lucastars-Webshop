@@ -106,11 +106,6 @@ export type OrdersGames = {
     price: number;
 };
 
-export type CartItem = {
-    gameId: number;
-    quantity: number;
-};
-
 export interface IUser {
     id: number;
     username: string;
