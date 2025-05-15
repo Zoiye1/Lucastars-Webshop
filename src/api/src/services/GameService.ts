@@ -16,6 +16,10 @@ export class GameService implements IGameService {
         return this.executeGamesQuery();
     }
 
+    public async getGameById(id: number): Promise<Game[]> {
+        return this.executeGameByNameQuery(id);
+    }
+
     /**
      * Retrieves all games owned by a specific user.
      */
@@ -77,6 +81,28 @@ export class GameService implements IGameService {
             const games: Game[] = await this._databaseService.query<Game[]>(connection, query);
 
             return games;
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    private async executeGameByNameQuery(id: number): Promise<Game[]> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const query: string = `
+            SELECT 
+                name,
+                thumbnail,
+                description,
+                price
+            FROM GAMES
+            WHERE
+                id = "${id}"
+        `;
+
+            return await this._databaseService.query<Game[]>(connection, query);
         }
         finally {
             connection.release();

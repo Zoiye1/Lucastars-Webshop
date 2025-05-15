@@ -22,6 +22,18 @@ export class GamesController {
         });
     }
 
+    public async getGameById(req: Request, res: Response): Promise<void> {
+        const id: number = Number(req.query.id as string);
+
+        if (!id) {
+            res.status(400).json({ error: "Missing 'id' parameter" });
+            return;
+        }
+
+        const game: Game[] = await this._gameService.getGameById(id);
+        res.status(200).json({ games: game });
+    }
+
     /**
      * Handles the request to get all owned games for a user.
      */

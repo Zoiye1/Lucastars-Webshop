@@ -22,12 +22,12 @@ export class BannerComponent extends HTMLElement {
                 .banner {
                     margin: 38.5px 0;
                     width: 100%;
-                    height: 350px;
                     background: #fffbfb;
                     border-radius: 30px;
                     display: flex;
                     flex-direction: column;
                     box-shadow: 0px 0px 9px -4px black;
+                    padding: 30px 0;
                 }
 
                 .banner header {
@@ -36,12 +36,16 @@ export class BannerComponent extends HTMLElement {
                     justify-content: center;
                     align-items: center;
                     font-size: 22px;
+                    text-align: center;
+                    margin: 20px;
                 }
 
                 .banner .description {
                     height: 15%;
                     display: flex;
                     justify-content: center;
+                    margin: 20px;
+                    text-align: center;
                 }
                 
                 .banner .button {
@@ -49,6 +53,7 @@ export class BannerComponent extends HTMLElement {
                     justify-content: space-evenly;
                     align-items: center;
                     height: 35%;
+                    flex-wrap: wrap;
                 }
             </style>
         `;

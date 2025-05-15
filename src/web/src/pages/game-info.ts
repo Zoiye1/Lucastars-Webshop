@@ -1,9 +1,8 @@
 import "@web/components/LayoutComponent";
-import "@web/components/MyGamesListComponent";
-import "@web/components/AuthProviderComponent";
+import "@web/components/GameInfoComponent";
 import { html } from "@web/helpers/webComponents";
 
-class MyGamesPageComponent extends HTMLElement {
+class GameInfoPageComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
 
@@ -17,9 +16,7 @@ class MyGamesPageComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <webshop-layout>
-                <webshop-auth-provider>
-                    <webshop-my-games-list></webshop-my-games-list>
-                </webshop-auth-provider>
+                <webshop-game-info></webshop-game-info>
             </webshop-layout>
         `;
 
@@ -28,4 +25,4 @@ class MyGamesPageComponent extends HTMLElement {
     }
 }
 
-window.customElements.define("webshop-page-my-games", MyGamesPageComponent);
+window.customElements.define("webshop-page-game-info", GameInfoPageComponent);
