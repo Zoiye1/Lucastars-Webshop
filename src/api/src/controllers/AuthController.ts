@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
 import { SessionService } from "../services/SessionService";
-import { AuthReponse, IUserRegisterDTO, IUser } from "@shared/types";
+import { AuthReponse, IUserRegisterDTO, IUser, AuthVerifyResponse } from "@shared/types";
 
 export class AuthController {
     private readonly _userService: UserService = new UserService();
@@ -151,7 +151,7 @@ export class AuthController {
             }
 
             // Check password
-            const isPasswordCorrect: boolean = await this._userService.verifyPassword(password, user.password);
+            const isPasswordCorrect: boolean = await this._userService.verifyPassword(user.email, password);
             if (!isPasswordCorrect) {
                 const errorResponse: AuthReponse = {
                     success: false,
@@ -200,4 +200,12 @@ export class AuthController {
             res.status(500).json(errorResponse);
         }
     };
+
+    public verify(req: Request, res: Response): void {
+        const response: AuthVerifyResponse = {
+            loggedIn: req.userId !== undefined,
+        };
+
+        res.status(200).json(response);
+    }
 }

@@ -24,51 +24,51 @@ export class RegisterComponent extends HTMLElement {
         }
         const element: HTMLElement = html`
             <div class="register-form">
-                <h2>Create Account</h2>
+                <h2>Account aanmaken</h2>
                 <div id="error-message" class="error-message" style="display: none;"></div>
                 <form id="register-form">
                     <div class="form-group">
-                        <label for="username">Username: <span class="required">*</span></label>
+                        <label for="username">Gebruikersnaam: <span class="required">*</span></label>
                         <input type="text" id="username" name="username" required>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email: <span class="required">*</span></label>
+                        <label for="email">E-mail: <span class="required">*</span></label>
                         <input type="email" id="email" name="email" required>
                     </div>
                     
                     <!-- Name fields -->
                     <div class="name-section">
-                        <h3>Full Name</h3>
+                        <h3>Volledige Naam</h3>
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="first-name">First Name: <span class="required">*</span></label>
+                                <label for="first-name">Voornaam: <span class="required">*</span></label>
                                 <input type="text" id="first-name" name="firstName" required>
                             </div>
                             <div class="form-group">
-                                <label for="prefix">Prefix:</label>
+                                <label for="prefix">Tussenvoegsel:</label>
                                 <input type="text" id="prefix" name="prefix">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="last-name">Last Name: <span class="required">*</span></label>
+                            <label for="last-name">Achternaam: <span class="required">*</span></label>
                             <input type="text" id="last-name" name="lastName" required>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="password">Password: <span class="required">*</span></label>
+                        <label for="password">Wachtwoord: <span class="required">*</span></label>
                         <input type="password" id="password" name="password" required>
-                        <p class="password-hint">Password must be at least 8 characters long</p>
+                        <p class="password-hint">Wachtwoord moet minimaal 8 tekens zijn</p>
                     </div>
                     <div class="form-group">
-                        <label for="confirm-password">Confirm Password: <span class="required">*</span></label>
+                        <label for="confirm-password">Bevestig Wachtwoord: <span class="required">*</span></label>
                         <input type="password" id="confirm-password" name="confirm_password" required>
                     </div>
                     <div class="form-group">
-                        <button type="submit" id="submit-button">Register</button>
+                        <button type="submit" id="submit-button">Registreer</button>
                     </div>
                     <div class="form-group">
-                        <p>Already have an account? Log in <a href = "/login.html" >here</a>.</p>
+                        <p>Heeft u al account? Log in <a href = "/login.html" >hier</a>.</p>
                     </div>
                 </form>
             </div>
@@ -82,13 +82,13 @@ export class RegisterComponent extends HTMLElement {
                     margin: 0 auto;
                     padding: 20px;
                     background-color: #f8f9fa;
-                    border-radius: 8px;
+                    border-radius: 30px;
                     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
                 }
                 
                 h2, h3 {
                     color: #333;
-                }
+                    }
                 
                 h2 {
                     text-align: center;
@@ -105,7 +105,7 @@ export class RegisterComponent extends HTMLElement {
                     margin: 20px 0;
                     padding: 15px;
                     background-color: #f0f0f0;
-                    border-radius: 6px;
+                    border-radius: 15px;
                 }
                 
                 .form-group {
@@ -131,14 +131,14 @@ export class RegisterComponent extends HTMLElement {
                 }
                 
                 .required {
-                    color: #dc3545;
+                    color: #ecae20;
                 }
                 
                 input {
                     width: 100%;
                     padding: 10px;
                     border: 1px solid #ddd;
-                    border-radius: 4px;
+                    border-radius: 15px;
                     font-size: 16px;
                     box-sizing: border-box;
                 }
@@ -155,9 +155,10 @@ export class RegisterComponent extends HTMLElement {
                     background-color: #159eff;
                     color: white;
                     border: none;
-                    border-radius: 4px;
+                    border-radius: 15px;
                     cursor: pointer;
                     font-size: 16px;
+                    font-weight: bold;
                 }
                 
                 button:hover {
@@ -174,7 +175,7 @@ export class RegisterComponent extends HTMLElement {
                     margin: 10px 0;
                     padding: 10px;
                     background-color: #f8d7da;
-                    border-radius: 4px;
+                    border-radius: 15px;
                     font-size: 14px;
                 }
                 
@@ -221,7 +222,7 @@ export class RegisterComponent extends HTMLElement {
 
         // Disable submit button
         this._submitButton.disabled = true;
-        this._submitButton.textContent = "Registering...";
+        this._submitButton.textContent = "Registreren...";
 
         try {
             const username: string = this._usernameInput.value.trim();
@@ -234,17 +235,17 @@ export class RegisterComponent extends HTMLElement {
 
             // Basic validation
             if (!username || !email || !firstName || !lastName || !password || !confirmPassword) {
-                this.showError("Please fill in all required fields");
+                this.showError("Vul alle velden in");
                 return;
             }
 
             if (password !== confirmPassword) {
-                this.showError("Passwords do not match");
+                this.showError("Wachtwoorden komen niet overeen");
                 return;
             }
 
             if (password.length < 8) {
-                this.showError("Password must be at least 8 characters long");
+                this.showError("Wachtwoord moet minimaal 8 tekens zijn");
                 return;
             }
 
@@ -259,16 +260,18 @@ export class RegisterComponent extends HTMLElement {
                 confirmPassword,
             });
 
+            console.log(result);
+
             if (result.success) {
                 // Show success message before redirect
                 this._errorMessage.style.display = "block";
                 this._errorMessage.style.backgroundColor = "#d4edda";
                 this._errorMessage.style.color = "#155724";
-                this._errorMessage.textContent = "Registration successful! Redirecting...";
+                this._errorMessage.textContent = "Registratie successvol! Een moment...";
 
                 // Redirect to home page after a short delay
                 setTimeout(() => {
-                    window.location.href = "/";
+                    window.location.href = "/login.html";
                 }, 1500);
             }
             else {

@@ -29,12 +29,18 @@ export class LayoutComponent extends HTMLElement {
                 }
                 
                 main {
+                    display: flex;
                     flex-grow: 1;
                     max-width: var(--max-width);
                     width: 100%;
                     padding: 0 1em;
                     margin: 0 auto;
                     box-sizing: border-box;
+                }
+
+                slot {
+                    flex-grow: 1;
+                    display: block;
                 }
             </style>
         `;

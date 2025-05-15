@@ -6,6 +6,20 @@ import { CartItem } from "@shared/types";
 export class CartController {
     private readonly _cartService: ICartService = new CartService();
 
+    /**
+     * Cart
+     */
+    public async createCart(req: Request, res: Response): Promise<void> {
+        const data: Cart = req.body as Cart;
+        await this._cartService.createCart(
+            req.userId,
+            data.gameId,
+            data.quantity
+        );
+
+        res.status(201).json({ success: true });
+    };
+
     public async getCart(req: Request, res: Response): Promise<void> {
         const userId: number = req.userId ?? 1; // fallback demo user
         const items: CartItem[] = await this._cartService.getCart(userId);
