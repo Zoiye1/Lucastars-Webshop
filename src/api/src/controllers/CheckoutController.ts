@@ -7,8 +7,33 @@ export class CheckoutController {
     private readonly _checkoutService: ICheckoutService = new CheckoutService();
 
     public async getCheckout(req: Request, res: Response): Promise<void> {
-        const userId: number = req.userId;
+        const userId: number | undefined = req.userId;
+
+        if (!userId) {
+            res.status(401);
+            return;
+        }
+
         const item: CheckoutItem | null = await this._checkoutService.getCheckout(userId);
         res.json(item);
+    }
+
+    public async postCheckout(req: Request, res: Response): Promise<void> {
+        const userId: number | undefined = req.userId;
+
+        if (!userId) {
+            res.status(401);
+            return;
+        }
+
+        const item: CheckoutItem | undefined = req.body as CheckoutItem | undefined;
+
+        if (!item) {
+            res.status(400);
+            return;
+        }
+
+        await this._checkoutService.postCheckout(userId, item);
+        res.sendStatus(200);
     }
 }

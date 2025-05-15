@@ -1,7 +1,7 @@
 import { ICartService } from "@api/interfaces/ICartService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
-import { CartItem } from "@shared/types";
+import { Cart, CartItem } from "@shared/types";
 
 export class CartService implements ICartService {
     private readonly _databaseService: DatabaseService = new DatabaseService();

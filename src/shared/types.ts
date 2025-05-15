@@ -25,7 +25,6 @@ export type SecretResponse = {
 };
 
 export type CheckoutItem = {
-    userId: number;
     street: string;
     houseNumber: string;
     postalCode: string;
