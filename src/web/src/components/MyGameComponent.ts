@@ -6,17 +6,17 @@ import { GameInfoModalComponent } from "@web/components/GameInfoModalComponent";
  * This component represents a single game card in the my games page.
  */
 export class MyGameComponent extends HTMLElement {
+    private _gameId: string = "";
     private _name: string = "";
     private _description: string = "";
     private _image: string = "";
-    private _url: string = "";
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
+        this._gameId = this.getAttribute("gameId") ?? "";
         this._name = this.getAttribute("name") ?? "";
         this._description = this.getAttribute("description") ?? "";
         this._image = this.getAttribute("image") ?? "";
-        this._url = this.getAttribute("url") ?? "";
         this.render();
     }
 
@@ -136,11 +136,13 @@ export class MyGameComponent extends HTMLElement {
             </button>
         `;
 
+        const playUrl: string = `/play.html?id=${this._gameId}`;
+
         const infoModal: GameInfoModalComponent = document.createElement("game-info-modal") as GameInfoModalComponent;
         infoModal.setAttribute("name", this._name);
         infoModal.setAttribute("image", this._image);
         infoModal.setAttribute("description", this._description);
-        infoModal.setAttribute("url", this._url);
+        infoModal.setAttribute("url", playUrl);
 
         infoButton.addEventListener("click", () => {
             infoModal.showModal();
@@ -155,7 +157,7 @@ export class MyGameComponent extends HTMLElement {
                     </header>
                     <main>
                         <p class="game-title">${this._name}</p>
-                        <a href="${this._url}" class="play-button" >
+                        <a href="${playUrl}" class="play-button" >
                             Speel
                         </a>
                     </main>
