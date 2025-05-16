@@ -83,7 +83,6 @@ export class MyGamesListComponent extends HTMLElement {
                             name="${game.name}"
                             description="${game.description}"
                             image="${game.thumbnail}"
-                            url="${game.url ?? ""}"
                         ></webshop-my-game>
                     `)}
                 </div>

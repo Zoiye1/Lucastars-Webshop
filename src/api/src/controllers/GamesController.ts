@@ -45,7 +45,10 @@ export class GamesController {
             return;
         }
 
-        const ownedGames: Game[] = await this._gameService.getOwnedGames(userId);
+        // Check if we need to get a specific game or all owned games.
+        const gameId: number | undefined = req.query.id ? Number(req.query.id) : undefined;
+
+        const ownedGames: Game[] = await this._gameService.getOwnedGames(userId, gameId);
 
         res.json({
             games: ownedGames,
