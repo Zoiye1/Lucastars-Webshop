@@ -97,12 +97,16 @@ export class TopGamesComponent extends HTMLElement {
 
                 .arrow {
                     background-color: #F9FAFC;
-                    color: #1b5fff;
+                    color: var(--primary-color);
                     border: none;
                     font-size: 24px;
                     width: 40px;
                     height: 100px;
                     cursor: pointer;
+                }
+                
+                .arrow:hover {
+                    color: var(--primary-color-dark);
                 }
                 
                 .top-games {

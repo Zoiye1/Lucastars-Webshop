@@ -114,14 +114,14 @@ export class GameSelectComponent extends HTMLElement {
                     border-radius: 20px;
                     width: 80%;
                     padding: 5px 0;
-                    background: #1b5fff;
+                    background: var(--primary-color);
                     color: white;
                     font-size: 13px;
                     font-weight: bold;
                 }
 
                 .add-button:hover {
-                    background: #164dd5;
+                    background: var(--primary-color-dark);
                 }
             </style>
         `;
