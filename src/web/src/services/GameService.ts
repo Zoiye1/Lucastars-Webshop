@@ -19,9 +19,9 @@ export class GameService implements IGameService {
         return gamesResponse.games;
     }
 
-    public async getOwnedGames(): Promise<Game[]> {
+    public async getOwnedGames(id?: number): Promise<Game[]> {
         try {
-            const response: Response = await fetch(`${VITE_API_URL}owned-games`, {
+            const response: Response = await fetch(`${VITE_API_URL}owned-games?id=${id}`, {
                 credentials: "include",
             });
 

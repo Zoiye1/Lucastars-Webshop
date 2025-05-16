@@ -23,10 +23,12 @@ export class GameService implements IGameService {
     /**
      * Retrieves all games owned by a specific user.
      */
-    public async getOwnedGames(userId: number): Promise<Game[]> {
+    public async getOwnedGames(userId: number, gameId?: number): Promise<Game[]> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         try {
+            const gameIdCondition: string = gameId ? "AND g.id = ?" : "";
+
             const query: string = `
                 SELECT 
                     g.id,
@@ -39,11 +41,17 @@ export class GameService implements IGameService {
                 FROM games g
                 JOIN orders_games og ON g.id = og.gameId
                 JOIN orders o ON og.orderId = o.id
-                WHERE o.userId = ? AND o.status = "paid" 
+                WHERE o.userId = ? AND o.status = "paid" ${gameIdCondition}
                 GROUP BY g.id
             `;
 
-            const ownedGames: Game[] = await this._databaseService.query<Game[]>(connection, query, userId);
+            const params: unknown[] = [userId];
+
+            if (gameId) {
+                params.push(gameId);
+            }
+
+            const ownedGames: Game[] = await this._databaseService.query<Game[]>(connection, query, ...params);
 
             return ownedGames;
         }
