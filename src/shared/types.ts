@@ -25,10 +25,10 @@ export type SecretResponse = {
 };
 
 export type CheckoutItem = {
-    street: string;
-    houseNumber: string;
-    postalCode: string;
-    city: string;
+    street: string | null;
+    houseNumber: string | null;
+    postalCode: string | null;
+    city: string | null;
     totalPrice: number;
 };
 

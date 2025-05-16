@@ -1,4 +1,4 @@
-import { CartItem } from "@shared/types";
+import { CartItem, ICartResponse } from "@shared/types";
 
 export class CartService {
     public async getCart(): Promise<CartItem[]> {

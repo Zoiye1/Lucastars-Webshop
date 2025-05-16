@@ -46,7 +46,7 @@ export class CheckoutPageComponent extends HTMLElement {
                             <input 
                                 type="text" 
                                 name="street" 
-                                value="${this.item.street}" 
+                                value="${this.item.street ?? ""}" 
                                 placeholder="Straatnaam" 
                                 required 
                                 style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
@@ -59,7 +59,7 @@ export class CheckoutPageComponent extends HTMLElement {
                             <input 
                                 type="text" 
                                 name="houseNumber" 
-                                value="${this.item.houseNumber}" 
+                                value="${this.item.houseNumber ?? ""}" 
                                 placeholder="Nr." 
                                 required 
                                 style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
@@ -74,7 +74,7 @@ export class CheckoutPageComponent extends HTMLElement {
                             <input 
                                 type="text" 
                                 name="postalCode" 
-                                value="${this.item.postalCode}" 
+                                value="${this.item.postalCode ?? ""}" 
                                 placeholder="1234 AB" 
                                 required 
                                 style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
@@ -87,7 +87,7 @@ export class CheckoutPageComponent extends HTMLElement {
                             <input 
                                 type="text" 
                                 name="city" 
-                                value="${this.item.city}" 
+                                value="${this.item.city ?? ""}" 
                                 placeholder="Plaatsnaam" 
                                 required 
                                 style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
@@ -135,8 +135,8 @@ export class CheckoutPageComponent extends HTMLElement {
                     totalPrice: this.item!.totalPrice,
                 };
 
-                await this._checkoutService.submitCheckout(data);
-                // eventueel data verzenden naar backend hier
+                const result: CheckoutItem = await this._checkoutService.submitCheckout(data);
+                alert(result);
             }
             else {
                 alert("Vul het adres in.");

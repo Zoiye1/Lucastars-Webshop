@@ -33,7 +33,13 @@ export class CheckoutController {
             return;
         }
 
-        await this._checkoutService.postCheckout(userId, item);
-        res.sendStatus(200);
+        const result: CheckoutItem | null = await this._checkoutService.postCheckout(userId, item);
+
+        if (!result) {
+            res.status(400);
+            return;
+        }
+
+        res.json(result);
     }
 }

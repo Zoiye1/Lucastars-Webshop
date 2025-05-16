@@ -6,7 +6,6 @@ import { CheckoutController } from "@api/controllers/CheckoutController";
 import { GamesController } from "./controllers/GamesController";
 import { OrdersGamesController } from "@api/controllers/OrdersGamesController";
 import { AuthController } from "./controllers/AuthController";
-import { CartController } from "@api/controllers/CartController";
 
 // Create a router
 export const router: Router = Router();

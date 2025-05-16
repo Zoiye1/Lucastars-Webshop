@@ -6,12 +6,14 @@ export class CheckoutService {
         return await res.json() as unknown as CheckoutItem;
     }
 
-    public async submitCheckout(data: CheckoutItem): Promise<void> {
-        await fetch(`${VITE_API_URL}checkout`, {
+    public async submitCheckout(data: CheckoutItem): Promise<CheckoutItem> {
+        const res: Response = await fetch(`${VITE_API_URL}checkout`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
             body: JSON.stringify(data),
         });
+
+        return await res.json() as unknown as CheckoutItem;
     }
 }

@@ -1,7 +1,21 @@
-import { PoolConnection } from "mysql2/promise";
+import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
 import { CheckoutItem } from "@shared/types";
 import { ICheckoutService } from "@api/interfaces/ICheckoutService";
+
+type CartItemsResult = {
+    gameId: number;
+    quantity: number;
+    price: number;
+};
+
+type TotalPriceResults = {
+    totalPrice: number;
+};
+
+type AddressIdResult = {
+    id: number;
+};
 
 export class CheckoutService implements ICheckoutService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
@@ -22,7 +36,7 @@ export class CheckoutService implements ICheckoutService {
                     SUM(games.price * cart_items.quantity) as 'totalPrice'
                 FROM cart_items
                 JOIN games ON games.id = cart_items.gameId
-                JOIN addresses ON addresses.userId = cart_items.userId
+                LEFT JOIN addresses ON addresses.userId = cart_items.userId
                 WHERE cart_items.userId = ?
                 GROUP BY cart_items.userId
                 `,
@@ -46,54 +60,74 @@ export class CheckoutService implements ICheckoutService {
 
         try {
             // 1. Upsert address using INSERT ... ON DUPLICATE KEY UPDATE
+            // Upsert address and get its id
             await this._databaseService.query(connection,
                 `
-                INSERT INTO addresses (userId, street, houseNumber, postalCode, city, country, \`default\`)
-                VALUES (?, ?, ?, ?, ?, 'Netherlands', true)
+                INSERT INTO addresses (userId, street, houseNumber, postalCode, city, country)
+                VALUES (?, ?, ?, ?, ?, 'Netherlands')
                 ON DUPLICATE KEY UPDATE
                     street = VALUES(street),
                     houseNumber = VALUES(houseNumber),
                     postalCode = VALUES(postalCode),
                     city = VALUES(city)
                 `,
-                userId, item.street, item.houseNumber, item.postalCode, item.city
+                userId,
+                item.street,
+                item.houseNumber,
+                item.postalCode,
+                item.city
             );
 
+            // Retrieve the address id (assuming userId is unique in addresses)
+            const addressRow: AddressIdResult[] = await this._databaseService.query(connection,
+                `
+                SELECT id FROM addresses WHERE userId = ?
+                `,
+                userId
+            );
+
+            const addressId: number = addressRow[0].id;
+            if (!addressId) {
+                throw new Error("Failed to retrieve address id.");
+            }
+
             // 2. Get total price from cart
-            const cartTotalRows: unknown = await this._databaseService.query(connection,
+            const cartTotalRows: TotalPriceResults[] = await this._databaseService.query(connection,
                 `
                 SELECT SUM(games.price * cart_items.quantity) as totalPrice
                 FROM cart_items
                 JOIN games ON games.id = cart_items.gameId
                 WHERE cart_items.userId = ?
                 `,
-                [userId]
+                userId
             );
-            const totalPrice = Number(cartTotalRows[0]?.totalPrice || 0);
+            const totalPrice: number = Number(cartTotalRows[0]?.totalPrice || 0);
 
             if (totalPrice === 0) {
                 throw new Error("Cart is empty or total price is zero.");
             }
 
             // 3. Insert order
-            const [orderResult]: unknown = await this._databaseService.query(connection,
+            const orderResult: ResultSetHeader = await this._databaseService.query(connection,
                 `
                 INSERT INTO orders (userId, addressId, orderDate, status, totalAmount)
-                VALUES (?, ?, NOW(), 'pending', ?)
+                VALUES (?, ?, NOW(), 'paid', ?)
                 `,
-                [userId, addressId, totalPrice]
+                userId,
+                addressId,
+                totalPrice
             );
-            const orderId = orderResult.insertId;
+            const orderId: number = orderResult.insertId;
 
             // 4. Insert into orders_games using cart_items directly
-            const [cartItems]: any = await this._databaseService.query(connection,
+            const cartItems: CartItemsResult[] = await this._databaseService.query(connection,
                 `
                 SELECT cart_items.gameId, cart_items.quantity, games.price
                 FROM cart_items
                 JOIN games ON games.id = cart_items.gameId
                 WHERE cart_items.userId = ?
                 `,
-                [userId]
+                userId
             );
 
             for (const cartItem of cartItems) {
@@ -104,7 +138,7 @@ export class CheckoutService implements ICheckoutService {
                     `,
                     orderId,
                     cartItem.gameId,
-                    cartItem.price,
+                    cartItem.price
                 );
             }
 
