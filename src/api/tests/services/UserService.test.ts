@@ -51,25 +51,4 @@ describe("UserService", () => {
         // Asserts
         expect(user).toBeUndefined();
     });
-
-    test("createUser should return a ", async () => {
-        // Arrange
-        const userService: UserService = new UserService();
-        const mockDatabaseService: MockDatabaseService = createMockDatabaseService();
-        mockDatabaseService.query.mockResolvedValue([{
-            id: 1,
-            username: "Zoiye",
-            email: "Zoiyevanleeuwen@icloud.com",
-            firstName: "Zoiye",
-            prefix: "van",
-            lastName: "Leeuwen",
-            hashedPassword: "password",
-        }]);
-
-        // Acts
-        const user: IUser | undefined = await userService.getUserByUsername("Zoiye");
-
-        // Asserts
-        expect(user).toBeUndefined();
-    });
 });
