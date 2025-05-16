@@ -61,6 +61,42 @@ export class GameService implements IGameService {
     }
 
     /**
+     * Searches for games based on a query string.
+     */
+    public async searchGames(query: string): Promise<Game[]> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const sqlQuery: string = `
+                SELECT 
+                    g.id,
+                    g.sku,
+                    g.name,
+                    g.thumbnail,
+                    g.description,
+                    g.price,
+                    IF(
+                        COUNT(gi.imageUrl) = 0, 
+                        JSON_ARRAY(), 
+                        JSON_ARRAYAGG(gi.imageUrl)
+                    ) AS images
+                FROM games g
+                LEFT JOIN game_images gi ON g.id = gi.gameId
+                WHERE g.name LIKE ?
+                GROUP BY g.id
+                ORDER BY g.name
+            `;
+
+            const games: Game[] = await this._databaseService.query<Game[]>(connection, sqlQuery, `%${query}%`);
+
+            return games;
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    /**
      * Execute the games query.
      */
     private async executeGamesQuery(): Promise<Game[]> {
