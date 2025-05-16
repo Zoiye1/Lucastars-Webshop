@@ -27,10 +27,84 @@ export class TopGamesComponent extends HTMLElement {
         const ordersGames: OrdersGames[] = await this._ordersGamesService.getOrdersGames();
 
         // Use the OrdersGames type directly
-        const games: { gameId: number; name: string; thumbnail: string; price: number }[] = this.getTopGames(ordersGames, 5);
+        const games: { gameId: number; name: string; thumbnail: string; price: number }[] = this.getTopGames(ordersGames, 10);
+
+        // const games: { gameId: number; name: string; thumbnail: string; price: number }[] =
+        //     [
+        //         {
+        //             gameId: 16,
+        //             name: "naam",
+        //             thumbnail: "foto",
+        //             price: 500,
+        //         },
+        //         {
+        //             gameId: 16,
+        //             name: "naam",
+        //             thumbnail: "foto",
+        //             price: 500,
+        //         },
+        //         {
+        //             gameId: 16,
+        //             name: "naam",
+        //             thumbnail: "foto",
+        //             price: 500,
+        //         },
+        //         {
+        //             gameId: 16,
+        //             name: "naam",
+        //             thumbnail: "foto",
+        //             price: 500,
+        //         },
+        //         {
+        //             gameId: 16,
+        //             name: "naam",
+        //             thumbnail: "foto",
+        //             price: 500,
+        //         },
+        //     ];
 
         const styles: HTMLElement = html`
             <style>
+                .slider-container {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    width: 971px;
+                }
+
+                .slider-view {
+                    width: 100%; /* 5 boxes * 100px each */
+                    overflow: hidden;
+                }
+
+                .slider-track {
+                    display: flex;
+                    transition: transform 0.3s ease;
+                }
+
+                .box {
+                    width: 100px;
+                    height: 100px;
+                    background-color: #8c8;
+                    border: 2px solid #555;
+                    margin-right: 5px;
+                    flex-shrink: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                }
+
+                .arrow {
+                    background-color: #F9FAFC;
+                    color: #1b5fff;
+                    border: none;
+                    font-size: 24px;
+                    width: 40px;
+                    height: 100px;
+                    cursor: pointer;
+                }
+                
                 .top-games {
                     width: 100%;
                     margin: 50px 0;
@@ -96,7 +170,7 @@ export class TopGamesComponent extends HTMLElement {
                 }
             });
 
-            return gameElement; // ← important!
+            return gameElement;
         });
 
         const element: HTMLElement = html`
@@ -104,12 +178,50 @@ export class TopGamesComponent extends HTMLElement {
                 <div id="message-container">
                     <p id="message"></p>
                 </div>
-                ${gameElements}
+                <div class="slider-container">
+                    <button id="prev" class="arrow">&#9664;</button>
+
+                    <div class="slider-view">
+                        <div class="slider-track">
+                            ${gameElements}
+                        </div>
+                    </div>
+
+                    <button id="next" class="arrow">&#9654;</button>
+                </div>
             </section>
         `;
 
         this.shadowRoot.firstChild?.remove();
         this.shadowRoot.append(styles, element);
+
+        const track: HTMLElement = element.querySelector(".slider-track")!;
+        const next: HTMLElement = element.querySelector("#next")!;
+        const prev: HTMLElement = element.querySelector("#prev")!;
+
+        const visibleBoxes: number = 5;
+        const boxWidth: number = 219; // box + margin
+        const totalBoxes: number = track.children.length;
+
+        let currentIndex: number = 0;
+
+        next.addEventListener("click", () => {
+            if (currentIndex < totalBoxes - visibleBoxes) {
+                currentIndex++;
+                updateSlider();
+            }
+        });
+
+        prev.addEventListener("click", () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlider();
+            }
+        });
+
+        function updateSlider(): void {
+            track.style.transform = `translateX(-${currentIndex * boxWidth}px)`;
+        }
     }
 
     private getTopGames(purchases: OrdersGames[], topN: number = 5): { gameId: number; name: string; thumbnail: string; price: number }[] {
