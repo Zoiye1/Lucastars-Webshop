@@ -36,6 +36,12 @@ export type GetGamesOptions = {
     sort?: "asc" | "desc";
     /** Sort field for the games */
     sortBy?: "name" | "price" | "created";
+    /** Filter for tags */
+    tags?: number[];
+    /** Minimum price for filtering */
+    minPrice?: number;
+    /** Maximum price for filtering */
+    maxPrice?: number;
 };
 
 /**
@@ -72,6 +78,8 @@ export type Game = {
     price: number;
     /** List of images of the game */
     images: string[];
+    /** List of tags associated with the game */
+    tags: string[];
     /**
      * URL of the game
      * @remarks This will only be filled if the user owns the game
@@ -178,3 +186,13 @@ export interface PaginatedResponse<T> {
         totalPages: number;
     };
 }
+
+/**
+ * Represents a tag
+ */
+export type Tag = {
+    /** ID of the tag */
+    id: number;
+    /** Name of the tag */
+    value: string;
+};
