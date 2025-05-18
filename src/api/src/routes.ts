@@ -5,6 +5,7 @@ import { GamesController } from "./controllers/GamesController";
 import { OrdersGamesController } from "@api/controllers/OrdersGamesController";
 import { AuthController } from "./controllers/AuthController";
 import { CartController } from "@api/controllers/CartController";
+import { TagController } from "./controllers/TagController";
 
 // Create a router
 export const router: Router = Router();
@@ -20,6 +21,7 @@ const gamesController: GamesController = new GamesController();
 const ordersGamesController: OrdersGamesController = new OrdersGamesController();
 const authController: AuthController = new AuthController();
 const cartController: CartController = new CartController();
+const tagController: TagController = new TagController();
 
 router.post("/auth/register", authController.register);
 router.post("/auth/login", authController.login);
@@ -27,6 +29,7 @@ router.get("/games/search", (req, res) => gamesController.searchGames(req, res))
 router.get("/game-info", (req, res) => gamesController.getGameById(req, res));
 router.get("/games", (req, res) => gamesController.getGames(req, res));
 router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));
+router.get("/tags", (req, res) => tagController.getTags(req, res));
 
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
