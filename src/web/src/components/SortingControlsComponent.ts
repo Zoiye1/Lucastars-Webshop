@@ -1,14 +1,16 @@
 import { html } from "@web/helpers/webComponents";
 
 export class SortingControlsComponent extends HTMLElement {
-    private _totalResults: number = 0;
     private _sortBy: string = "name";
     private _sortOrder: "asc" | "desc" = "asc";
     private _sortChangeCallback: ((sortBy: string, sortOrder: "asc" | "desc") => void) | null = null;
 
+    private _totalResultsSpan: HTMLSpanElement | null = null;
+
     public set totalResults(value: number) {
-        this._totalResults = value;
-        this.render();
+        if (this._totalResultsSpan) {
+            this._totalResultsSpan.textContent = `${value} resultaten`;
+        }
     }
 
     public set onSortChange(callback: (sortBy: string, sortOrder: "asc" | "desc") => void) {
@@ -68,21 +70,39 @@ export class SortingControlsComponent extends HTMLElement {
             </style>
         `;
 
+        const sortSelect: HTMLSelectElement = html`
+            <select id="sort-select">
+                <option value="name">Naam</option>
+                <option value="price">Prijs</option>
+                <option value="created">Datum toegevoegd</option>
+            </select>
+        ` as HTMLSelectElement;
+
+        Array.from(sortSelect.options).forEach(option => {
+            if (option.value === this._sortBy) {
+                option.selected = true;
+            }
+        });
+
+        const sortDirection: HTMLButtonElement = html`
+            <button class="sort-direction" id="sort-direction">
+                ${this._sortOrder === "asc" ? "↑" : "↓"}
+            </button>
+        ` as HTMLButtonElement;
+
+        this._totalResultsSpan = html`
+            <span>0 resultaten</span>
+        ` as HTMLSpanElement;
+
         const element: HTMLElement = html`
             <div class="controls-container">
                 <div class="sort-controls">
                     <label for="sort-select">Sorteer op:</label>
-                    <select id="sort-select">
-                        <option value="name" .selected=${this._sortBy === "name"}>Naam</option>
-                        <option value="price" .selected=${this._sortBy === "price"}>Prijs</option>
-                        <option value="created" .selected=${this._sortBy === "created"}>Datum toegevoegd</option>
-                    </select>
-                    <button class="sort-direction" id="sort-direction">
-                        ${this._sortOrder === "asc" ? "↑" : "↓"}
-                    </button>
+                    ${sortSelect}
+                    ${sortDirection}
                 </div>
                 <div class="total-results">
-                    ${this._totalResults} resultaten
+                    ${this._totalResultsSpan}
                 </div>
             </div>
         `;
@@ -91,25 +111,21 @@ export class SortingControlsComponent extends HTMLElement {
         this.shadowRoot.append(styles, element);
 
         // Add event listeners
-        const sortSelect: HTMLSelectElement | null = this.shadowRoot.querySelector("#sort-select");
-        const sortDirection: HTMLElement | null = this.shadowRoot.querySelector("#sort-direction");
+        sortSelect.addEventListener("change", () => {
+            this._sortBy = sortSelect.value;
+            if (this._sortChangeCallback) {
+                this._sortChangeCallback(this._sortBy, this._sortOrder);
+            }
+        });
 
-        if (sortSelect && sortDirection) {
-            sortSelect.addEventListener("change", () => {
-                this._sortBy = sortSelect.value;
-                if (this._sortChangeCallback) {
-                    this._sortChangeCallback(this._sortBy, this._sortOrder);
-                }
-            });
-
-            sortDirection.addEventListener("click", () => {
-                this._sortOrder = this._sortOrder === "asc" ? "desc" : "asc";
-                sortDirection.textContent = this._sortOrder === "asc" ? "↑" : "↓";
-                if (this._sortChangeCallback) {
-                    this._sortChangeCallback(this._sortBy, this._sortOrder);
-                }
-            });
-        }
+        sortDirection.addEventListener("click", () => {
+            console.log("Sort direction clicked");
+            this._sortOrder = this._sortOrder === "asc" ? "desc" : "asc";
+            sortDirection.textContent = this._sortOrder === "asc" ? "↑" : "↓";
+            if (this._sortChangeCallback) {
+                this._sortChangeCallback(this._sortBy, this._sortOrder);
+            }
+        });
     }
 }
 
