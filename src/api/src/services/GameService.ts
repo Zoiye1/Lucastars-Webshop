@@ -20,6 +20,29 @@ export class GameService implements IGameService {
             ? `ORDER BY g.${options.sortBy} ${options.sort === "desc" ? "DESC" : "ASC"}`
             : `ORDER BY g.name ${options.sort === "desc" ? "DESC" : "ASC"}`;
 
+        let whereClause: string = "";
+        const whereClauseValues: number[] = [];
+        let tagJoin: string = "";
+
+        if (options.tags && options.tags.length > 0) {
+            tagJoin = "JOIN games_tags gt ON g.id = gt.gameId";
+            whereClause += whereClause ? " AND " : "WHERE ";
+            whereClause += `gt.tagId IN (${options.tags.map(() => "?").join(",")})`;
+            whereClauseValues.push(...options.tags);
+        }
+
+        if (options.minPrice) {
+            whereClause += whereClause ? " AND " : "WHERE ";
+            whereClause += "g.price >= ?";
+            whereClauseValues.push(options.minPrice);
+        }
+
+        if (options.maxPrice) {
+            whereClause += whereClause ? " AND " : "WHERE ";
+            whereClause += "g.price <= ?";
+            whereClauseValues.push(options.maxPrice);
+        }
+
         try {
             const query: string = `
                 SELECT 
@@ -29,13 +52,22 @@ export class GameService implements IGameService {
                     g.thumbnail,
                     g.description,
                     g.price,
-                    IF(
-                        COUNT(gi.imageUrl) = 0, 
-                        JSON_ARRAY(), 
-                        JSON_ARRAYAGG(gi.imageUrl)
-                    ) AS images
+                    COALESCE(
+                        (SELECT JSON_ARRAYAGG(gi.imageUrl)
+                         FROM game_images gi
+                         WHERE gi.gameId = g.id),
+                        JSON_ARRAY()
+                    ) AS images,
+                    COALESCE(
+                        (SELECT JSON_ARRAYAGG(t.value)
+                         FROM games_tags gt
+                         JOIN tags t ON gt.tagId = t.id
+                         WHERE gt.gameId = g.id),
+                        JSON_ARRAY()
+                    ) AS tags
                 FROM games g
-                LEFT JOIN game_images gi ON g.id = gi.gameId
+                ${tagJoin}
+                ${whereClause}
                 GROUP BY g.id
                 ${sortByQuery}
                 LIMIT ?
@@ -45,18 +77,22 @@ export class GameService implements IGameService {
             const games: Game[] = await this._databaseService.query<Game[]>(
                 connection,
                 query,
+                ...whereClauseValues,
                 options.limit,
                 offset
             );
 
             const countQuery: string = `
-                SELECT COUNT(*) AS totalCount
+                SELECT COUNT(DISTINCT g.id) AS totalCount
                 FROM games g
+                ${tagJoin}
+                ${whereClause}
             `;
 
             const countResult: { totalCount: number }[] = await this._databaseService.query<{ totalCount: number }[]>(
                 connection,
-                countQuery
+                countQuery,
+                ...whereClauseValues
             );
 
             const paginatedResponse: PaginatedResponse<Game> = {

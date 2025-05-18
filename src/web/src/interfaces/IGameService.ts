@@ -5,7 +5,10 @@ export abstract class IGameService {
         page?: number,
         limit?: number,
         sort?: "asc" | "desc",
-        sortBy?: "name" | "price" | "created"
+        sortBy?: "name" | "price" | "created",
+        tags?: number[],
+        minPrice?: number,
+        maxPrice?: number
     ): Promise<PaginatedResponse<Game>>;
     public abstract getGameById(id: number): Promise<Game[]>;
     public abstract getOwnedGames(): Promise<Game[]>;

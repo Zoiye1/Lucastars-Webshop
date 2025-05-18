@@ -20,6 +20,9 @@ export class GamesController {
             limit: req.query.limit ? parseInt(req.query.limit as string) : 10,
             sort: req.query.sort ? (req.query.sort as "asc" | "desc") : undefined,
             sortBy: req.query.sortBy ? (req.query.sortBy as "name" | "price" | "created") : undefined,
+            tags: req.query.tags ? (req.query.tags as string).split(",").map(Number) : undefined,
+            minPrice: req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined,
+            maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined,
         };
 
         if (options.page < 1) {
@@ -46,6 +49,31 @@ export class GamesController {
         if (options.sortBy && !["name", "price", "created"].includes(options.sortBy)) {
             res.status(400).json({
                 error: "Invalid sortBy value",
+            });
+            return;
+        }
+
+        if (options.tags && options.tags.length > 0) {
+            for (const tag of options.tags) {
+                if (isNaN(tag)) {
+                    res.status(400).json({
+                        error: "Invalid tag value",
+                    });
+                    return;
+                }
+            }
+        }
+
+        if (options.minPrice && isNaN(options.minPrice)) {
+            res.status(400).json({
+                error: "Invalid minPrice value",
+            });
+            return;
+        }
+
+        if (options.maxPrice && isNaN(options.maxPrice)) {
+            res.status(400).json({
+                error: "Invalid maxPrice value",
             });
             return;
         }

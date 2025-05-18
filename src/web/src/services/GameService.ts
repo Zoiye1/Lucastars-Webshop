@@ -6,7 +6,10 @@ export class GameService implements IGameService {
         page?: number,
         limit?: number,
         sort?: "asc" | "desc",
-        sortBy?: "name" | "price" | "created"
+        sortBy?: "name" | "price" | "created",
+        tags?: number[],
+        minPrice?: number,
+        maxPrice?: number
     ): Promise<PaginatedResponse<Game>> {
         let url: string = `${VITE_API_URL}games?page=${page}&limit=${limit}`;
 
@@ -16,6 +19,18 @@ export class GameService implements IGameService {
 
         if (sortBy) {
             url += `&sortBy=${sortBy}`;
+        }
+
+        if (tags && tags.length > 0) {
+            url += `&tags=${tags.join(",")}`;
+        }
+
+        if (minPrice) {
+            url += `&minPrice=${minPrice}`;
+        }
+
+        if (maxPrice) {
+            url += `&maxPrice=${maxPrice}`;
         }
 
         const response: Response = await fetch(url);
