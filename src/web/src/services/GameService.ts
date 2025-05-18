@@ -2,8 +2,23 @@ import { Game, GamesResponse, PaginatedResponse } from "@shared/types";
 import { IGameService } from "@web/interfaces/IGameService";
 
 export class GameService implements IGameService {
-    public async getGames(page?: number, limit?: number): Promise<PaginatedResponse<Game>> {
-        const response: Response = await fetch(`${VITE_API_URL}games?page=${page}&limit=${limit}`);
+    public async getGames(
+        page?: number,
+        limit?: number,
+        sort?: "asc" | "desc",
+        sortBy?: "name" | "price" | "created"
+    ): Promise<PaginatedResponse<Game>> {
+        let url: string = `${VITE_API_URL}games?page=${page}&limit=${limit}`;
+
+        if (sort) {
+            url += `&sort=${sort}`;
+        }
+
+        if (sortBy) {
+            url += `&sortBy=${sortBy}`;
+        }
+
+        const response: Response = await fetch(url);
 
         const gamesResponse: PaginatedResponse<Game> = await response.json() as unknown as PaginatedResponse<Game>;
 

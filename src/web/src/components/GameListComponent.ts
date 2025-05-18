@@ -1,13 +1,22 @@
 import "@web/components/GameSelectComponent";
+import "@web/components/SortingControlsComponent";
 import { Game, PaginatedResponse } from "@shared/types";
 import { html } from "@web/helpers/webComponents";
 import { GameService } from "@web/services/GameService";
+import { SortingControlsComponent } from "@web/components/SortingControlsComponent";
 
 class GameListComponent extends HTMLElement {
     private _gameService: GameService = new GameService();
     private _currentPage: number = 1;
     private _totalPages: number = 1;
     private _itemsPerPage: number = 15;
+    private _sortBy: string = "name";
+    private _sortOrder: "asc" | "desc" = "asc";
+    private _totalItems: number = 0;
+
+    private _sortingControls: SortingControlsComponent | null = null;
+    private _gamesContainer: HTMLElement | null = null;
+    private _paginationContainer: HTMLElement | null = null;
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -19,12 +28,6 @@ class GameListComponent extends HTMLElement {
         if (!this.shadowRoot) {
             return;
         }
-
-        const paginatedResponse: PaginatedResponse<Game> = await this._gameService.getGames(this._currentPage, this._itemsPerPage);
-        const games: Game[] = paginatedResponse.items;
-        this._totalPages = paginatedResponse.pagination.totalPages;
-        this._currentPage = paginatedResponse.pagination.currentPage;
-        this._itemsPerPage = paginatedResponse.pagination.itemsPerPage;
 
         const styles: HTMLElement = html`
             <style>
@@ -76,6 +79,75 @@ class GameListComponent extends HTMLElement {
             </style>
         `;
 
+        this._sortingControls = html`
+            <webshop-sorting-controls total-results="${this._totalItems}"></webshop-sorting-controls>
+        ` as SortingControlsComponent;
+
+        this._gamesContainer = html`
+            <div class="games"></div>
+        `;
+
+        this._paginationContainer = html`
+            <div class="pagination"></div>
+        `;
+
+        const element: HTMLElement = html`
+            <div>
+                ${this._sortingControls}
+                 ${this._gamesContainer}
+                <div class="pagination-container">
+                    ${this._paginationContainer}
+                </div>
+            </div>
+        `;
+
+        this.shadowRoot.innerHTML = "";
+        this.shadowRoot.append(styles, element);
+
+        await this.updateGames();
+
+        this._sortingControls.onSortChange = async (sortBy: string, sortOrder: "asc" | "desc") => {
+            this._sortBy = sortBy;
+            this._sortOrder = sortOrder;
+            this._currentPage = 1;
+            await this.updateGames();
+        };
+    }
+
+    private async updateGames(): Promise<void> {
+        if (!this.shadowRoot || !this._sortingControls || !this._gamesContainer || !this._paginationContainer) {
+            return;
+        }
+
+        const paginatedResponse: PaginatedResponse<Game> = await this._gameService.getGames(
+            this._currentPage,
+            this._itemsPerPage,
+            this._sortOrder,
+            this._sortBy as "name" | "price" | "created"
+        );
+
+        const games: Game[] = paginatedResponse.items;
+        this._totalPages = paginatedResponse.pagination.totalPages;
+        this._currentPage = paginatedResponse.pagination.currentPage;
+        this._itemsPerPage = paginatedResponse.pagination.itemsPerPage;
+        this._totalItems = paginatedResponse.pagination.totalItems;
+
+        this._gamesContainer.innerHTML = ""; // Clear existing games
+        games.forEach(game => {
+            const gameElement: HTMLElement = html`
+                <webshop-select-game
+                    gameId="${game.id}"
+                    name="${game.name}"
+                    image="${game.thumbnail}"
+                    price="${game.price}"
+                ></webshop-select-game>
+            `;
+
+            this._gamesContainer!.appendChild(gameElement);
+        });
+
+        this._sortingControls.totalResults = this._totalItems;
+
         const pageButtons: HTMLButtonElement[] = [];
 
         const startPage: number = Math.max(1, this._currentPage - 1);
@@ -107,30 +179,12 @@ class GameListComponent extends HTMLElement {
             await this.switchPage(this._currentPage + 1);
         });
 
-        const element: HTMLElement = html`
-            <div>
-                <div class="games">
-                    ${games.map(game => html`
-                        <webshop-select-game
-                            gameId="${game.id}"
-                            name="${game.name}"
-                            image="${game.thumbnail}"
-                            price="${game.price}"
-                        ></webshop-select-game>
-                    `)}
-                </div>
-                <div class="pagination-container">
-                    <div class="pagination">
-                        ${prevArrow}
-                        ${pageButtons}
-                        ${nextArrow}
-                    </div>
-                </div>
-            </div>
-        `;
-
-        this.shadowRoot.innerHTML = "";
-        this.shadowRoot.append(styles, element);
+        this._paginationContainer.innerHTML = ""; // Clear existing pagination
+        this._paginationContainer.appendChild(prevArrow);
+        pageButtons.forEach(button => {
+            this._paginationContainer!.appendChild(button);
+        });
+        this._paginationContainer.appendChild(nextArrow);
     }
 
     private async switchPage(page: number): Promise<void> {
@@ -143,7 +197,7 @@ class GameListComponent extends HTMLElement {
         }
 
         this._currentPage = page;
-        await this.render();
+        await this.updateGames();
     }
 }
 
