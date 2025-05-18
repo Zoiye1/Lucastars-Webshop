@@ -5,6 +5,9 @@ const COLOR_GREEN: string = "\x1b[32m";
 const COLOR_GRAY: string = "\x1b[90m";
 const COLOR_RESET: string = "\x1b[0m";
 
+// Type definition for records that will be passed between seeders
+export type SeederRecord = Record<string, unknown> & { id?: number };
+
 /**
  * Seeder class to seed the database with test data.
  *
@@ -34,35 +37,35 @@ export abstract class Seeder<T extends { id?: number }> {
      * Get the records to seed the database with.
      *
      * @param count The number of records to generate.
-     * @param recordIds The ids of the records to use for seeding. This is optional.
+     * @param seederRecords Contains records passed from other seeders.
      * @remarks return type should match the table columns defined in `_tableColumns`
      */
-    protected abstract getRecords(count: number, ...recordIds: number[][]): SyncOrAsync<T[]>;
+    protected abstract getRecords(count: number, seederRecords: SeederRecord[][]): SyncOrAsync<T[]>;
 
     /**
      * Get the records to seed the database with in development mode.
      *
      * @param count The number of records to generate.
-     * @param recordIds The ids of the records to use for seeding. This is optional.
+     * @param seederRecords Contains records passed from other seeders.
      * @remarks Defaults to the same as `getRecords` but can be overridden to provide different data for development.
      */
-    protected getRecordsDev(count: number, ...recordIds: number[][]): SyncOrAsync<T[]> {
-        return this.getRecords(count, ...recordIds);
+    protected getRecordsDev(count: number, seederRecords: SeederRecord[][]): SyncOrAsync<T[]> {
+        return this.getRecords(count, seederRecords);
     }
 
     /**
      * Seed the database with test data.
      *
      * @param count The number of records to generate.
-     * @param recordIds The ids of the records to use for seeding. This is optional.
+     * @param seederRecords Contains records passed from other seeders.
      */
-    public async seed(count: number, ...recordIds: number[][]): Promise<T[]> {
+    public async seed(count: number, ...seederRecords: SeederRecord[][]): Promise<T[]> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         // Get the records to insert. If we are in dev mode, we will use the dev records.
         const records: T[] = this._devMode
-            ? await this.getRecordsDev(count, ...recordIds)
-            : await this.getRecords(count, ...recordIds);
+            ? await this.getRecordsDev(count, seederRecords)
+            : await this.getRecords(count, seederRecords);
 
         if (records.length === 0) {
             console.log(`${COLOR_GRAY}No records to seed for ${this._table}${COLOR_RESET}`);
