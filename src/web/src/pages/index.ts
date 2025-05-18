@@ -19,7 +19,7 @@ export class IndexPageComponent extends HTMLElement {
         const element: HTMLElement = html`
             <webshop-layout>
                 <webshop-banner></webshop-banner> 
-                <h1>Meeste verkochte games</h1>
+                <h1>Meest verkochte games</h1>
                 <webshop-top-games></webshop-top-games>
             </webshop-layout>
         `;

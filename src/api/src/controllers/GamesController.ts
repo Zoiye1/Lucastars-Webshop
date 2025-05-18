@@ -34,6 +34,14 @@ export class GamesController {
         res.status(200).json({ games: game });
     }
 
+    public async getFiveRandomGames(_req: Request, res: Response): Promise<void> {
+        const game: Game[] = await this._gameService.getFiveRandomGames();
+
+        res.status(200).json({
+            games: game,
+        });
+    }
+
     /**
      * Handles the request to get all owned games for a user.
      */

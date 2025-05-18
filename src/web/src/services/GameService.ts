@@ -19,6 +19,15 @@ export class GameService implements IGameService {
         return gamesResponse.games;
     }
 
+    public async getFiveRandomGames(): Promise<Game[]> {
+        const url: string = `${VITE_API_URL}five-random-games`;
+        const response: Response = await fetch(url);
+
+        const gamesResponse: GamesResponse = await response.json() as unknown as GamesResponse;
+
+        return gamesResponse.games;
+    }
+
     public async getOwnedGames(id?: number): Promise<Game[]> {
         try {
             const response: Response = await fetch(`${VITE_API_URL}owned-games?id=${id}`, {

@@ -27,6 +27,7 @@ router.get("/games/search", (req, res) => gamesController.searchGames(req, res))
 router.get("/game-info", (req, res) => gamesController.getGameById(req, res));
 router.get("/games", (req, res) => gamesController.getGames(req, res));
 router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));
+router.get("/five-random-games", (req, res) => gamesController.getFiveRandomGames(req, res));
 
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
