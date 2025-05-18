@@ -1,20 +1,26 @@
 import "@web/components/GameSelectComponent";
 import "@web/components/SortingControlsComponent";
+import "@web/components/FilterControlsComponent";
 import { Game, PaginatedResponse } from "@shared/types";
 import { html } from "@web/helpers/webComponents";
 import { GameService } from "@web/services/GameService";
 import { SortingControlsComponent } from "@web/components/SortingControlsComponent";
+import { FilterControlsComponent } from "@web/components/FilterControlsComponent";
 
 class GameListComponent extends HTMLElement {
     private _gameService: GameService = new GameService();
     private _currentPage: number = 1;
     private _totalPages: number = 1;
-    private _itemsPerPage: number = 15;
+    private _itemsPerPage: number = 12;
     private _sortBy: string = "name";
     private _sortOrder: "asc" | "desc" = "asc";
     private _totalItems: number = 0;
+    private _minPrice: number = 0;
+    private _maxPrice: number = 100;
+    private _selectedTags: number[] = [];
 
     private _sortingControls: SortingControlsComponent | null = null;
+    private _filterControls: FilterControlsComponent | null = null;
     private _gamesContainer: HTMLElement | null = null;
     private _paginationContainer: HTMLElement | null = null;
 
@@ -31,6 +37,20 @@ class GameListComponent extends HTMLElement {
 
         const styles: HTMLElement = html`
             <style>
+                .games-page-container {
+                    display: flex;
+                    gap: 50px;
+                }
+                
+                .filter-sidebar {
+                    width: 250px;
+                    flex-shrink: 0;
+                }
+                
+                .games-content {
+                    flex-grow: 1;
+                }
+                
                 .games {
                     display: grid;
                     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -76,8 +96,22 @@ class GameListComponent extends HTMLElement {
                     border-color: #159eff;
                     color: white;
                 }
+                
+                @media (max-width: 768px) {
+                    .games-page-container {
+                        flex-direction: column;
+                    }
+                    
+                    .filter-sidebar {
+                        width: 100%;
+                    }
+                }
             </style>
         `;
+
+        this._filterControls = html`
+            <webshop-filter-controls></webshop-filter-controls>
+        ` as FilterControlsComponent;
 
         this._sortingControls = html`
             <webshop-sorting-controls total-results="${this._totalItems}"></webshop-sorting-controls>
@@ -92,11 +126,16 @@ class GameListComponent extends HTMLElement {
         `;
 
         const element: HTMLElement = html`
-            <div>
-                ${this._sortingControls}
-                 ${this._gamesContainer}
-                <div class="pagination-container">
-                    ${this._paginationContainer}
+            <div class="games-page-container">
+                <div class="filter-sidebar">
+                    ${this._filterControls}
+                </div>
+                <div class="games-content">
+                    ${this._sortingControls}
+                    ${this._gamesContainer}
+                    <div class="pagination-container">
+                        ${this._paginationContainer}
+                    </div>
                 </div>
             </div>
         `;
@@ -112,6 +151,14 @@ class GameListComponent extends HTMLElement {
             this._currentPage = 1;
             await this.updateGames();
         };
+
+        this._filterControls.onFilterChange = async (minPrice: number, maxPrice: number, tagIds: number[]) => {
+            this._minPrice = minPrice;
+            this._maxPrice = maxPrice;
+            this._selectedTags = tagIds;
+            this._currentPage = 1;
+            await this.updateGames();
+        };
     }
 
     private async updateGames(): Promise<void> {
@@ -123,7 +170,10 @@ class GameListComponent extends HTMLElement {
             this._currentPage,
             this._itemsPerPage,
             this._sortOrder,
-            this._sortBy as "name" | "price" | "created"
+            this._sortBy as "name" | "price" | "created",
+            this._selectedTags,
+            this._minPrice,
+            this._maxPrice
         );
 
         const games: Game[] = paginatedResponse.items;
@@ -132,7 +182,8 @@ class GameListComponent extends HTMLElement {
         this._itemsPerPage = paginatedResponse.pagination.itemsPerPage;
         this._totalItems = paginatedResponse.pagination.totalItems;
 
-        this._gamesContainer.innerHTML = ""; // Clear existing games
+        // Clear existing games
+        this._gamesContainer.innerHTML = "";
         games.forEach(game => {
             const gameElement: HTMLElement = html`
                 <webshop-select-game
@@ -179,7 +230,8 @@ class GameListComponent extends HTMLElement {
             await this.switchPage(this._currentPage + 1);
         });
 
-        this._paginationContainer.innerHTML = ""; // Clear existing pagination
+        // Clear existing pagination
+        this._paginationContainer.innerHTML = "";
         this._paginationContainer.appendChild(prevArrow);
         pageButtons.forEach(button => {
             this._paginationContainer!.appendChild(button);
