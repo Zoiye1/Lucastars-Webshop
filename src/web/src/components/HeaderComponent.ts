@@ -1,3 +1,4 @@
+import "@web/components/SearchBarComponent";
 import { html } from "@web/helpers/webComponents";
 
 /**
@@ -44,18 +45,31 @@ export class HeaderComponent extends HTMLElement {
                     height: 100%;
                     padding: 5px 0;
                 }
+
+                .logo-container {
+                    display: flex;
+                    gap: 32px;
+                }
+
+                .search-bar-container {
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                }
             </style>
         `;
 
         const element: HTMLElement = html`
             <header>
                 <div class="wrapper">
-                    <div>
+                    <div class="logo-container">
                         <a href="/index.html">
                             <img src="/images/logo.png" alt="LucaStars Logo" />
                         </a>
+                        <div class="search-bar-container">
+                            <webshop-search-bar></webshop-search-bar>
+                        </div>
                     </div>
-
                     <webshop-navigation></webshop-navigation>
                 </div>
             </header>

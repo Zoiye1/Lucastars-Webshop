@@ -22,16 +22,17 @@ export class LinkButtonComponent extends HTMLElement {
                 .link-button {
                     font-size: 25px;
                     border: none;
-                    background: #1b5fff;
+                    background: #159eff;
                     color: white;
                     padding: 5px 0;
                     border-radius: 15px;
                     font-weight: bold;
                     width: 220px;
+                    margin: 10px;
                 }
                 
                 .link-button:hover {
-                    background: #1752de;
+                    background: #159eff;
                 }
             </style>
         `;

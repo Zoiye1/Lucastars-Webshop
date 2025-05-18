@@ -54,6 +54,18 @@ export class GamesController {
         res.json(paginatedResult);
     }
 
+    public async getGameById(req: Request, res: Response): Promise<void> {
+        const id: number = Number(req.query.id as string);
+
+        if (!id) {
+            res.status(400).json({ error: "Missing 'id' parameter" });
+            return;
+        }
+
+        const game: Game[] = await this._gameService.getGameById(id);
+        res.status(200).json({ games: game });
+    }
+
     /**
      * Handles the request to get all owned games for a user.
      */
@@ -65,10 +77,30 @@ export class GamesController {
             return;
         }
 
-        const ownedGames: Game[] = await this._gameService.getOwnedGames(userId);
+        // Check if we need to get a specific game or all owned games.
+        const gameId: number | undefined = req.query.id ? Number(req.query.id) : undefined;
+
+        const ownedGames: Game[] = await this._gameService.getOwnedGames(userId, gameId);
 
         res.json({
             games: ownedGames,
         });
+    }
+
+    /**
+     * Handles the request to search for games.
+     *
+     * @remarks This will later be paginated.
+     */
+    public async searchGames(req: Request, res: Response): Promise<void> {
+        const query: string | undefined = req.query.q as string || undefined;
+
+        if (!query) {
+            res.json({ games: [] });
+            return;
+        }
+
+        const games: Game[] = await this._gameService.searchGames(query);
+        res.json({ games });
     }
 }

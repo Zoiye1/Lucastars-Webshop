@@ -7,5 +7,7 @@ export abstract class IGameService {
         sort?: "asc" | "desc",
         sortBy?: "name" | "price" | "created"
     ): Promise<PaginatedResponse<Game>>;
+    public abstract getGameById(id: number): Promise<Game[]>;
     public abstract getOwnedGames(): Promise<Game[]>;
+    public abstract searchGames(query: string): Promise<Game[]>;
 }
