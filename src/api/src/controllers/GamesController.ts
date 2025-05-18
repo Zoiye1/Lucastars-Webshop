@@ -1,6 +1,6 @@
 import { IGameService } from "@api/interfaces/IGameService";
 import { GameService } from "@api/services/GameService";
-import { Game, PaginatedResponse } from "@shared/types";
+import { Game, GetGamesOptions, PaginatedResponse } from "@shared/types";
 import { Request, Response } from "express";
 
 /**
@@ -15,24 +15,42 @@ export class GamesController {
      * @remarks This will later handle filtering and/or sorting.
      */
     public async getGames(req: Request, res: Response): Promise<void> {
-        const page: number = parseInt(req.query.page as string) || 1;
-        const limit: number = parseInt(req.query.limit as string) || 10;
+        const options: GetGamesOptions = {
+            page: req.query.page ? parseInt(req.query.page as string) : 1,
+            limit: req.query.limit ? parseInt(req.query.limit as string) : 10,
+            sort: req.query.sort ? (req.query.sort as "asc" | "desc") : undefined,
+            sortBy: req.query.sortBy ? (req.query.sortBy as "name" | "price" | "created") : undefined,
+        };
 
-        if (page < 1) {
+        if (options.page < 1) {
             res.status(400).json({
                 error: "Page must be greater than 0",
             });
             return;
         }
 
-        if (limit < 1) {
+        if (options.limit < 1) {
             res.status(400).json({
                 error: "Limit must be greater than 0",
             });
             return;
         }
 
-        const paginatedResult: PaginatedResponse<Game> = await this._gameService.getGames(page, limit);
+        if (options.sort && !["asc", "desc"].includes(options.sort)) {
+            res.status(400).json({
+                error: "Invalid sort value",
+            });
+            return;
+        }
+
+        if (options.sortBy && !["name", "price", "created"].includes(options.sortBy)) {
+            res.status(400).json({
+                error: "Invalid sortBy value",
+            });
+            return;
+        }
+
+        const paginatedResult: PaginatedResponse<Game> = await this._gameService.getGames(options);
         res.json(paginatedResult);
     }
 

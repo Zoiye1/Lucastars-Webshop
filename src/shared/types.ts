@@ -25,6 +25,20 @@ export type SecretResponse = {
 };
 
 /**
+ * Represents the query options for getting games
+ */
+export type GetGamesOptions = {
+    /** Page number for pagination */
+    page: number;
+    /** Number of items per page */
+    limit: number;
+    /** Sort order for the games */
+    sort?: "asc" | "desc";
+    /** Sort field for the games */
+    sortBy?: "name" | "price" | "created";
+};
+
+/**
  * Represents a list of games
  */
 export type GamesResponse = {

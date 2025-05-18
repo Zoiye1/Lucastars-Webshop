@@ -1,7 +1,7 @@
 import { IGameService } from "@api/interfaces/IGameService";
 import { PoolConnection } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
-import { Game, PaginatedResponse } from "@shared/types";
+import { Game, GetGamesOptions, PaginatedResponse } from "@shared/types";
 
 /**
  * Service to retrieve games from the database.
@@ -12,9 +12,13 @@ export class GameService implements IGameService {
     /**
      * Retrieves a paginated list of games.
      */
-    public async getGames(page: number, limit: number): Promise<PaginatedResponse<Game>> {
+    public async getGames(options: GetGamesOptions): Promise<PaginatedResponse<Game>> {
         const connection: PoolConnection = await this._databaseService.openConnection();
-        const offset: number = (page - 1) * limit;
+        const offset: number = (options.page - 1) * options.limit;
+
+        const sortByQuery: string = options.sortBy
+            ? `ORDER BY g.${options.sortBy} ${options.sort === "desc" ? "DESC" : "ASC"}`
+            : `ORDER BY g.name ${options.sort === "desc" ? "DESC" : "ASC"}`;
 
         try {
             const query: string = `
@@ -33,7 +37,7 @@ export class GameService implements IGameService {
                 FROM games g
                 LEFT JOIN game_images gi ON g.id = gi.gameId
                 GROUP BY g.id
-                ORDER BY g.name
+                ${sortByQuery}
                 LIMIT ?
                 OFFSET ?
             `;
@@ -41,7 +45,7 @@ export class GameService implements IGameService {
             const games: Game[] = await this._databaseService.query<Game[]>(
                 connection,
                 query,
-                limit,
+                options.limit,
                 offset
             );
 
@@ -59,9 +63,9 @@ export class GameService implements IGameService {
                 items: games,
                 pagination: {
                     totalItems: countResult[0].totalCount,
-                    totalPages: Math.ceil(countResult[0].totalCount / limit),
-                    currentPage: page,
-                    itemsPerPage: limit,
+                    totalPages: Math.ceil(countResult[0].totalCount / options.limit),
+                    currentPage: options.page,
+                    itemsPerPage: options.limit,
                 },
             };
 
