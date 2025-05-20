@@ -25,6 +25,11 @@ const cartController: CartController = new CartController();
 
 router.post("/auth/register", authController.register);
 router.post("/auth/login", authController.login);
+router.get("/games/search", (req, res) => gamesController.searchGames(req, res));
+router.get("/game-info", (req, res) => gamesController.getGameById(req, res));
+router.get("/games", (req, res) => gamesController.getGames(req, res));
+router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));
+
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
 

@@ -176,6 +176,7 @@ export class NavigationComponent extends HTMLElement {
                         `
 : `
                             <a href="/index.html">Account</a>
+                            <a href="/my-games.html">Mijn spellen</a>
                         `}
                     </div>
                 </div>
