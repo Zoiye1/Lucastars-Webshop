@@ -156,8 +156,10 @@ export class CartPageComponent extends HTMLElement {
 
             container.appendChild(totalEl);
             container.appendChild(checkoutButton);
-        } else {
+        }
+        else {
             // Toon melding als winkelmand leeg is
+            // eslint-disable-next-line @typescript-eslint/typedef
             const emptyMsg = document.createElement("p");
             emptyMsg.textContent = "Je winkelmand is leeg, voeg iets toe!";
             emptyMsg.style.textAlign = "center";

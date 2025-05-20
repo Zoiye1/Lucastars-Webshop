@@ -135,8 +135,8 @@ export class CheckoutPageComponent extends HTMLElement {
                     totalPrice: this.item!.totalPrice,
                 };
 
-                const result: CheckoutItem = await this._checkoutService.submitCheckout(data);
-                alert(result);
+                await this._checkoutService.submitCheckout(data);
+                location.href = "/my-games.html";
             }
             else {
                 alert("Vul het adres in.");
