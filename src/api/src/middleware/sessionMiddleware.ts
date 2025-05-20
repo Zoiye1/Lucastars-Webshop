@@ -1,4 +1,3 @@
-
 import { ISessionService } from "@api/interfaces/ISessionService";
 import { SessionService } from "@api/services/SessionService";
 import { NextFunction, Request, Response } from "express";
