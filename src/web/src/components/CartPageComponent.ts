@@ -124,36 +124,47 @@ export class CartPageComponent extends HTMLElement {
             ul.appendChild(li);
         });
 
-        // eslint-disable-next-line @typescript-eslint/typedef
-        const total = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
-
-        // eslint-disable-next-line @typescript-eslint/typedef
-        const totalEl = document.createElement("p");
-        totalEl.innerHTML = `<strong>Totaal:</strong> €${total}`;
-        totalEl.style.textAlign = "right";
-        totalEl.style.fontSize = "1.2rem";
-
-        // eslint-disable-next-line @typescript-eslint/typedef
-        const checkoutButton = document.createElement("button");
-        checkoutButton.textContent = "Afrekenen";
-        checkoutButton.style.marginTop = "1rem";
-        checkoutButton.style.padding = "0.75rem 1.5rem";
-        checkoutButton.style.fontSize = "1rem";
-        checkoutButton.style.backgroundColor = "#28a745";
-        checkoutButton.style.color = "white";
-        checkoutButton.style.border = "none";
-        checkoutButton.style.borderRadius = "8px";
-        checkoutButton.style.cursor = "pointer";
-        checkoutButton.onclick = () => {
-            // eslint-disable-next-line @typescript-eslint/typedef
-            const total = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-            localStorage.setItem("cart-total", total.toFixed(2));
-            window.location.href = "/checkout.html";
-        };
-
         container.appendChild(ul);
-        container.appendChild(totalEl);
-        container.appendChild(checkoutButton);
+
+        if (this.items.length > 0) {
+            // eslint-disable-next-line @typescript-eslint/typedef
+            const total = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
+
+            // eslint-disable-next-line @typescript-eslint/typedef
+            const totalEl = document.createElement("p");
+            totalEl.innerHTML = `<strong>Totaal:</strong> €${total}`;
+            totalEl.style.textAlign = "right";
+            totalEl.style.fontSize = "1.2rem";
+
+            // eslint-disable-next-line @typescript-eslint/typedef
+            const checkoutButton = document.createElement("button");
+            checkoutButton.textContent = "Afrekenen";
+            checkoutButton.style.marginTop = "1rem";
+            checkoutButton.style.padding = "0.75rem 1.5rem";
+            checkoutButton.style.fontSize = "1rem";
+            checkoutButton.style.backgroundColor = "#28a745";
+            checkoutButton.style.color = "white";
+            checkoutButton.style.border = "none";
+            checkoutButton.style.borderRadius = "8px";
+            checkoutButton.style.cursor = "pointer";
+            checkoutButton.onclick = () => {
+                // eslint-disable-next-line @typescript-eslint/typedef
+                const total = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+                localStorage.setItem("cart-total", total.toFixed(2));
+                window.location.href = "/checkout.html";
+            };
+
+            container.appendChild(totalEl);
+            container.appendChild(checkoutButton);
+        } else {
+            // Toon melding als winkelmand leeg is
+            const emptyMsg = document.createElement("p");
+            emptyMsg.textContent = "Je winkelmand is leeg, voeg iets toe!";
+            emptyMsg.style.textAlign = "center";
+            emptyMsg.style.color = "#888";
+            emptyMsg.style.fontSize = "1.1rem";
+            container.appendChild(emptyMsg);
+        }
 
         this.shadowRoot.appendChild(container);
     }
