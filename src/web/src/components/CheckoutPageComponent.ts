@@ -37,7 +37,10 @@ export class CheckoutPageComponent extends HTMLElement {
         // Professioneel gestylede invoervelden voor bezorgadres
         const userInfo: HTMLElement = document.createElement("div");
         userInfo.innerHTML = `
-            <h2>👤 Bezorginformatie</h2>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="/images/icons/account-outline.svg" alt="User Icon" />
+                <h2>Bezorginformatie</h2>
+            </div>
             <form id="address-form" style="display: flex; flex-direction: column; gap: 1rem;">
                 <div style="display: flex; gap: 1rem;">
                     <div style="flex: 2;">
@@ -100,7 +103,10 @@ export class CheckoutPageComponent extends HTMLElement {
         `;
         const payment: HTMLElement = document.createElement("div");
         payment.innerHTML = `
-            <h2>💳 Betaalmethode</h2>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="/images/icons/payment.svg" alt="User Icon" />
+                <h2>Betaalmethode</h2>
+            </div>
             <form id="payment-form" style="display: flex; flex-direction: column; gap: 1rem;">
                 <label><input type="radio" name="payment" value="ideal" checked /> iDEAL</label>
                 <label><input type="radio" name="payment" value="creditcard" /> Creditcard</label>
@@ -111,7 +117,7 @@ export class CheckoutPageComponent extends HTMLElement {
         const submitButton: HTMLElement = document.createElement("button");
         submitButton.textContent = "Bestelling plaatsen";
         submitButton.style.padding = "0.75rem";
-        submitButton.style.backgroundColor = "#007bff";
+        submitButton.style.backgroundColor = "var(--primary-color)";
         submitButton.style.color = "white";
         submitButton.style.border = "none";
         submitButton.style.borderRadius = "8px";

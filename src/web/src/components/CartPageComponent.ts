@@ -41,10 +41,25 @@ export class CartPageComponent extends HTMLElement {
         container.style.margin = "2rem auto";
 
         // eslint-disable-next-line @typescript-eslint/typedef
+        const titleContainer = document.createElement("div");
+        titleContainer.style.display = "flex";
+        titleContainer.style.justifyContent = "center";
+        titleContainer.style.gap = "10px";
+
+        // eslint-disable-next-line @typescript-eslint/typedef
         const title = document.createElement("h2");
-        title.textContent = "🛒 Mijn winkelmand";
+        title.textContent = "Mijn winkelmand";
         title.style.textAlign = "center";
-        container.appendChild(title);
+
+        // eslint-disable-next-line @typescript-eslint/typedef
+        const titleIcon = document.createElement("img");
+        titleIcon.src = "/images/icons/cart.svg";
+        titleIcon.alt = "Winkelmand";
+
+        titleContainer.appendChild(titleIcon);
+        titleContainer.appendChild(title);
+
+        container.appendChild(titleContainer);
 
         // eslint-disable-next-line @typescript-eslint/typedef
         const ul = document.createElement("ul");
@@ -109,13 +124,19 @@ export class CartPageComponent extends HTMLElement {
 
             // eslint-disable-next-line @typescript-eslint/typedef
             const btnRemove = document.createElement("button");
-            btnRemove.innerHTML = "🗑️";
+            btnRemove.innerHTML = "";
             btnRemove.style.marginLeft = "1rem";
             btnRemove.style.background = "transparent";
             btnRemove.style.border = "none";
-            btnRemove.style.fontSize = "1.5rem";
             btnRemove.style.cursor = "pointer";
             btnRemove.onclick = () => this.removeItem(index);
+
+            // eslint-disable-next-line @typescript-eslint/typedef
+            const btnIcon = document.createElement("img");
+            btnIcon.src = "/images/icons/trash.svg";
+            btnIcon.alt = "Verwijder";
+
+            btnRemove.appendChild(btnIcon);
 
             li.appendChild(img);
             li.appendChild(details);
@@ -142,7 +163,7 @@ export class CartPageComponent extends HTMLElement {
             checkoutButton.style.marginTop = "1rem";
             checkoutButton.style.padding = "0.75rem 1.5rem";
             checkoutButton.style.fontSize = "1rem";
-            checkoutButton.style.backgroundColor = "#28a745";
+            checkoutButton.style.backgroundColor = "var(--primary-color)";
             checkoutButton.style.color = "white";
             checkoutButton.style.border = "none";
             checkoutButton.style.borderRadius = "8px";
