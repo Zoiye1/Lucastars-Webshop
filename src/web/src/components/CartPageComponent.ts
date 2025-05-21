@@ -42,7 +42,7 @@ export class CartPageComponent extends HTMLElement {
 
         // eslint-disable-next-line @typescript-eslint/typedef
         const title = document.createElement("h2");
-        title.textContent = "🛒 Mijn Winkelmand";
+        title.textContent = "🛒 Mijn winkelmand";
         title.style.textAlign = "center";
         container.appendChild(title);
 
@@ -161,11 +161,29 @@ export class CartPageComponent extends HTMLElement {
             // Toon melding als winkelmand leeg is
             // eslint-disable-next-line @typescript-eslint/typedef
             const emptyMsg = document.createElement("p");
-            emptyMsg.textContent = "Je winkelmand is leeg, voeg iets toe!";
+            emptyMsg.textContent = "Wat jammer je winkelmand is leeg!";
             emptyMsg.style.textAlign = "center";
             emptyMsg.style.color = "#888";
             emptyMsg.style.fontSize = "1.1rem";
             container.appendChild(emptyMsg);
+
+            // Voeg "Shop nu" knop toe
+            // eslint-disable-next-line @typescript-eslint/typedef
+            const shopNowBtn = document.createElement("button");
+            shopNowBtn.textContent = "Shop nu";
+            shopNowBtn.style.display = "block";
+            shopNowBtn.style.margin = "1.5rem auto 0 auto";
+            shopNowBtn.style.padding = "0.75rem 1.5rem";
+            shopNowBtn.style.fontSize = "1rem";
+            shopNowBtn.style.backgroundColor = "#007bff";
+            shopNowBtn.style.color = "white";
+            shopNowBtn.style.border = "none";
+            shopNowBtn.style.borderRadius = "8px";
+            shopNowBtn.style.cursor = "pointer";
+            shopNowBtn.onclick = () => {
+                window.location.href = "/games.html";
+            };
+            container.appendChild(shopNowBtn);
         }
 
         this.shadowRoot.appendChild(container);
