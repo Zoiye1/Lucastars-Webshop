@@ -204,8 +204,6 @@ export class FilterControlsComponent extends HTMLElement {
             }
         `);
 
-        this.setupEventListeners();
-
         this._loadingComponent.show();
 
         const tags: Tag[] = await this._tagService.getTags();
@@ -222,6 +220,8 @@ export class FilterControlsComponent extends HTMLElement {
         });
 
         this._loadingComponent.hide();
+
+        this.setupEventListeners();
     }
 
     private setupEventListeners(): void {
