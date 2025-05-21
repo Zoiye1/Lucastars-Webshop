@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { IGameService } from "@api/interfaces/IGameService";
 import { GameService } from "@api/services/GameService";
-import { Game, PaginatedResponse } from "@shared/types";
+import { Game, GetGamesOptions, PaginatedResponse } from "@shared/types";
 import { createMockDatabaseService, MockDatabaseService } from "../__helpers__/databaseService.helpers";
 
 beforeEach(() => {
@@ -30,26 +30,28 @@ describe("GameService", () => {
             .mockResolvedValueOnce([{ totalCount: 1 }]);
 
         // Act
-        const page: number = 1;
-        const limit: number = 10;
-        const pagniatedGames: PaginatedResponse<Game> = await gameService.getGames(page, limit);
+        const options: GetGamesOptions = {
+            page: 1,
+            limit: 10,
+        };
+        const paginatedGames: PaginatedResponse<Game> = await gameService.getGames(options);
 
         // Assert
-        expect(pagniatedGames.items[0]).toHaveProperty("id");
-        expect(pagniatedGames.items[0]).toHaveProperty("name");
-        expect(pagniatedGames.items[0]).toHaveProperty("thumbnail");
-        expect(pagniatedGames.items[0]).toHaveProperty("description");
-        expect(pagniatedGames.items[0]).toHaveProperty("images");
-        expect(Array.isArray(pagniatedGames.items[0].images)).toBe(true);
-        expect(pagniatedGames.items[0].images.length).toBe(1);
+        expect(paginatedGames.items[0]).toHaveProperty("id");
+        expect(paginatedGames.items[0]).toHaveProperty("name");
+        expect(paginatedGames.items[0]).toHaveProperty("thumbnail");
+        expect(paginatedGames.items[0]).toHaveProperty("description");
+        expect(paginatedGames.items[0]).toHaveProperty("images");
+        expect(Array.isArray(paginatedGames.items[0].images)).toBe(true);
+        expect(paginatedGames.items[0].images.length).toBe(1);
 
-        expect(pagniatedGames.pagination.totalItems).toBe(1);
-        expect(pagniatedGames.pagination.totalPages).toBe(1);
-        expect(pagniatedGames.pagination.currentPage).toBe(page);
-        expect(pagniatedGames.pagination.itemsPerPage).toBe(limit);
+        expect(paginatedGames.pagination.totalItems).toBe(1);
+        expect(paginatedGames.pagination.totalPages).toBe(1);
+        expect(paginatedGames.pagination.currentPage).toBe(options.page);
+        expect(paginatedGames.pagination.itemsPerPage).toBe(options.limit);
     });
 
-    test("getGames should return a list of games", async () => {
+    test("getGames should return a list of paginated games", async () => {
         // Arrange
         const gameService: IGameService = new GameService();
         const mockDatabaseService: MockDatabaseService = createMockDatabaseService();
@@ -80,18 +82,20 @@ describe("GameService", () => {
             .mockResolvedValueOnce([{ totalCount: 2 }]);
 
         // Act
-        const page: number = 1;
-        const limit: number = 10;
-        const pagniatedGames: PaginatedResponse<Game> = await gameService.getGames(page, limit);
+        const options: GetGamesOptions = {
+            page: 1,
+            limit: 10,
+        };
+        const paginatedGames: PaginatedResponse<Game> = await gameService.getGames(options);
 
         // Assert
-        expect(pagniatedGames.items).toBeInstanceOf(Array);
-        expect(pagniatedGames.items.length).toBe(2);
+        expect(paginatedGames.items).toBeInstanceOf(Array);
+        expect(paginatedGames.items.length).toBe(2);
 
-        expect(pagniatedGames.pagination.totalItems).toBe(2);
-        expect(pagniatedGames.pagination.totalPages).toBe(1);
-        expect(pagniatedGames.pagination.currentPage).toBe(page);
-        expect(pagniatedGames.pagination.itemsPerPage).toBe(limit);
+        expect(paginatedGames.pagination.totalItems).toBe(2);
+        expect(paginatedGames.pagination.totalPages).toBe(1);
+        expect(paginatedGames.pagination.currentPage).toBe(options.page);
+        expect(paginatedGames.pagination.itemsPerPage).toBe(options.limit);
     });
 
     test("getGames should return an empty array if no games are found", async () => {
@@ -103,18 +107,20 @@ describe("GameService", () => {
             .mockResolvedValueOnce([{ totalCount: 0 }]);
 
         // Act
-        const page: number = 1;
-        const limit: number = 10;
-        const pagniatedGames: PaginatedResponse<Game> = await gameService.getGames(page, limit);
+        const options: GetGamesOptions = {
+            page: 1,
+            limit: 10,
+        };
+        const paginatedGames: PaginatedResponse<Game> = await gameService.getGames(options);
 
         // Assert
-        expect(pagniatedGames.items).toBeInstanceOf(Array);
-        expect(pagniatedGames.items.length).toBe(0);
+        expect(paginatedGames.items).toBeInstanceOf(Array);
+        expect(paginatedGames.items.length).toBe(0);
 
-        expect(pagniatedGames.pagination.totalItems).toBe(0);
-        expect(pagniatedGames.pagination.totalPages).toBe(0);
-        expect(pagniatedGames.pagination.currentPage).toBe(page);
-        expect(pagniatedGames.pagination.itemsPerPage).toBe(limit);
+        expect(paginatedGames.pagination.totalItems).toBe(0);
+        expect(paginatedGames.pagination.totalPages).toBe(0);
+        expect(paginatedGames.pagination.currentPage).toBe(options.page);
+        expect(paginatedGames.pagination.itemsPerPage).toBe(options.limit);
     });
 
     test("getGames should handle database errors gracefully", async () => {
@@ -124,9 +130,11 @@ describe("GameService", () => {
         mockDatabaseService.query.mockRejectedValueOnce(new Error("Database connection failed"));
 
         // Act & Assert
-        const page: number = 1;
-        const limit: number = 10;
-        await expect(gameService.getGames(page, limit)).rejects.toThrow();
+        const options: GetGamesOptions = {
+            page: 1,
+            limit: 10,
+        };
+        await expect(gameService.getGames(options)).rejects.toThrow();
     });
 
     test("getOwnedGames should return a list of games owned by a user", async () => {
