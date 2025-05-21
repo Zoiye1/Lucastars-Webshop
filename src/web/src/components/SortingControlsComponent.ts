@@ -1,9 +1,18 @@
+import { WebshopEvent } from "@web/enums/WebshopEvent";
 import { html } from "@web/helpers/webComponents";
+import { WebshopEventService } from "@web/services/WebshopEventService";
+import { GameListLoadedEvent } from "./GameListComponent";
+
+export type SortingChangeEvent = {
+    sortBy: string;
+    sortOrder: "asc" | "desc";
+};
 
 export class SortingControlsComponent extends HTMLElement {
+    private _webshopEventService: WebshopEventService = new WebshopEventService();
+
     private _sortBy: string = "name";
     private _sortOrder: "asc" | "desc" = "asc";
-    private _sortChangeCallback: ((sortBy: string, sortOrder: "asc" | "desc") => void) | null = null;
 
     private _totalResultsSpan: HTMLSpanElement | null = null;
 
@@ -11,10 +20,6 @@ export class SortingControlsComponent extends HTMLElement {
         if (this._totalResultsSpan) {
             this._totalResultsSpan.textContent = `${value} resultaten`;
         }
-    }
-
-    public set onSortChange(callback: (sortBy: string, sortOrder: "asc" | "desc") => void) {
-        this._sortChangeCallback = callback;
     }
 
     public connectedCallback(): void {
@@ -113,18 +118,29 @@ export class SortingControlsComponent extends HTMLElement {
         // Add event listeners
         sortSelect.addEventListener("change", () => {
             this._sortBy = sortSelect.value;
-            if (this._sortChangeCallback) {
-                this._sortChangeCallback(this._sortBy, this._sortOrder);
-            }
+
+            this._webshopEventService.dispatchEvent<SortingChangeEvent>(WebshopEvent.Sort, {
+                sortBy: this._sortBy,
+                sortOrder: this._sortOrder,
+            });
         });
 
         sortDirection.addEventListener("click", () => {
-            console.log("Sort direction clicked");
             this._sortOrder = this._sortOrder === "asc" ? "desc" : "asc";
             sortDirection.textContent = this._sortOrder === "asc" ? "↑" : "↓";
-            if (this._sortChangeCallback) {
-                this._sortChangeCallback(this._sortBy, this._sortOrder);
+
+            this._webshopEventService.dispatchEvent<SortingChangeEvent>(WebshopEvent.Sort, {
+                sortBy: this._sortBy,
+                sortOrder: this._sortOrder,
+            });
+        });
+
+        this._webshopEventService.addEventListener(WebshopEvent.GamesListLoaded, (event: GameListLoadedEvent) => {
+            if (!this._totalResultsSpan) {
+                return;
             }
+
+            this._totalResultsSpan.innerText = `${event.totalItems} resultaten`;
         });
     }
 }

@@ -4,13 +4,22 @@ import { css, html } from "@web/helpers/webComponents";
 import { RangeSlider } from "toolcool-range-slider";
 import { TagService } from "@web/services/TagService";
 import { Tag } from "@shared/types";
+import { WebshopEventService } from "@web/services/WebshopEventService";
+import { WebshopEvent } from "@web/enums/WebshopEvent";
 
 type SliderChangeEvent = CustomEvent<{
     value1: number;
     value2: number;
 }>;
 
+export type FilterChangeEvent = {
+    minPrice: number;
+    maxPrice: number;
+    tags: number[];
+};
+
 export class FilterControlsComponent extends HTMLElement {
+    private _webshopEventService: WebshopEventService = new WebshopEventService();
     private _tagService: TagService = new TagService();
 
     private _minPrice: number = 5;
@@ -22,12 +31,6 @@ export class FilterControlsComponent extends HTMLElement {
     private _rangeSlider: RangeSlider | null = null;
     private _minPriceSpan: HTMLSpanElement | null = null;
     private _maxPriceSpan: HTMLSpanElement | null = null;
-
-    private _filterChangeCallback: ((minPrice: number, maxPrice: number, tagIds: number[]) => void) | null = null;
-
-    public set onFilterChange(callback: (minPrice: number, maxPrice: number, tagIds: number[]) => void) {
-        this._filterChangeCallback = callback;
-    }
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -239,13 +242,11 @@ export class FilterControlsComponent extends HTMLElement {
         });
 
         applyButton.addEventListener("click", () => {
-            if (this._filterChangeCallback) {
-                this._filterChangeCallback(
-                    this._selectedMinPrice,
-                    this._selectedMaxPrice,
-                    this._selectedTags
-                );
-            }
+            this._webshopEventService.dispatchEvent<FilterChangeEvent>(WebshopEvent.Filter, {
+                minPrice: this._selectedMinPrice,
+                maxPrice: this._selectedMaxPrice,
+                tags: this._selectedTags,
+            });
         });
 
         clearButton.addEventListener("click", () => {
@@ -260,9 +261,11 @@ export class FilterControlsComponent extends HTMLElement {
                 checkbox.checked = false;
             });
 
-            if (this._filterChangeCallback) {
-                this._filterChangeCallback(this._minPrice, this._maxPrice, []);
-            }
+            this._webshopEventService.dispatchEvent<FilterChangeEvent>(WebshopEvent.Filter, {
+                minPrice: this._selectedMinPrice,
+                maxPrice: this._selectedMaxPrice,
+                tags: [],
+            });
         });
     }
 }

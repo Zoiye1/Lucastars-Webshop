@@ -6,7 +6,7 @@ export class GameService implements IGameService {
         page?: number,
         limit?: number,
         sort?: "asc" | "desc",
-        sortBy?: "name" | "price" | "created",
+        sortBy?: string,
         tags?: number[],
         minPrice?: number,
         maxPrice?: number
