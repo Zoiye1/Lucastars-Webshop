@@ -15,6 +15,13 @@ export class CartService {
         });
     }
 
+    public async deleteCartItem(gameId: number): Promise<void> {
+        await fetch(`${VITE_API_URL}cart/${gameId}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+    }
+
     public async createCart(data: CartItem): Promise<ICartResponse> {
         const url: string = `${VITE_API_URL}create-cart`;
         const response: Response = await fetch(url, {

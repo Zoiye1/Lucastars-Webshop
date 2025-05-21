@@ -227,7 +227,14 @@ export class GameInfoComponent extends HTMLElement {
 
         const cartButton: HTMLElement = element.querySelector("#add-to-cart-button")!;
         cartButton.addEventListener("click", async () => {
-            const cartResponse: ICartResponse = await this.cartService.createCart({ gameId: id, quantity: 1 });
+            const cartResponse: ICartResponse = await this.cartService.createCart({
+                gameId: id, quantity: 1,
+                userId: 0,
+                thumbnail: "",
+                name: "",
+                description: "",
+                price: 0,
+            });
             if (cartResponse.success) {
                 this.showPopup(
                     "Toegevoegd aan de winkelmand",

@@ -24,6 +24,23 @@ export type SecretResponse = {
     userId: string;
 };
 
+export type CheckoutItem = {
+    street: string | null;
+    houseNumber: string | null;
+    postalCode: string | null;
+    city: string | null;
+    totalPrice: number;
+};
+
+export type CartItem = {
+    userId: number;
+    gameId: number;
+    quantity: number;
+    thumbnail: string;
+    name: string;
+    description: string;
+    price: number;
+};
 /**
  * Represents the query options for getting games
  */
@@ -108,11 +125,6 @@ export type OrdersGames = {
     name: string;
     thumbnail: string;
     price: number;
-};
-
-export type CartItem = {
-    gameId: number;
-    quantity: number;
 };
 
 export interface IUser {
