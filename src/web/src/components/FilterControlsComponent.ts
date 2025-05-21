@@ -165,7 +165,7 @@ export class FilterControlsComponent extends HTMLElement {
                 </div>
                 
                 <div class="filter-section">
-                    <div class="filter-section-title">Filter op labels</div>
+                    <div class="filter-section-title">Filter op categorieën</div>
                     <div class="tag-list">
                         ${tags.map(tag => html`
                                 <label class="tag-checkbox">
