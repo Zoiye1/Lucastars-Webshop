@@ -1,4 +1,5 @@
 import "toolcool-range-slider";
+import "@web/components/LoadingComponent";
 
 import { css, html } from "@web/helpers/webComponents";
 import { RangeSlider } from "toolcool-range-slider";
@@ -6,6 +7,7 @@ import { TagService } from "@web/services/TagService";
 import { Tag } from "@shared/types";
 import { WebshopEventService } from "@web/services/WebshopEventService";
 import { WebshopEvent } from "@web/enums/WebshopEvent";
+import { LoadingComponent } from "./LoadingComponent";
 
 type SliderChangeEvent = CustomEvent<{
     value1: number;
@@ -31,6 +33,8 @@ export class FilterControlsComponent extends HTMLElement {
     private _rangeSlider: RangeSlider | null = null;
     private _minPriceSpan: HTMLSpanElement | null = null;
     private _maxPriceSpan: HTMLSpanElement | null = null;
+
+    private _loadingComponent: LoadingComponent = html`<webshop-loading></webshop-loading>` as LoadingComponent;
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -149,10 +153,12 @@ export class FilterControlsComponent extends HTMLElement {
             <span>${this._selectedMaxPrice}</span>
         ` as HTMLSpanElement;
 
-        const tags: Tag[] = await this._tagService.getTags();
+        const tagList: HTMLElement = html`
+            <div class="tag-list"></div>
+        `;
 
         const element: HTMLElement = html`
-            <div class="filter-container">                
+            <div class="filter-container">
                 <div class="filter-section">
                     <div class="filter-section-title">Filter op prijs</div>
                     ${this._rangeSlider}
@@ -166,16 +172,8 @@ export class FilterControlsComponent extends HTMLElement {
                 
                 <div class="filter-section">
                     <div class="filter-section-title">Filter op categorieën</div>
-                    <div class="tag-list">
-                        ${tags.map(tag => html`
-                                <label class="tag-checkbox">
-                                    <input type="checkbox" value="${tag.id}" 
-                                           ?checked=${this._selectedTags.includes(tag.id)} />
-                                    ${tag.value}
-                                </label>
-                            `
-                        )}
-                    </div>
+                    ${this._loadingComponent}
+                    ${tagList}
                 </div>
                 
                 <div class="filter-actions">
@@ -207,6 +205,23 @@ export class FilterControlsComponent extends HTMLElement {
         `);
 
         this.setupEventListeners();
+
+        this._loadingComponent.show();
+
+        const tags: Tag[] = await this._tagService.getTags();
+
+        tags.forEach(tag => {
+            const tagCheckbox: HTMLElement = html`
+                <label class="tag-checkbox">
+                    <input type="checkbox" value="${tag.id}" ?checked=${this._selectedTags.includes(tag.id)} />
+                    ${tag.value}
+                </label>
+            `;
+
+            tagList.append(tagCheckbox);
+        });
+
+        this._loadingComponent.hide();
     }
 
     private setupEventListeners(): void {

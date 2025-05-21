@@ -1,4 +1,5 @@
 import "@web/components/GameSelectComponent";
+import "@web/components/LoadingComponent";
 import { Game, PaginatedResponse } from "@shared/types";
 import { html } from "@web/helpers/webComponents";
 import { GameService } from "@web/services/GameService";
@@ -6,6 +7,7 @@ import { WebshopEventService } from "@web/services/WebshopEventService";
 import { WebshopEvent } from "@web/enums/WebshopEvent";
 import { FilterChangeEvent } from "./FilterControlsComponent";
 import { SortingChangeEvent } from "./SortingControlsComponent";
+import { LoadingComponent } from "./LoadingComponent";
 
 export type GameListLoadedEvent = {
     totalPages: number;
@@ -37,6 +39,7 @@ export class GameListComponent extends HTMLElement {
 
     private _gamesContainer: HTMLElement | null = null;
     private _paginationContainer: HTMLElement | null = null;
+    private _loadingComponent: LoadingComponent = html`<webshop-loading></webshop-loading>` as LoadingComponent;
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -113,6 +116,8 @@ export class GameListComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <div class="games-content">
+                ${this._loadingComponent}
+
                 ${this._gamesContainer}
                 <div>
                     ${this._paginationContainer}
@@ -145,6 +150,11 @@ export class GameListComponent extends HTMLElement {
             return;
         }
 
+        // Clear existing games
+        this._gamesContainer.innerHTML = "";
+
+        this._loadingComponent.show();
+
         const paginatedResponse: PaginatedResponse<Game> = await this._gameService.getGames(
             this._currentPage,
             this._itemsPerPage,
@@ -161,8 +171,6 @@ export class GameListComponent extends HTMLElement {
         this._itemsPerPage = paginatedResponse.pagination.itemsPerPage;
         this._totalItems = paginatedResponse.pagination.totalItems;
 
-        // Clear existing games
-        this._gamesContainer.innerHTML = "";
         games.forEach(game => {
             const gameElement: HTMLElement = html`
                 <webshop-select-game
@@ -221,6 +229,8 @@ export class GameListComponent extends HTMLElement {
             itemsPerPage: this._itemsPerPage,
             totalItems: this._totalItems,
         });
+
+        this._loadingComponent.hide();
     }
 
     private async switchPage(page: number): Promise<void> {
