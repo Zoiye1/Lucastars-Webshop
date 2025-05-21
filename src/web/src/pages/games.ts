@@ -30,6 +30,16 @@ class GamesPageComponent extends HTMLElement {
                 webshop-filter-controls {
                     max-width: 250px;
                 }
+
+                @media (max-width: 768px) {
+                    .games-container {
+                        flex-direction: column;
+                    }
+
+                    webshop-filter-controls {
+                        max-width: 100%;
+                    }
+                }
             </style>
         `;
 
