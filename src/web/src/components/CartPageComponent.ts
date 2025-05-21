@@ -196,7 +196,7 @@ export class CartPageComponent extends HTMLElement {
             shopNowBtn.style.margin = "1.5rem auto 0 auto";
             shopNowBtn.style.padding = "0.75rem 1.5rem";
             shopNowBtn.style.fontSize = "1rem";
-            shopNowBtn.style.backgroundColor = "#007bff";
+            shopNowBtn.style.backgroundColor = "var(--primary-color)";
             shopNowBtn.style.color = "white";
             shopNowBtn.style.border = "none";
             shopNowBtn.style.borderRadius = "8px";
