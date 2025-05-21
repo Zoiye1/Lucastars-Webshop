@@ -1,9 +1,8 @@
 import { html } from "@web/helpers/webComponents";
 import "@web/components/GameSelectComponent";
 import { OrdersGamesService } from "@web/services/OrdersGamesService";
-import { ICartResponse, OrdersGames } from "@shared/types";
-import { ICartService } from "@web/interfaces/ICartService";
-import { CartService } from "@web/services/CartService";
+import { OrdersGames } from "@shared/types";
+
 /**
  * This component demonstrates the use of sessions, cookies and Services.
  *
@@ -11,7 +10,6 @@ import { CartService } from "@web/services/CartService";
  */
 export class TopGamesComponent extends HTMLElement {
     private _ordersGamesService: OrdersGamesService = new OrdersGamesService();
-    private cartService: ICartService = new CartService();
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -38,32 +36,6 @@ export class TopGamesComponent extends HTMLElement {
                     justify-content: space-evenly;
                     flex-wrap: wrap;
                 }
-
-                #message-container {
-                    display: none;
-                    width: 100%;
-                    height: 100vh;
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    z-index: 1;
-                    pointer-events: none;
-                    justify-content: end;
-                }
-
-                #message {
-                    transition: 0.3s;
-                    height: 50px;
-                    padding: 0 20px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    color: white;
-                    font-weight: bold;
-                    border-radius: 15px;
-                    position: relative;
-                    top: 68px;
-                }
             </style>
         `;
 
@@ -77,42 +49,11 @@ export class TopGamesComponent extends HTMLElement {
                 </webshop-select-game>
             `;
 
-            gameElement.addEventListener("add-to-cart", async event => {
-                const customEvent: CustomEvent = event as CustomEvent;
-                const { gameId } = customEvent.detail as { gameId: number };
-
-                const cartResponse: ICartResponse = await this.cartService.createCart({
-                    gameId: gameId,
-                    quantity: 1,
-                    userId: 0,
-                    thumbnail: "",
-                    name: "",
-                    description: "",
-                    price: 0,
-                });
-
-                if (cartResponse.success) {
-                    this.showPopup(
-                        "Toegevoegd aan de winkelmand",
-                        "success"
-                    );
-                }
-                else {
-                    this.showPopup(
-                        "Je bent niet ingelogd",
-                        "warning"
-                    );
-                }
-            });
-
             return gameElement; // ← important!
         });
 
         const element: HTMLElement = html`
             <section class="top-games">
-                <div id="message-container">
-                    <p id="message"></p>
-                </div>
                 ${gameElements}
             </section>
         `;
@@ -154,43 +95,6 @@ export class TopGamesComponent extends HTMLElement {
             .slice(0, topN);
 
         return topGames;
-    }
-
-    private showPopup(message: string, type: string = "warning"): void {
-        const messageContainerElement: HTMLElement = this.shadowRoot!.querySelector("#message-container")!;
-        const messageElement: HTMLElement = this.shadowRoot!.querySelector("#message")!;
-
-        // Reset position & show container
-        messageElement.style.right = "-200px";
-        messageContainerElement.style.display = "flex";
-
-        // Slide in after a tiny delay to trigger CSS transition
-        setTimeout(() => {
-            messageElement.style.right = "18px";
-        }, 20);
-
-        // Set message and background color
-        messageElement.innerHTML = message;
-        switch (type) {
-            case "success":
-                messageElement.style.backgroundColor = "#159eff";
-                break;
-            case "warning":
-                messageElement.style.backgroundColor = "orange";
-                break;
-            case "error":
-                messageElement.style.backgroundColor = "red";
-                break;
-        }
-
-        // Auto-hide after 4 seconds
-        setTimeout(() => {
-            messageElement.style.right = "-400px";
-
-            setTimeout(() => {
-                messageContainerElement.style.display = "none";
-            }, 300);
-        }, 2000);
     }
 }
 

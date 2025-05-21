@@ -10,4 +10,6 @@ export enum WebshopEvent {
     Sort = "sort",
     /** Represents the Game List page loaded event */
     GamesListLoaded = "gamesListLoaded",
+    /** Represents the Item added to cart event */
+    AddToCart = "addToCart",
 };
