@@ -89,7 +89,7 @@ export class CartPageComponent extends HTMLElement {
 
             // eslint-disable-next-line @typescript-eslint/typedef
             const price = document.createElement("p");
-            price.innerHTML = `<strong>Prijs:</strong> €${Number(item.price).toFixed(2)}`;
+            price.innerHTML = `<strong>Prijs:</strong> <span style= "color: red;">€${Number(item.price).toFixed(2)}<span>`;
             price.style.margin = "0.25rem 0";
 
             // eslint-disable-next-line @typescript-eslint/typedef
@@ -132,7 +132,7 @@ export class CartPageComponent extends HTMLElement {
 
             // eslint-disable-next-line @typescript-eslint/typedef
             const totalEl = document.createElement("p");
-            totalEl.innerHTML = `<strong>Totaal:</strong> €${total}`;
+            totalEl.innerHTML = `<strong>Totaal:</strong> <span style= "color: red;">€${total}<span>`;
             totalEl.style.textAlign = "right";
             totalEl.style.fontSize = "1.2rem";
 
