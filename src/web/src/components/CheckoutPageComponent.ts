@@ -98,7 +98,7 @@ export class CheckoutPageComponent extends HTMLElement {
                         </label>
                     </div>
                 </div>
-                <p style="margin-top: 1rem;"><strong>Totaal:</strong> €${this.item.totalPrice.toFixed(2)}</p>
+                <p style="margin-top: 1rem;"><strong>Totaal:</strong> <span style= "color: red;">€${this.item.totalPrice.toFixed(2)}</span></p>
             </form>
         `;
         const payment: HTMLElement = document.createElement("div");
