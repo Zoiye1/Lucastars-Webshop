@@ -1,6 +1,7 @@
 // src/pages/cart.ts
 import "@web/components/LayoutComponent";
 import "@web/components/CartPageComponent";
+import "@web/components/AuthProviderComponent";
 import { html } from "@web/helpers/webComponents";
 
 class CartPageComponent extends HTMLElement {
@@ -14,7 +15,9 @@ class CartPageComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <webshop-layout>
-                <webshop-cartpage></webshop-cartpage>
+                <webshop-auth-provider>
+                    <webshop-cartpage></webshop-cartpage>
+                </webshop-auth-provider>
             </webshop-layout>
         `;
 
