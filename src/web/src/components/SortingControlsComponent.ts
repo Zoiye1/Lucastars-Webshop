@@ -91,7 +91,7 @@ export class SortingControlsComponent extends HTMLElement {
 
         const sortDirection: HTMLButtonElement = html`
             <button class="sort-direction" id="sort-direction">
-                ${this._sortOrder === "asc" ? "↑" : "↓"}
+                <img src="/images/icons/arrow-${this._sortOrder === "asc" ? "up" : "down"}.svg" alt="Sort direction" />
             </button>
         ` as HTMLButtonElement;
 
@@ -127,7 +127,7 @@ export class SortingControlsComponent extends HTMLElement {
 
         sortDirection.addEventListener("click", () => {
             this._sortOrder = this._sortOrder === "asc" ? "desc" : "asc";
-            sortDirection.textContent = this._sortOrder === "asc" ? "↑" : "↓";
+            sortDirection.querySelector("img")!.src = `/images/icons/arrow-${this._sortOrder === "asc" ? "up" : "down"}.svg`;
 
             this._webshopEventService.dispatchEvent<SortingChangeEvent>(WebshopEvent.Sort, {
                 sortBy: this._sortBy,
