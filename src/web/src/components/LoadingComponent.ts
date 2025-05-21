@@ -1,7 +1,18 @@
 import { html } from "@web/helpers/webComponents";
 
+/**
+ * Displays a loading spinner.
+ *
+ * @remarks This component will only show the spinner when the `show` method is called.
+ *          The spinner will also be hidden after a delay of 300ms to prevent flickering.
+ */
 export class LoadingComponent extends HTMLElement {
+    private showTimer: number | null = null;
+    private delayMs: number = 300;
+
     public connectedCallback(): void {
+        this.style.display = "none";
+
         this.attachShadow({ mode: "open" });
         this.render();
     }
@@ -57,11 +68,30 @@ export class LoadingComponent extends HTMLElement {
     }
 
     public show(): void {
-        this.style.display = "flex";
+        this.clearTimer();
+
+        this.showTimer = window.setTimeout(() => {
+            this.style.display = "flex";
+            this.showTimer = null;
+        }, this.delayMs);
     }
 
     public hide(): void {
+        this.clearTimer();
         this.style.display = "none";
+    }
+
+    private clearTimer(): void {
+        if (this.showTimer === null) {
+            return;
+        }
+
+        clearTimeout(this.showTimer);
+        this.showTimer = null;
+    }
+
+    public disconnectedCallback(): void {
+        this.clearTimer();
     }
 }
 
