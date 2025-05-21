@@ -154,9 +154,14 @@ export class NavigationComponent extends HTMLElement {
 
         const navigation: HTMLElement = html`
             <nav>
-                <a href="/index.html">
+                <a href="/my-games.html">
+                    <img src="/images/icons/gamepad.svg" alt="Gamepad icon" />
+                    <span>Mijn spellen</span>
+                </a>
+
+                <a href="/cart.html">
                     <img src="/images/icons/cart.svg" alt="Cart icon" />
-                    <span>Winkelmand (0)</span>
+                    <span>Winkelmand</span>
                 </a>
 
                 <div class ="dropdown">

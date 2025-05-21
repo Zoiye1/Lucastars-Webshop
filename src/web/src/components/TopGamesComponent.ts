@@ -81,7 +81,16 @@ export class TopGamesComponent extends HTMLElement {
                 const customEvent: CustomEvent = event as CustomEvent;
                 const { gameId } = customEvent.detail as { gameId: number };
 
-                const cartResponse: ICartResponse = await this.cartService.createCart({ gameId: gameId, quantity: 1 });
+                const cartResponse: ICartResponse = await this.cartService.createCart({
+                    gameId: gameId,
+                    quantity: 1,
+                    userId: 0,
+                    thumbnail: "",
+                    name: "",
+                    description: "",
+                    price: 0,
+                });
+
                 if (cartResponse.success) {
                     this.showPopup(
                         "Toegevoegd aan de winkelmand",
