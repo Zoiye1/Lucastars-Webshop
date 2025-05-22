@@ -102,8 +102,6 @@ export type Game = {
      * @remarks This will only be filled if the user owns the game
      */
     url?: string;
-    /** Value of the game's tag */
-    value: string;
 };
 
 /**

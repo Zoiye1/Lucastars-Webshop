@@ -370,7 +370,7 @@ export class BannerComponent extends HTMLElement {
                                     />
                                 </div>
                             </div>
-                            <h3 class="status">${games[i].value}</h3>
+                            <h3 class="status">${games[i].tags[0] ? games[i].tags[0] : "N/A"}</h3>
                             <p class="price">€${games[i].price}</p>
                         </div>
                     </div>
@@ -384,7 +384,7 @@ export class BannerComponent extends HTMLElement {
                     <a class="scrollable-card" href="/game-info.html?id=${game.id}">
                         <img src="${game.thumbnail}" alt="${game.name}"/>
                         <div class="title">${game.name}</div>
-                        <div class="status">${game.value}</div>
+                        <div class="status">${game.tags[0] ? game.tags[0] : "N/A"}</div>
                         <div class="price">€${game.price}</div>
                     </a>
                 `)}
