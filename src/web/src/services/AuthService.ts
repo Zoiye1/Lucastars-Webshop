@@ -73,8 +73,6 @@ class AuthService {
 
             console.log("Response status:", response.status, response.statusText);
 
-
-
             // Rest of the method remains the same...
             // Try to read the response text first
             let text: string;
