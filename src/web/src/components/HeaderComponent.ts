@@ -23,7 +23,6 @@ export class HeaderComponent extends HTMLElement {
                     height: var(--header-height);
                     background-color: var(--header-background-color);
                     border-bottom: 1px solid var(--border-color);
-                    padding: 0 1em;
                 }
 
                 div.wrapper {

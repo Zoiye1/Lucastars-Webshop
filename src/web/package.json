@@ -18,5 +18,8 @@
         "@testing-library/user-event": "14.6.1",
         "glob": "11.0.1",
         "jsdom": "26.0.0"
+    },
+    "dependencies": {
+        "toolcool-range-slider": "^4.0.28"
     }
 }

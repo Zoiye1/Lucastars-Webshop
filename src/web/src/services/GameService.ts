@@ -1,13 +1,43 @@
-import { Game, GamesResponse } from "@shared/types";
+import { Game, GamesResponse, PaginatedResponse } from "@shared/types";
 import { IGameService } from "@web/interfaces/IGameService";
 
 export class GameService implements IGameService {
-    public async getGames(): Promise<Game[]> {
-        const response: Response = await fetch(`${VITE_API_URL}games`);
+    public async getGames(
+        page?: number,
+        limit?: number,
+        sort?: "asc" | "desc",
+        sortBy?: string,
+        tags?: number[],
+        minPrice?: number,
+        maxPrice?: number
+    ): Promise<PaginatedResponse<Game>> {
+        let url: string = `${VITE_API_URL}games?page=${page}&limit=${limit}`;
 
-        const gamesReponse: GamesResponse = await response.json() as unknown as GamesResponse;
+        if (sort) {
+            url += `&sort=${sort}`;
+        }
 
-        return gamesReponse.games;
+        if (sortBy) {
+            url += `&sortBy=${sortBy}`;
+        }
+
+        if (tags && tags.length > 0) {
+            url += `&tags=${tags.join(",")}`;
+        }
+
+        if (minPrice) {
+            url += `&minPrice=${minPrice}`;
+        }
+
+        if (maxPrice) {
+            url += `&maxPrice=${maxPrice}`;
+        }
+
+        const response: Response = await fetch(url);
+
+        const gamesResponse: PaginatedResponse<Game> = await response.json() as unknown as PaginatedResponse<Game>;
+
+        return gamesResponse;
     }
 
     public async getGameById(id: number): Promise<Game[]> {
@@ -25,9 +55,9 @@ export class GameService implements IGameService {
                 credentials: "include",
             });
 
-            const gamesReponse: GamesResponse = await response.json() as unknown as GamesResponse;
+            const gamesResponse: GamesResponse = await response.json() as unknown as GamesResponse;
 
-            return gamesReponse.games;
+            return gamesResponse.games;
         }
         catch (error) {
             console.error("Error fetching owned games:", error);
