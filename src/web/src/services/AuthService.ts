@@ -73,14 +73,7 @@ class AuthService {
 
             console.log("Response status:", response.status, response.statusText);
 
-            // Check if response is ok
-            if (!response.ok) {
-                console.error(`Server returned ${response.status}: ${response.statusText}`);
-                return {
-                    success: false,
-                    message: `Server error: ${response.status} ${response.statusText}`,
-                };
-            }
+
 
             // Rest of the method remains the same...
             // Try to read the response text first
@@ -147,15 +140,6 @@ class AuthService {
             });
 
             console.log("Login response status:", response.status, response.statusText);
-
-            // Check if response is ok
-            if (!response.ok) {
-                console.error(`Server returned ${response.status}: ${response.statusText}`);
-                return {
-                    success: false,
-                    message: `Server error: ${response.status} ${response.statusText}`,
-                };
-            }
 
             // Try to read the response text first
             let text: string;
