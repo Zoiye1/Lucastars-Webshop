@@ -29,47 +29,15 @@ export class TopGamesComponent extends HTMLElement {
         // Use the OrdersGames type directly
         const games: { gameId: number; name: string; thumbnail: string; price: number }[] = this.getTopGames(ordersGames, 10);
 
-        // const games: { gameId: number; name: string; thumbnail: string; price: number }[] =
-        //     [
-        //         {
-        //             gameId: 16,
-        //             name: "naam",
-        //             thumbnail: "foto",
-        //             price: 500,
-        //         },
-        //         {
-        //             gameId: 16,
-        //             name: "naam",
-        //             thumbnail: "foto",
-        //             price: 500,
-        //         },
-        //         {
-        //             gameId: 16,
-        //             name: "naam",
-        //             thumbnail: "foto",
-        //             price: 500,
-        //         },
-        //         {
-        //             gameId: 16,
-        //             name: "naam",
-        //             thumbnail: "foto",
-        //             price: 500,
-        //         },
-        //         {
-        //             gameId: 16,
-        //             name: "naam",
-        //             thumbnail: "foto",
-        //             price: 500,
-        //         },
-        //     ];
-
         const styles: HTMLElement = html`
             <style>
                 .slider-container {
                     display: flex;
                     align-items: center;
                     gap: 10px;
-                    width: 971px;
+                    width: 100%;
+                    max-width: 971px;
+                    position: relative;
                 }
 
                 .slider-view {
@@ -141,6 +109,20 @@ export class TopGamesComponent extends HTMLElement {
                     border-radius: 15px;
                     position: relative;
                     top: 68px;
+                }
+                
+                @media only screen and (max-width: 968px) {
+                    .slider-track {
+                        flex-wrap: wrap;
+                        justify-content: space-evenly;
+                    }
+                    .arrow {
+                        display: none;
+                    }
+                    .slider-view {
+                        display: flex;
+                        justify-content: center;
+                    }
                 }
             </style>
         `;

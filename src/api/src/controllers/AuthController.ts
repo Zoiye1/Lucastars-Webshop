@@ -124,7 +124,6 @@ export class AuthController {
  */
     public login = async (req: Request, res: Response): Promise<void> => {
         try {
-            console.log("Login request received:", req.body);
             const { email, password } = req.body as { email: string; password: string };
 
             // Basic validation

@@ -162,15 +162,26 @@ export class GameService implements IGameService {
 
         try {
             const query: string = `
-            SELECT 
-                id,
-                name,
-                thumbnail,
-                description,
-                price
-            FROM GAMES
-            ORDER BY RAND()
-            LIMIT 5;
+                SELECT 
+                    g.id,
+                    g.name,
+                    g.thumbnail,
+                    g.description,
+                    g.price,
+                    t.value AS value,
+                    IF(
+                        COUNT(gi.imageUrl) = 0, 
+                        JSON_ARRAY(), 
+                        JSON_ARRAYAGG(gi.imageUrl)
+                    ) AS images
+                FROM games g
+                INNER JOIN games_tags gt ON g.id = gt.gameId
+                INNER JOIN tags t ON gt.tagId = t.id
+                LEFT JOIN game_images gi ON g.id = gi.gameId
+                WHERE gt.tagId IN (3, 5)
+                GROUP BY g.id, t.value
+                ORDER BY RAND()
+                LIMIT 5;
         `;
 
             return await this._databaseService.query<Game[]>(connection, query);
