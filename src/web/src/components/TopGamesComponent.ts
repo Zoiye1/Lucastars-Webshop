@@ -82,32 +82,6 @@ export class TopGamesComponent extends HTMLElement {
                     justify-content: space-evenly;
                     flex-wrap: wrap;
                 }
-
-                #message-container {
-                    display: none;
-                    width: 100%;
-                    height: 100vh;
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    z-index: 1;
-                    pointer-events: none;
-                    justify-content: end;
-                }
-
-                #message {
-                    transition: 0.3s;
-                    height: 50px;
-                    padding: 0 20px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    color: white;
-                    font-weight: bold;
-                    border-radius: 15px;
-                    position: relative;
-                    top: 68px;
-                }
                 
                 @media only screen and (max-width: 968px) {
                     .slider-track {
@@ -135,35 +109,13 @@ export class TopGamesComponent extends HTMLElement {
                 </webshop-select-game>
             `;
 
-            return gameElement; // ← important!
-            gameElement.addEventListener("add-to-cart", async event => {
-                const customEvent: CustomEvent = event as CustomEvent;
-                const { gameId } = customEvent.detail as { gameId: number };
-
-                const cartResponse: ICartResponse = await this.cartService.createCart({ gameId: gameId, quantity: 1 });
-                if (cartResponse.success) {
-                    this.showPopup(
-                        "Toegevoegd aan de winkelmand",
-                        "success"
-                    );
-                }
-                else {
-                    this.showPopup(
-                        "Je bent niet ingelogd",
-                        "warning"
-                    );
-                }
-            });
+            return gameElement;
 
             return gameElement;
         });
 
         const element: HTMLElement = html`
             <section class="top-games">
-                ${gameElements}
-                <div id="message-container">
-                    <p id="message"></p>
-                </div>
                 <div class="slider-container">
                     <button id="prev" class="arrow">&#9664;</button>
 
