@@ -108,9 +108,6 @@ export class TopGamesComponent extends HTMLElement {
                     price="${game.price}">
                 </webshop-select-game>
             `;
-
-            return gameElement;
-
             return gameElement;
         });
 
