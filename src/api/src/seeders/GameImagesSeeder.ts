@@ -1,6 +1,7 @@
 import { ExternalGamesService, GamesApiResponse } from "@api/services/ExternalGamesService";
-import { Seeder } from "./Seeder";
+import { Seeder, SeederRecord } from "./Seeder";
 import { faker } from "@faker-js/faker";
+import { GameRecord } from "./GameSeeder";
 
 type GameImageRecord = {
     id?: number;
@@ -49,13 +50,14 @@ export class GameImagesSeeder extends Seeder<GameImageRecord> {
     /**
      * @inheritdoc
      */
-    protected getRecordsDev(count: number, gameIds: number[]): GameImageRecord[] {
+    protected getRecordsDev(count: number, seederRecords: SeederRecord[][]): GameImageRecord[] {
         const records: GameImageRecord[] = [];
+        const gameRecords: GameRecord[] = seederRecords[0] as GameRecord[];
 
-        for (const gameId of gameIds) {
+        for (const gameRecord of gameRecords) {
             for (let i: number = 0; i < count; i++) {
                 records.push({
-                    gameId: gameId,
+                    gameId: gameRecord.id!,
                     imageUrl: faker.image.url(),
                     sortOrder: i,
                 });

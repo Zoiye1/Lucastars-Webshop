@@ -1,6 +1,6 @@
 import { ExternalGamesService, GamesApiResponse } from "@api/services/ExternalGamesService";
 import { ExternalGamesPriceService } from "@api/services/ExternalGamesPriceService";
-import { Seeder } from "./Seeder";
+import { Seeder, SeederRecord } from "./Seeder";
 import { faker } from "@faker-js/faker";
 
 export type GameRecord = {
@@ -28,7 +28,7 @@ export class GameSeeder extends Seeder<GameRecord> {
     /**
      * @inheritdoc
      */
-    protected async getRecords(): Promise<GameRecord[]> {
+    protected async getRecords(_count: number, _seederRecords: SeederRecord[][]): Promise<GameRecord[]> {
         const games: GamesApiResponse[] = await this._externalGamesService.getGames();
 
         // Fetch the price from the SPP API, hosted on Oege!
@@ -64,7 +64,7 @@ export class GameSeeder extends Seeder<GameRecord> {
     /**
      * @inheritdoc
      */
-    protected getRecordsDev(count: number): GameRecord[] {
+    protected getRecordsDev(count: number, _seederRecords: SeederRecord[][]): GameRecord[] {
         const records: GameRecord[] = [];
 
         for (let i: number = 0; i < count; i++) {
