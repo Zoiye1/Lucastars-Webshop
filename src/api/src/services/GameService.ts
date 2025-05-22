@@ -9,6 +9,32 @@ import { Game, GetGamesOptions, PaginatedResponse } from "@shared/types";
 export class GameService implements IGameService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
 
+    private getGameBaseQuery(): string {
+        return `
+            SELECT 
+                g.id,
+                g.sku,
+                g.name,
+                g.thumbnail,
+                g.description,
+                g.price,
+                COALESCE(
+                    (SELECT JSON_ARRAYAGG(gi.imageUrl)
+                     FROM game_images gi
+                     WHERE gi.gameId = g.id),
+                    JSON_ARRAY()
+                ) AS images,
+                COALESCE(
+                    (SELECT JSON_ARRAYAGG(t.value)
+                     FROM games_tags gt
+                     JOIN tags t ON gt.tagId = t.id
+                     WHERE gt.gameId = g.id),
+                    JSON_ARRAY()
+                ) AS tags
+            FROM games g
+        `;
+    }
+
     /**
      * Retrieves a paginated list of games.
      */
@@ -45,27 +71,7 @@ export class GameService implements IGameService {
 
         try {
             const query: string = `
-                SELECT 
-                    g.id,
-                    g.sku,
-                    g.name,
-                    g.thumbnail,
-                    g.description,
-                    g.price,
-                    COALESCE(
-                        (SELECT JSON_ARRAYAGG(gi.imageUrl)
-                         FROM game_images gi
-                         WHERE gi.gameId = g.id),
-                        JSON_ARRAY()
-                    ) AS images,
-                    COALESCE(
-                        (SELECT JSON_ARRAYAGG(t.value)
-                         FROM games_tags gt
-                         JOIN tags t ON gt.tagId = t.id
-                         WHERE gt.gameId = g.id),
-                        JSON_ARRAY()
-                    ) AS tags
-                FROM games g
+                ${this.getGameBaseQuery()}
                 ${tagJoin}
                 ${whereClause}
                 GROUP BY g.id
@@ -130,15 +136,7 @@ export class GameService implements IGameService {
             const gameIdCondition: string = gameId ? "AND g.id = ?" : "";
 
             const query: string = `
-                SELECT 
-                    g.id,
-                    g.sku,
-                    g.name,
-                    g.thumbnail,
-                    g.description,
-                    g.price,
-                    g.playUrl AS url
-                FROM games g
+                ${this.getGameBaseQuery()}
                 JOIN orders_games og ON g.id = og.gameId
                 JOIN orders o ON og.orderId = o.id
                 WHERE o.userId = ? AND o.status = "paid" ${gameIdCondition}
@@ -168,20 +166,7 @@ export class GameService implements IGameService {
 
         try {
             const sqlQuery: string = `
-                SELECT 
-                    g.id,
-                    g.sku,
-                    g.name,
-                    g.thumbnail,
-                    g.description,
-                    g.price,
-                    IF(
-                        COUNT(gi.imageUrl) = 0, 
-                        JSON_ARRAY(), 
-                        JSON_ARRAYAGG(gi.imageUrl)
-                    ) AS images
-                FROM games g
-                LEFT JOIN game_images gi ON g.id = gi.gameId
+                ${this.getGameBaseQuery()}
                 WHERE g.name LIKE ?
                 GROUP BY g.id
                 ORDER BY g.name
@@ -223,24 +208,10 @@ export class GameService implements IGameService {
 
         try {
             const query: string = `
-                SELECT 
-                    g.id,
-                    g.name,
-                    g.thumbnail,
-                    g.description,
-                    g.price,
-                    t.value AS value,
-                    IF(
-                        COUNT(gi.imageUrl) = 0, 
-                        JSON_ARRAY(), 
-                        JSON_ARRAYAGG(gi.imageUrl)
-                    ) AS images
-                FROM games g
-                INNER JOIN games_tags gt ON g.id = gt.gameId
-                INNER JOIN tags t ON gt.tagId = t.id
-                LEFT JOIN game_images gi ON g.id = gi.gameId
+                ${this.getGameBaseQuery()}
+                JOIN games_tags gt ON g.id = gt.gameId
                 WHERE gt.tagId IN (3, 5)
-                GROUP BY g.id, t.value
+                GROUP BY g.id
                 ORDER BY RAND()
                 LIMIT 5;
         `;
