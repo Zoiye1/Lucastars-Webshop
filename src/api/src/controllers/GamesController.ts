@@ -1,6 +1,6 @@
 import { IGameService } from "@api/interfaces/IGameService";
 import { GameService } from "@api/services/GameService";
-import { Game } from "@shared/types";
+import { Game, GetGamesOptions, PaginatedResponse } from "@shared/types";
 import { Request, Response } from "express";
 
 /**
@@ -12,14 +12,74 @@ export class GamesController {
     /**
      * Handles the request to get all games.
      *
-     * @remarks This will later be paginated and will handle filtering and/or sorting.
+     * @remarks This will later handle filtering and/or sorting.
      */
-    public async getGames(_req: Request, res: Response): Promise<void> {
-        const games: Game[] = await this._gameService.getGames();
+    public async getGames(req: Request, res: Response): Promise<void> {
+        const options: GetGamesOptions = {
+            page: req.query.page ? parseInt(req.query.page as string) : 1,
+            limit: req.query.limit ? parseInt(req.query.limit as string) : 10,
+            sort: req.query.sort ? (req.query.sort as "asc" | "desc") : undefined,
+            sortBy: req.query.sortBy ? (req.query.sortBy as "name" | "price" | "created") : undefined,
+            tags: req.query.tags ? (req.query.tags as string).split(",").map(Number) : undefined,
+            minPrice: req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined,
+            maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined,
+        };
 
-        res.json({
-            games: games,
-        });
+        if (options.page < 1) {
+            res.status(400).json({
+                error: "Page must be greater than 0",
+            });
+            return;
+        }
+
+        if (options.limit < 1) {
+            res.status(400).json({
+                error: "Limit must be greater than 0",
+            });
+            return;
+        }
+
+        if (options.sort && !["asc", "desc"].includes(options.sort)) {
+            res.status(400).json({
+                error: "Invalid sort value",
+            });
+            return;
+        }
+
+        if (options.sortBy && !["name", "price", "created"].includes(options.sortBy)) {
+            res.status(400).json({
+                error: "Invalid sortBy value",
+            });
+            return;
+        }
+
+        if (options.tags && options.tags.length > 0) {
+            for (const tag of options.tags) {
+                if (isNaN(tag)) {
+                    res.status(400).json({
+                        error: "Invalid tag value",
+                    });
+                    return;
+                }
+            }
+        }
+
+        if (options.minPrice && isNaN(options.minPrice)) {
+            res.status(400).json({
+                error: "Invalid minPrice value",
+            });
+            return;
+        }
+
+        if (options.maxPrice && isNaN(options.maxPrice)) {
+            res.status(400).json({
+                error: "Invalid maxPrice value",
+            });
+            return;
+        }
+
+        const paginatedResult: PaginatedResponse<Game> = await this._gameService.getGames(options);
+        res.json(paginatedResult);
     }
 
     public async getGameById(req: Request, res: Response): Promise<void> {

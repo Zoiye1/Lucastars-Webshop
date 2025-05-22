@@ -24,6 +24,43 @@ export type SecretResponse = {
     userId: string;
 };
 
+export type CheckoutItem = {
+    street: string | null;
+    houseNumber: string | null;
+    postalCode: string | null;
+    city: string | null;
+    totalPrice: number;
+};
+
+export type CartItem = {
+    userId: number;
+    gameId: number;
+    quantity: number;
+    thumbnail: string;
+    name: string;
+    description: string;
+    price: number;
+};
+/**
+ * Represents the query options for getting games
+ */
+export type GetGamesOptions = {
+    /** Page number for pagination */
+    page: number;
+    /** Number of items per page */
+    limit: number;
+    /** Sort order for the games */
+    sort?: "asc" | "desc";
+    /** Sort field for the games */
+    sortBy?: "name" | "price" | "created";
+    /** Filter for tags */
+    tags?: number[];
+    /** Minimum price for filtering */
+    minPrice?: number;
+    /** Maximum price for filtering */
+    maxPrice?: number;
+};
+
 /**
  * Represents a list of games
  */
@@ -58,6 +95,8 @@ export type Game = {
     price: number;
     /** List of images of the game */
     images: string[];
+    /** List of tags associated with the game */
+    tags: string[];
     /**
      * URL of the game
      * @remarks This will only be filled if the user owns the game
@@ -88,11 +127,6 @@ export type OrdersGames = {
     name: string;
     thumbnail: string;
     price: number;
-};
-
-export type CartItem = {
-    gameId: number;
-    quantity: number;
 };
 
 export interface IUser {
@@ -146,4 +180,33 @@ export type AuthReponse = {
 
 export type AuthVerifyResponse = {
     loggedIn: boolean;
+};
+
+/**
+ * Generic paginated response type
+ */
+export interface PaginatedResponse<T> {
+    /** Actual data items */
+    items: T[];
+    /** Pagination data */
+    pagination: {
+        /** Total number of items across all pages */
+        totalItems: number;
+        /** Number of items per page */
+        itemsPerPage: number;
+        /** Current page number */
+        currentPage: number;
+        /** Total number of pages */
+        totalPages: number;
+    };
+}
+
+/**
+ * Represents a tag
+ */
+export type Tag = {
+    /** ID of the tag */
+    id: number;
+    /** Name of the tag */
+    value: string;
 };

@@ -1,4 +1,6 @@
+import { WebshopEvent } from "@web/enums/WebshopEvent";
 import { html } from "@web/helpers/webComponents";
+import { WebshopEventService } from "@web/services/WebshopEventService";
 
 /**
  * This component demonstrates the use of sessions, cookies and Services.
@@ -6,6 +8,8 @@ import { html } from "@web/helpers/webComponents";
  * @remarks This class should be removed from the final product!
  */
 export class GameSelectComponent extends HTMLElement {
+    private _webshopEventService: WebshopEventService = new WebshopEventService();
+
     private _name: string = "";
     private _image: string = "";
     private _price: number = 0;
@@ -143,15 +147,7 @@ export class GameSelectComponent extends HTMLElement {
 
         const addButton: HTMLButtonElement = this.shadowRoot.querySelector(`#add-button-${this._gameId}`)!;
         addButton.addEventListener("click", () => {
-            this.dispatchEvent(new CustomEvent("add-to-cart", {
-                bubbles: true, // ← allow the event to bubble up to parent elements
-                composed: true, // ← allow it to pass out of shadow DOM
-                detail: {
-                    gameId: this._gameId,
-                    name: this._name,
-                    price: this._price,
-                },
-            }));
+            this._webshopEventService.dispatchEvent<number>(WebshopEvent.AddToCart, this._gameId);
         });
     }
 }

@@ -345,6 +345,15 @@ export class BannerComponent extends HTMLElement {
                                 <div class="small-picture">
                                     <img
                                         alt="Screenshot"
+                                        src="${games[i].images[0] ? games[i].images[0] : games[i].thumbnail}"
+                                        data-banner-index="${i}"
+                                        data-image-src="${games[i].images[0] ? games[i].images[0] : games[i].thumbnail}"
+                                        class="thumbnail"
+                                    />
+                                </div>
+                                <div class="small-picture">
+                                    <img
+                                        alt="Screenshot"
                                         src="${games[i].images[1] ? games[i].images[1] : games[i].thumbnail}"
                                         data-banner-index="${i}"
                                         data-image-src="${games[i].images[1] ? games[i].images[1] : games[i].thumbnail}"
@@ -357,15 +366,6 @@ export class BannerComponent extends HTMLElement {
                                         src="${games[i].images[2] ? games[i].images[2] : games[i].thumbnail}"
                                         data-banner-index="${i}"
                                         data-image-src="${games[i].images[2] ? games[i].images[2] : games[i].thumbnail}"
-                                        class="thumbnail"
-                                    />
-                                </div>
-                                <div class="small-picture">
-                                    <img
-                                        alt="Screenshot"
-                                        src="${games[i].images[3] ? games[i].images[1] : games[i].thumbnail}"
-                                        data-banner-index="${i}"
-                                        data-image-src="${games[i].images[3] ? games[i].images[3] : games[i].thumbnail}"
                                         class="thumbnail"
                                     />
                                 </div>

@@ -15,6 +15,15 @@ export class SearchBarComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
         this.render();
+
+        // Hide the results dropdown when clicking outside
+        document.addEventListener("click", (event: MouseEvent) => {
+            const path: EventTarget[] = event.composedPath();
+
+            if (!path.includes(this) && this._resultsDropdown) {
+                this._resultsDropdown.classList.remove("visible");
+            }
+        });
     }
 
     private render(): void {

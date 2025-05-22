@@ -1,7 +1,7 @@
 import { IUser } from "../../../shared/types";
 import { DatabaseService } from "./DatabaseService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
-import { hash, compare } from "bcrypt-ts";
+import { hash, compare } from "bcrypt-ts/node";
 
 type UserPasswordQueryResult = {
     password: string;
