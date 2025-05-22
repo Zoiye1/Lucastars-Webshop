@@ -151,6 +151,7 @@ describe("GamesController", () => {
                     description: "Description 1",
                     price: 19.99,
                     images: ["https://example.com/image1.jpg"],
+                    tags: ["GOTY", "Runner-up"],
                 },
             ];
 
