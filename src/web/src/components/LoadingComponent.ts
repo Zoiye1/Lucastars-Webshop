@@ -30,6 +30,7 @@ export class LoadingComponent extends HTMLElement {
                     align-items: center;
                     width: 100%;
                     padding: 20px;
+                    box-sizing: border-box;
                 }
                 
                 .loading-container {
