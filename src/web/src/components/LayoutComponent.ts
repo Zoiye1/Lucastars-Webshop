@@ -35,7 +35,6 @@ export class LayoutComponent extends HTMLElement {
                     flex-direction: column;
                     min-height: 100dvh;
                     width: 100%;
-                    padding: 0 1em;
                     box-sizing: border-box;
                 }
                 
@@ -44,6 +43,7 @@ export class LayoutComponent extends HTMLElement {
                     flex-grow: 1;
                     max-width: var(--max-width);
                     width: 100%;
+                    padding: 0 1em;
                     margin: 0 auto;
                     box-sizing: border-box;
                 }

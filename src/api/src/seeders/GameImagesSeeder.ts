@@ -24,7 +24,7 @@ export class GameImagesSeeder extends Seeder<GameImageRecord> {
     /**
      * @inheritdoc
      */
-    protected async getRecords(): Promise<GameImageRecord[]> {
+    protected async getRecords(_count: number, _seederRecords: SeederRecord[][]): Promise<GameImageRecord[]> {
         const games: GamesApiResponse[] = await this._externalGamesService.getGames();
 
         const records: GameImageRecord[] = [];
@@ -37,7 +37,7 @@ export class GameImagesSeeder extends Seeder<GameImageRecord> {
 
             for (let j: number = 0; j < game.Images.length; j++) {
                 records.push({
-                    gameId: i,
+                    gameId: i + 1,
                     imageUrl: game.Images[j],
                     sortOrder: j,
                 });

@@ -45,6 +45,7 @@ export class SearchBarComponent extends HTMLElement {
                     border: 1px solid var(--border-color);
                     border-radius: 8px;
                     padding: 4px 12px;
+                    background-color: white;
                 }
 
                 .input-container:has(input:focus) {
