@@ -42,7 +42,7 @@ export class GameSelectComponent extends HTMLElement {
                     align-items: center;
                     margin: 10px;
                 }
-                
+
                 a {
                     text-decoration: none;
                     color: black;
@@ -97,7 +97,7 @@ export class GameSelectComponent extends HTMLElement {
                     position: relative;
                     top: 68px;
                 }
-                
+
                 .game-title {
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -106,7 +106,7 @@ export class GameSelectComponent extends HTMLElement {
                     text-align: center;
                     margin: 10px auto;
                 }
-                
+
                 .game-price {
                     height: 30px;
                     font-size: 14px;
@@ -118,19 +118,19 @@ export class GameSelectComponent extends HTMLElement {
                     border-radius: 20px;
                     width: 80%;
                     padding: 5px 0;
-                    background: #159eff;
+                    background: var(--primary-color);
                     color: white;
                     font-size: 13px;
                     font-weight: bold;
                 }
 
                 .add-button:hover {
-                    background: #138be1;
+                    background: var(--primary-color-dark);
                 }
             </style>
         `;
         const element: HTMLElement = html`
-            <article class="select-game-container">
+            <article class="box select-game-container">
                 <a href="/game-info.html?id=${this._gameId}">
                     <header class="game-img"><img src="${this._image}"/></header>
                 </a>

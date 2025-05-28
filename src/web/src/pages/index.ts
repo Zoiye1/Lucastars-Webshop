@@ -16,16 +16,26 @@ export class IndexPageComponent extends HTMLElement {
             return;
         }
 
+        const styles: HTMLElement = html`
+            <style>
+                .banner-title {
+                    width: 100%;
+                    margin: 50px 0 0 0;
+                }
+            </style>
+        `;
+
         const element: HTMLElement = html`
             <webshop-layout>
+                <h2 class="banner-title">Topaanbevelingen</h2>
                 <webshop-banner></webshop-banner> 
-                <h1>Top Games!</h1>
+                <h2>Meest verkochte games</h2>
                 <webshop-top-games></webshop-top-games>
             </webshop-layout>
         `;
 
         this.shadowRoot.firstChild?.remove();
-        this.shadowRoot.append(element);
+        this.shadowRoot.append(styles, element);
     }
 }
 
