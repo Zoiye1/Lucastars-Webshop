@@ -133,6 +133,7 @@ export class GameListComponent extends HTMLElement {
             this._minPrice = event.minPrice;
             this._maxPrice = event.maxPrice;
             this._tags = event.tags;
+            this._currentPage = 1;
             await this.updateGames();
         });
 
