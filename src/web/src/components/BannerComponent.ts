@@ -86,6 +86,7 @@ export class BannerComponent extends HTMLElement {
                     align-items: center;
                     color: var(--primary-color);
                     font-size: 25px;
+                    cursor: pointer;
                 }
 
                 .arrow-right {
@@ -139,15 +140,12 @@ export class BannerComponent extends HTMLElement {
                     height: 200px;
                     display: flex;
                     flex-wrap: wrap;
-                    justify-content: space-between;
-                    align-items: center;
-                    flex-direction: column;
                 }
 
                 .small-picture {
                     width: 45%;
                     height: 45%;
-                    margin: 0 5px;
+                    margin: 5px 8px;
                     position: relative;
                     background: white;
                 }
@@ -336,39 +334,51 @@ export class BannerComponent extends HTMLElement {
                                 <div class="small-picture">
                                     <img
                                         alt="Screenshot"
-                                        src="${games[i].thumbnail}"
+                                        src="${games[i].images[0]}"
                                         data-banner-index="${i}"
-                                        data-image-src="${games[i].thumbnail}"
+                                        data-image-src="${games[i].images[0]}"
                                         class="thumbnail"
                                     />
                                 </div>
-                                <div class="small-picture">
-                                    <img
-                                        alt="Screenshot"
-                                        src="${games[i].images[0] ? games[i].images[0] : games[i].thumbnail}"
-                                        data-banner-index="${i}"
-                                        data-image-src="${games[i].images[0] ? games[i].images[0] : games[i].thumbnail}"
-                                        class="thumbnail"
-                                    />
-                                </div>
-                                <div class="small-picture">
-                                    <img
-                                        alt="Screenshot"
-                                        src="${games[i].images[1] ? games[i].images[1] : games[i].thumbnail}"
-                                        data-banner-index="${i}"
-                                        data-image-src="${games[i].images[1] ? games[i].images[1] : games[i].thumbnail}"
-                                        class="thumbnail"
-                                    />
-                                </div>
-                                <div class="small-picture">
-                                    <img
-                                        alt="Screenshot"
-                                        src="${games[i].images[2] ? games[i].images[2] : games[i].thumbnail}"
-                                        data-banner-index="${i}"
-                                        data-image-src="${games[i].images[2] ? games[i].images[2] : games[i].thumbnail}"
-                                        class="thumbnail"
-                                    />
-                                </div>
+                                ${games[i].images[1]
+? html`
+                                    <div class="small-picture">
+                                        <img
+                                            alt="Screenshot"
+                                            src="${games[i].images[1]}"
+                                            data-banner-index="${i}"
+                                            data-image-src="${games[i].images[1]}"
+                                            class="thumbnail"
+                                        />
+                                    </div>
+                                `
+: ""}
+                                ${games[i].images[2]
+? html`
+                                    <div class="small-picture">
+                                        <img
+                                            alt="Screenshot"
+                                            src="${games[i].images[2]}"
+                                            data-banner-index="${i}"
+                                            data-image-src="${games[i].images[2]}"
+                                            class="thumbnail"
+                                        />
+                                    </div>
+                                `
+: ""}
+                                ${games[i].images[3]
+? html`
+                                    <div class="small-picture">
+                                        <img
+                                            alt="Screenshot"
+                                            src="${games[i].images[3]}"
+                                            data-banner-index="${i}"
+                                            data-image-src="${games[i].images[3]}"
+                                            class="thumbnail"
+                                        />
+                                    </div>
+                                `
+: ""}
                             </div>
                             <h3 class="status">${games[i].tags[0] ? games[i].tags[0] : "N/A"}</h3>
                             <p class="price">€${games[i].price}</p>
