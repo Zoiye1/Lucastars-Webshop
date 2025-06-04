@@ -22,7 +22,7 @@ export class BannerComponent extends HTMLElement {
                 .banner {
                     margin: 38.5px 0;
                     width: 100%;
-                    background: #fffbfb;
+                    background: #ffffff;
                     border-radius: 30px;
                     display: flex;
                     flex-direction: column;
