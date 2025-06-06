@@ -9,7 +9,7 @@ import { Game, GetGamesOptions, PaginatedResponse } from "@shared/types";
 export class GameService implements IGameService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
 
-    private getGameBaseQuery(): string {
+    private getGameBaseQuery(withPlayUrl: boolean = false): string {
         return `
             SELECT 
                 g.id,
@@ -18,6 +18,7 @@ export class GameService implements IGameService {
                 g.thumbnail,
                 g.description,
                 g.price,
+                ${withPlayUrl ? "g.playUrl as url," : ""}
                 COALESCE(
                     (SELECT JSON_ARRAYAGG(gi.imageUrl)
                      FROM game_images gi
@@ -136,7 +137,7 @@ export class GameService implements IGameService {
             const gameIdCondition: string = gameId ? "AND g.id = ?" : "";
 
             const query: string = `
-                ${this.getGameBaseQuery()}
+                ${this.getGameBaseQuery(true)}
                 JOIN orders_games og ON g.id = og.gameId
                 JOIN orders o ON og.orderId = o.id
                 WHERE o.userId = ? AND o.status = "paid" ${gameIdCondition}
