@@ -19,7 +19,7 @@ export class GamesController {
             page: req.query.page ? parseInt(req.query.page as string) : 1,
             limit: req.query.limit ? parseInt(req.query.limit as string) : 10,
             sort: req.query.sort ? (req.query.sort as "asc" | "desc") : undefined,
-            sortBy: req.query.sortBy ? (req.query.sortBy as "name" | "price" | "created") : undefined,
+            sortBy: req.query.sortBy ? (req.query.sortBy as string) : undefined,
             tags: req.query.tags ? (req.query.tags as string).split(",").map(Number) : undefined,
             minPrice: req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined,
             maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined,
@@ -46,7 +46,7 @@ export class GamesController {
             return;
         }
 
-        if (options.sortBy && !["name", "price", "created"].includes(options.sortBy)) {
+        if (options.sortBy && !["id", "sku", "name", "price", "created"].includes(options.sortBy)) {
             res.status(400).json({
                 error: "Invalid sortBy value",
             });

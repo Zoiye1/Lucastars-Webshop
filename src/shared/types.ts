@@ -52,7 +52,7 @@ export type GetGamesOptions = {
     /** Sort order for the games */
     sort?: "asc" | "desc";
     /** Sort field for the games */
-    sortBy?: "name" | "price" | "created";
+    sortBy?: string;
     /** Filter for tags */
     tags?: number[];
     /** Minimum price for filtering */
