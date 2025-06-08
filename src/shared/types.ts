@@ -127,6 +127,15 @@ export type OrdersGames = {
     price: number;
 };
 
+export type Order = {
+    id: number;
+    user: IUser;
+    orderDate: Date;
+    status: string;
+    totalAmount: number;
+    games: Game[];
+};
+
 export interface IUser {
     id: number;
     username: string;
