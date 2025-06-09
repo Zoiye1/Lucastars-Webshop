@@ -157,7 +157,7 @@ export class UserInfoModalComponent extends HTMLElement {
 : ""}
                         
                         <p><strong>Geregistreerd op:</strong> ${this.formatDate(this._user.created)}</p>
-                        <p><strong>Rol:</strong> ${this._user.role || "Gebruiker"}</p>
+                        <p><strong>Rol:</strong> ${this._user.role || "gebruiker"}</p>
                     </div>
 
                     <div class="button-container">

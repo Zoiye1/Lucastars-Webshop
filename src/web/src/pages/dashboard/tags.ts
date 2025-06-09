@@ -33,6 +33,7 @@ class DashboardTagsPageComponent extends HTMLElement {
                 }
 
                 .action-btn {
+                    padding: 0;
                     background: transparent;
                     border: none;
                     cursor: pointer;
@@ -41,6 +42,16 @@ class DashboardTagsPageComponent extends HTMLElement {
 
                 .action-btn.delete {
                     color: red;
+                }
+
+                .action-btn.icon {
+                    display: flex;
+                    height: 100%;
+                    align-items: center;
+                }
+
+                .tabulator-cell:has(.action-btn.icon) {
+                    padding: 0;
                 }
             </style>
         `;
@@ -61,6 +72,28 @@ class DashboardTagsPageComponent extends HTMLElement {
             columns: [
                 { title: "ID", field: "id", width: 75 },
                 { title: "Naam", field: "value" },
+                {
+                    title: "Acties",
+                    width: 100,
+                    headerSort: false,
+                    formatter: cell => {
+                        const button: HTMLButtonElement = document.createElement("button");
+                        button.className = "action-btn icon";
+
+                        const icon: HTMLImageElement = document.createElement("img");
+                        icon.src = "/images/icons/trash-red.svg";
+                        icon.alt = "Verwijderen";
+                        button.appendChild(icon);
+
+                        button.addEventListener("click", (event: MouseEvent) => {
+                            event.stopPropagation();
+                            if (confirm("Weet je zeker dat je deze tag wilt verwijderen?")) {
+                                console.log("Tag verwijderen:", cell.getData().id);
+                            }
+                        });
+                        return button;
+                    },
+                },
             ],
             initialSort: [{ column: "id", dir: "asc" }],
             popupContainer: tableContainer,

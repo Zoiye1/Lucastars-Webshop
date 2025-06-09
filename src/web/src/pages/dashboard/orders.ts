@@ -42,6 +42,7 @@ class DashboardOrdersPageComponent extends HTMLElement {
                 }
 
                 .action-btn {
+                    padding: 0;
                     background: transparent;
                     border: none;
                     cursor: pointer;
@@ -50,6 +51,16 @@ class DashboardOrdersPageComponent extends HTMLElement {
 
                 .action-btn.delete {
                     color: red;
+                }
+
+                .action-btn.icon {
+                    display: flex;
+                    height: 100%;
+                    align-items: center;
+                }
+
+                .tabulator-cell:has(.action-btn.icon) {
+                    padding: 0;
                 }
             </style>
         `;
@@ -98,6 +109,27 @@ class DashboardOrdersPageComponent extends HTMLElement {
                 { title: "Aantal spellen", field: "items", formatter: this.orderInfoFormatter, width: 150 },
                 { title: "Status", field: "status", width: 100 },
                 { title: "Totaal", field: "totalAmount", formatter: "money", formatterParams: { symbol: "€" }, width: 100 },
+                {
+                    title: "Acties",
+                    width: 100,
+                    headerSort: false,
+                    formatter: cell => {
+                        const button: HTMLButtonElement = document.createElement("button");
+                        button.className = "action-btn icon";
+
+                        const icon: HTMLImageElement = document.createElement("img");
+                        icon.src = "/images/icons/eye-outline.svg";
+                        icon.alt = "Details";
+                        button.appendChild(icon);
+
+                        button.addEventListener("click", (event: MouseEvent) => {
+                            event.stopPropagation();
+                            const order: Order = cell.getData() as Order;
+                            this._orderInfoModal.showModal(order);
+                        });
+                        return button;
+                    },
+                },
             ],
             initialSort: [{ column: "id", dir: "asc" }],
             popupContainer: tableContainer,
