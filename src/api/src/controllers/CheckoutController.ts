@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ICheckoutService } from "@api/interfaces/ICheckoutService";
 import { CheckoutService } from "@api/services/CheckoutService";
-import { CheckoutItem } from "@shared/types";
+import { CheckoutItem, Payment } from "@shared/types";
 
 export class CheckoutController {
     private readonly _checkoutService: ICheckoutService = new CheckoutService();
@@ -16,6 +16,34 @@ export class CheckoutController {
 
         const item: CheckoutItem | null = await this._checkoutService.getCheckout(userId);
         res.json(item);
+    }
+
+    public async createPayment(req: Request, res: Response): Promise<void> {
+        const userId: number | undefined = req.userId;
+
+        if (!userId) {
+            res.status(401);
+            return;
+        }
+
+        const data: Payment | undefined = req.body as Payment | undefined;
+
+        if (!data) {
+            res.status(400);
+            return;
+        }
+        if (typeof data.orderId !== "number") {
+            res.status(400).json({ error: "Invalid orderId" });
+            return;
+        }
+        const transactionId: string | undefined = await this._checkoutService.createPayment(data.orderId, data.value);
+
+        if (!transactionId) {
+            res.status(400);
+            return;
+        }
+        console.log("we are here");
+        res.status(200).json({ transactionId });
     }
 
     public async postCheckout(req: Request, res: Response): Promise<void> {

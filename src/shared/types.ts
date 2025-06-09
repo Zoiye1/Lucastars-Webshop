@@ -24,7 +24,19 @@ export type SecretResponse = {
     userId: string;
 };
 
+export type Payment = {
+    orderId: number;
+    value: number;
+};
+
+export type PaymentResponse = {
+    /** Transaction ID of the payment */
+    transactionId: string;
+    redirectUrl: string | null;
+};
+
 export type CheckoutItem = {
+    orderId: number | null;
     street: string | null;
     houseNumber: string | null;
     postalCode: string | null;
