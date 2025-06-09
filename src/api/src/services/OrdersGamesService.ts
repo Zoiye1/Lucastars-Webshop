@@ -66,7 +66,7 @@ export class OrdersGamesService implements IOrdersGamesService {
                 LEFT JOIN orders_games og ON og.orderId = o.id
                 LEFT JOIN games g ON og.gameId = g.id
                 LEFT JOIN users u ON o.userId = u.id
-                LEFT JOIN addresses ua ON o.addressId = ua.userId
+                LEFT JOIN addresses ua ON o.addressId = ua.id
                 GROUP BY o.id
                 ${sortByQuery}
                 LIMIT ? OFFSET ?
