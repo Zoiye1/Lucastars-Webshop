@@ -3,8 +3,9 @@ import "@web/components/DashboardComponent";
 import { html } from "@web/helpers/webComponents";
 import { DashboardComponent } from "@web/components/DashboardComponent";
 import { TagService } from "@web/services/TagService";
+import { Tag } from "@shared/types";
 
-import { Tabulator, AjaxModule, PageModule, SortModule, FormatModule, InteractionModule, TooltipModule } from "tabulator-tables";
+import { Tabulator, PageModule, SortModule, FormatModule, InteractionModule } from "tabulator-tables";
 import tabulatorCSS from "tabulator-tables/dist/css/tabulator_semanticui.min.css?raw";
 
 class DashboardTagsPageComponent extends HTMLElement {
@@ -20,6 +21,9 @@ class DashboardTagsPageComponent extends HTMLElement {
         if (!this.shadowRoot) {
             return;
         }
+
+        const tags: Tag[] = await this._tagService.getTags();
+
         const styles: HTMLElement = html`
             <style>
                 ${tabulatorCSS}
@@ -41,13 +45,13 @@ class DashboardTagsPageComponent extends HTMLElement {
             </style>
         `;
 
-        Tabulator.registerModule([AjaxModule, PageModule, SortModule, FormatModule, InteractionModule, TooltipModule]);
+        Tabulator.registerModule([PageModule, SortModule, FormatModule, InteractionModule]);
 
         const tableContainer: HTMLElement = html`<div></div>`;
 
         new Tabulator(tableContainer, {
             layout: "fitColumns",
-            data: await this._tagService.getTags(),
+            data: tags,
             pagination: true,
             paginationMode: "local",
             paginationSize: 10,
