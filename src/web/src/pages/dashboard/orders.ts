@@ -1,11 +1,13 @@
 import "@web/components/LayoutComponent";
 import "@web/components/DashboardComponent";
 import "@web/components/UserInfoModalComponent";
+import "@web/components/OrderInfoModalComponent";
 import { html } from "@web/helpers/webComponents";
 import { DashboardComponent } from "@web/components/DashboardComponent";
 import { OrdersGamesService } from "@web/services/OrdersGamesService";
 import { IUser, Order, PaginatedResponse } from "@shared/types";
 import { UserInfoModalComponent } from "@web/components/UserInfoModalComponent";
+import { OrderItemsInfoModalComponent } from "@web/components/OrderInfoModalComponent";
 
 import { Tabulator, AjaxModule, PageModule, SortModule, FormatModule, InteractionModule, TooltipModule, CellComponent } from "tabulator-tables";
 import tabulatorCSS from "tabulator-tables/dist/css/tabulator_semanticui.min.css?raw";
@@ -19,6 +21,7 @@ type TabulatorParams = {
 class DashboardOrdersPageComponent extends HTMLElement {
     private _ordersGamesService: OrdersGamesService = new OrdersGamesService();
     private _userInfoModal: UserInfoModalComponent = document.createElement("user-info-modal") as UserInfoModalComponent;
+    private _orderInfoModal: OrderItemsInfoModalComponent = document.createElement("order-items-info-modal") as OrderItemsInfoModalComponent;
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -92,7 +95,7 @@ class DashboardOrdersPageComponent extends HTMLElement {
                 { title: "ID", field: "id", width: 75 },
                 { title: "Gebruiker", field: "user.email", formatter: this.userInfoFormatter },
                 { title: "Datum", field: "orderDate", formatter: this.isoDateTimeFormatter, width: 200 },
-                { title: "Aantal spellen", field: "items", formatter: this.arrayLengthFormatter, width: 150 },
+                { title: "Aantal spellen", field: "items", formatter: this.orderInfoFormatter, width: 150 },
                 { title: "Status", field: "status", width: 100 },
                 { title: "Totaal", field: "totalAmount", formatter: "money", formatterParams: { symbol: "€" }, width: 100 },
             ],
@@ -109,17 +112,13 @@ class DashboardOrdersPageComponent extends HTMLElement {
             <webshop-layout>
                 ${dashboard}
                 ${this._userInfoModal}
+                ${this._orderInfoModal}
             </webshop-layout>
         `;
 
         this.shadowRoot.firstChild?.remove();
         this.shadowRoot.append(styles, element);
     }
-
-    private arrayLengthFormatter = (cell: CellComponent): string => {
-        const value: unknown[] = cell.getValue() as unknown[];
-        return value.length.toString();
-    };
 
     private isoDateTimeFormatter = (cell: CellComponent): string => {
         const value: string = cell.getValue() as string;
@@ -145,6 +144,20 @@ class DashboardOrdersPageComponent extends HTMLElement {
         button.addEventListener("click", (event: MouseEvent) => {
             event.stopPropagation();
             this._userInfoModal.showModal(user);
+        });
+
+        return button;
+    };
+
+    private orderInfoFormatter = (cell: CellComponent): HTMLElement => {
+        const order: Order = cell.getData() as Order;
+
+        const button: HTMLButtonElement = document.createElement("button");
+        button.className = "action-btn";
+        button.textContent = order.items.length.toString();
+        button.addEventListener("click", (event: MouseEvent) => {
+            event.stopPropagation();
+            this._orderInfoModal.showModal(order);
         });
 
         return button;
