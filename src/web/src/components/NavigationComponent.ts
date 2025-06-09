@@ -82,6 +82,10 @@ export class NavigationComponent extends HTMLElement {
                     background-color: #d6d6d6;
                 }
 
+                .dropbtn span {
+                    vertical-align: super;
+                }
+
                 .dropdown {
                     position: relative;
                     display: inline-block;
@@ -169,6 +173,7 @@ export class NavigationComponent extends HTMLElement {
                 <div class ="dropdown">
                     <button class ="dropbtn">
                         <img src="/images/icons/account.svg" />
+                        <span>${user ? `Welkom, ${user.username}` : ""}</span>
                     </button>
                     <div class ="dropdown-content">
                         ${!isLoggedIn
