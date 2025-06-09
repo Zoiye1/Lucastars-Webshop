@@ -178,7 +178,7 @@ export type AuthReponse = {
 };
 
 export type AuthVerifyResponse = {
-    loggedIn: boolean;
+    user: IUser | null;
 };
 
 /**

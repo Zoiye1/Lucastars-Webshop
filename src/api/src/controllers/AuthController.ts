@@ -200,9 +200,19 @@ export class AuthController {
         }
     };
 
-    public verify(req: Request, res: Response): void {
+    public async verify(req: Request, res: Response): Promise<void> {
+        if (!req.userId) {
+            res.status(200).json(<AuthVerifyResponse>{
+                user: null,
+            });
+
+            return;
+        }
+
+        const user: IUser | undefined = await this._userService.getUserById(req.userId);
+
         const response: AuthVerifyResponse = {
-            loggedIn: req.userId !== undefined,
+            user: user ?? null,
         };
 
         res.status(200).json(response);
