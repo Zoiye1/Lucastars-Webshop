@@ -141,11 +141,12 @@ export class UserInfoModalComponent extends HTMLElement {
         const element: HTMLElement = html`
             <div class="user-info-modal">
                 <header>
-                    <h1>${this._user.username}</h1>
+                    <h1>Gebruikers informatie</h1>
                 </header>
                 <main>
                     <div class="description">
                         <p><strong>Gebruikers ID:</strong> ${this._user.id}</p>
+                        <p><strong>Gebruikersnaam:</strong> ${this._user.username}</p>
                         <p><strong>Volledige naam:</strong> ${fullName}</p>
                         <p><strong>Email:</strong> ${this._user.email}</p>
                         
