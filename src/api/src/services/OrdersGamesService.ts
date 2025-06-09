@@ -55,8 +55,7 @@ export class OrdersGamesService implements IOrdersGamesService {
                     o.transactionId,
                     JSON_ARRAYAGG(
                         JSON_OBJECT(
-                            'id', g.id,
-                            'sku', g.sku,
+                            'gameId', g.id,
                             'name', g.name,
                             'thumbnail', g.thumbnail,
                             'price', og.price
