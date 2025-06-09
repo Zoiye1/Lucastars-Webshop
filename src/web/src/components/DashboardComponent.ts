@@ -1,6 +1,8 @@
 import "@web/components/LayoutComponent";
 import "@web/components/DashboardSidebarComponent";
 import { html } from "@web/helpers/webComponents";
+import { authService } from "@web/services/AuthService";
+import { IUser } from "@shared/types";
 
 export type DashboardButton = {
     title: string;
@@ -22,7 +24,19 @@ export class DashboardComponent extends HTMLElement {
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
-        this.render();
+
+        authService.getUser()
+            .then((user: IUser | undefined) => {
+                if (!user || user.role !== "admin") {
+                    location.href = "/";
+                    return;
+                }
+
+                this.render();
+            })
+            .catch(() => {
+                location.href = "/";
+            });
     }
 
     private render(): void {
