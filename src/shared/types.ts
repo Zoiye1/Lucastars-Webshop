@@ -41,18 +41,28 @@ export type CartItem = {
     description: string;
     price: number;
 };
+
 /**
- * Represents the query options for getting games
+ * Represents the query options for pagination
  */
-export type GetGamesOptions = {
+export type PaginationOptions = {
     /** Page number for pagination */
     page: number;
     /** Number of items per page */
     limit: number;
+};
+
+export type PaginationSortOptions = {
     /** Sort order for the games */
     sort?: "asc" | "desc";
     /** Sort field for the games */
     sortBy?: string;
+};
+
+/**
+ * Represents the query options for getting games
+ */
+export type GetGamesOptions = PaginationOptions & PaginationSortOptions & {
     /** Filter for tags */
     tags?: number[];
     /** Minimum price for filtering */
@@ -60,6 +70,11 @@ export type GetGamesOptions = {
     /** Maximum price for filtering */
     maxPrice?: number;
 };
+
+/**
+ * Represents the query options for getting orders
+ */
+export type GetOrdersOptions = PaginationOptions & PaginationSortOptions;
 
 /**
  * Represents a list of games
@@ -125,6 +140,16 @@ export type OrdersGames = {
     name: string;
     thumbnail: string;
     price: number;
+};
+
+export type Order = {
+    id: number;
+    user: IUser;
+    items: OrdersGames[];
+    orderDate: Date;
+    status: string;
+    totalAmount: number;
+    transactionId: string | null;
 };
 
 export interface IUser {

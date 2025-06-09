@@ -58,6 +58,7 @@ router.get("/owned-games", (req, res) => gamesController.getOwnedGames(req, res)
 // NOTE: After this line, all endpoints will require the user to have the "admin" role.
 router.use(requireRole("admin"));
 router.get("/secret", (req, res) => welcomeController.getSecret(req, res));
+router.get("/orders", (req, res) => ordersGamesController.getOrders(req, res));
 
 // TODO: The following endpoints have to be implemented in their own respective controller
 router.get("/products", (_req, _res) => {

@@ -1,6 +1,6 @@
 import { PoolConnection } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
-import { OrdersGames } from "@shared/types";
+import { Order, OrdersGames, PaginatedResponse, GetOrdersOptions } from "@shared/types";
 import { IOrdersGamesService } from "@api/interfaces/IOrdersGamesService";
 
 /**
@@ -11,6 +11,94 @@ export class OrdersGamesService implements IOrdersGamesService {
 
     public async getOrdersGames(): Promise<OrdersGames[]> {
         return this.executeOrdersGamesQuery();
+    }
+
+    public async getOrders(options: GetOrdersOptions): Promise<PaginatedResponse<Order>> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        const offset: number = (options.page - 1) * options.limit;
+
+        const sortDirection: string = options.sort === "desc" ? "DESC" : "ASC";
+        const sortByValues: Map<string, string> = new Map([
+            ["id", "o.id"],
+            ["user.email", "u.email"],
+            ["orderDate", "o.orderDate"],
+            ["items", "COUNT(og.gameId)"],
+            ["status", "o.status"],
+            ["totalAmount", "o.totalAmount"],
+        ]);
+
+        const sortByQuery: string = options.sortBy && sortByValues.has(options.sortBy)
+            ? `ORDER BY ${sortByValues.get(options.sortBy)} ${sortDirection}`
+            : "ORDER BY o.id DESC";
+
+        try {
+            const query: string = `
+                SELECT
+                    o.id,
+                    JSON_OBJECT(
+                        'id', u.id,
+                        'username', u.username,
+                        'email', u.email,
+                        'firstName', u.firstName,
+                        'prefix', u.prefix,
+                        'lastName', u.lastName,
+                        'street', ua.street,
+                        'houseNumber', ua.houseNumber,
+                        'postalCode', ua.postalCode,
+                        'city', ua.city,
+                        'country', ua.country,
+                        'created', u.created
+                    ) as 'user',
+                    o.orderDate,
+                    o.status,
+                    o.totalAmount,
+                    o.transactionId,
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', g.id,
+                            'sku', g.sku,
+                            'name', g.name,
+                            'thumbnail', g.thumbnail,
+                            'price', og.price
+                        )
+                    ) as 'items'
+                FROM orders o
+                LEFT JOIN orders_games og ON og.orderId = o.id
+                LEFT JOIN games g ON og.gameId = g.id
+                LEFT JOIN users u ON o.userId = u.id
+                LEFT JOIN addresses ua ON o.addressId = ua.userId
+                GROUP BY o.id
+                ${sortByQuery}
+                LIMIT ? OFFSET ?
+            `;
+
+            const orders: Order[] = await this._databaseService.query(
+                connection,
+                query,
+                options.limit,
+                offset
+            );
+
+            const countResult: { totalCount: number }[] = await this._databaseService.query<{ totalCount: number }[]>(
+                connection,
+                "SELECT COUNT(DISTINCT o.id) as totalCount FROM orders o"
+            );
+
+            const paginatedResponse: PaginatedResponse<Order> = {
+                items: orders,
+                pagination: {
+                    totalItems: countResult[0].totalCount,
+                    totalPages: Math.ceil(countResult[0].totalCount / options.limit),
+                    currentPage: options.page,
+                    itemsPerPage: options.limit,
+                },
+            };
+
+            return paginatedResponse;
+        }
+        finally {
+            connection.release();
+        }
     }
 
     /**
