@@ -208,3 +208,65 @@ export type Tag = {
     /** Name of the tag */
     value: string;
 };
+
+/**
+ * Represents a review
+ */
+export interface Review {
+    id: number;
+    userId: number;
+    gameId: number;
+    gameName?: string;
+    gameThumbnail?: string;
+    username?: string;
+    firstName?: string;
+    lastName?: string;
+    rating: number;
+    title: string;
+    content: string;
+    helpful: number;
+    created: Date;
+    updated?: Date;
+}
+
+/**
+ * DTO for creating a review
+ */
+export interface ReviewCreateDTO {
+    rating: number;
+    title: string;
+    content: string;
+}
+
+/**
+ * DTO for updating a review
+ */
+export interface ReviewUpdateDTO {
+    rating?: number;
+    title?: string;
+    content?: string;
+}
+
+/**
+ * Review statistics
+ */
+export interface ReviewStats {
+    totalReviews: number;
+    averageRating: number;
+    totalHelpful: number;
+}
+
+// Also update the UserController to extend functionality
+export interface UserUpdateDTO {
+    firstName?: string;
+    prefix?: string;
+    lastName?: string;
+}
+
+export interface AddressUpdateDTO {
+    street?: string;
+    houseNumber?: string;
+    postalCode?: string;
+    city?: string;
+    country?: string;
+}
