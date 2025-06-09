@@ -7,6 +7,7 @@ import { GamesController } from "./controllers/GamesController";
 import { OrdersGamesController } from "@api/controllers/OrdersGamesController";
 import { AuthController } from "./controllers/AuthController";
 import { TagController } from "./controllers/TagController";
+import { requireRole } from "./middleware/rolesMiddleWare";
 
 // Create a router
 export const router: Router = Router();
@@ -43,7 +44,6 @@ router.delete("/session", (req, res) => welcomeController.deleteSession(req, res
 router.delete("/session/expired", (req, res) => welcomeController.deleteExpiredSessions(req, res));
 router.get("/welcome", (req, res) => welcomeController.getWelcome(req, res));
 router.get("/game-info", (req, res) => gamesController.getGameById(req, res));
-router.get("/games", (req, res) => gamesController.getGames(req, res));
 router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));
 
 // NOTE: After this line, all endpoints will require a valid session.
@@ -53,8 +53,10 @@ router.get("/cart", (req, res) => cartController.getCart(req, res));
 router.delete("/cart/:gameId", (req, res) => cartController.deleteCartItem(req, res));
 router.get("/checkout", (req, res) => checkoutController.getCheckout(req, res));
 router.post("/checkout", (req, res) => checkoutController.postCheckout(req, res));
-
 router.get("/owned-games", (req, res) => gamesController.getOwnedGames(req, res));
+
+// NOTE: After this line, all endpoints will require the user to have the "admin" role.
+router.use(requireRole("admin"));
 router.get("/secret", (req, res) => welcomeController.getSecret(req, res));
 
 // TODO: The following endpoints have to be implemented in their own respective controller
