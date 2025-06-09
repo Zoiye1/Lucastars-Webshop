@@ -25,10 +25,12 @@ export class UserService {
                 a.postalCode,
                 a.city,
                 a.country,
+                r.name AS role,
                 u.created,
                 u.updated
             FROM users u
             LEFT JOIN addresses a ON u.id = a.userId
+            LEFT JOIN roles r ON u.roleId = r.id
         `;
     }
 

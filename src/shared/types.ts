@@ -139,6 +139,7 @@ export interface IUser {
     postalCode: string | null;
     city: string | null;
     country: string | null;
+    role: string | null;
     created: Date;
     updated: Date;
 }
