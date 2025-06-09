@@ -26,4 +26,6 @@ export class CheckoutService {
         });
         return await res.json() as unknown as PaymentResponse;
     }
+
+    public async getPaymentStatus();
 }

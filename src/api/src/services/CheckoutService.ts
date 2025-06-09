@@ -2,6 +2,8 @@ import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
 import { CheckoutItem, Game } from "@shared/types";
 import { ICheckoutService } from "@api/interfaces/ICheckoutService";
+import { Request, Response } from "express";
+import { PaymentResponse } from "@shared/types";
 
 type CartItemsResult = {
     gameId: number;
@@ -89,7 +91,9 @@ export class CheckoutService implements ICheckoutService {
                 currency: "EUR",
                 value: value,
                 description: `Bestelling ${this.gameName}`,
-                redirectUrl: `https://wiigiivuukii32-pb4sed2425..hbo-ict.cloud/payment-return?orderId=${orderId}`,
+                redirectUrl: process.env.NODE_ENV === "development"
+                    ? `http://localhost:3000/payment-return?orderId=${orderId}`
+                    : `https://wiigiivuukii32-pb4sed2425..hbo-ict.cloud/payment-return?orderId=${orderId}`,
             }),
         });
 
@@ -213,6 +217,74 @@ export class CheckoutService implements ICheckoutService {
         }
         catch (e: unknown) {
             throw new Error(`Failed to get checkout info: ${e}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    public async handlePaymentReturn(req: Request, res: Response): Promise<void> {
+        const orderId: number = Number((req.query as { orderId: string }).orderId);
+
+        if (!orderId) {
+            res.status(400).send("Missing orderId");
+            return;
+        }
+
+        // Get transactionId for this order from DB
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            const paymentRow: PaymentResponse[] = await this._databaseService.query<PaymentResponse[]>(
+                connection,
+                "SELECT transactionId FROM payments WHERE orderId = ?",
+                orderId
+            );
+
+            const transactionId: string = paymentRow[0]?.transactionId;
+            if (!transactionId) {
+                res.status(404).send("No payment found for order");
+                return;
+            }
+
+            // Call PSP
+            const pspRes = await fetch(`https://psp.api.lucastars.hbo-ict.cloud/payments/${transactionId}`, {
+                headers: {
+                    Authorization: `Bearer ${process.env.LS_PSP_API_KEY}`,
+                },
+            });
+
+            if (!pspRes.ok) {
+                const errText = await pspRes.text();
+                res.status(502).send(`Failed to check PSP: ${errText}`);
+                return;
+            }
+
+            const data = await pspRes.json();
+            const status = data.status;
+
+            // Update database
+            await this._databaseService.query(
+                connection,
+                "UPDATE payments SET status = ? WHERE orderId = ?",
+                status,
+                orderId
+            );
+
+            if (status === "Paid") {
+                await this._databaseService.query(
+                    connection,
+                    "UPDATE orders SET status = 'Paid' WHERE id = ?",
+                    orderId
+                );
+
+                // TODO: maybe unlock games or email confirmation here
+            }
+
+            res.redirect("/my-games.html");
+        }
+        catch (e) {
+            console.error("Error in payment return:", e);
+            res.status(500).send("Something went wrong");
         }
         finally {
             connection.release();

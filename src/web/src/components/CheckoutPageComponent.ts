@@ -152,6 +152,7 @@ export class CheckoutPageComponent extends HTMLElement {
                     value: this.item?.totalPrice ?? 0,
                 };
                 const transactionId: PaymentResponse = await this._checkoutService.createPayment(data2);
+                console.log(transactionId.transactionId);
                 location.href = `https://psp.api.lucastars.hbo-ict.cloud/checkout/${transactionId.transactionId}`;
             }
             else {

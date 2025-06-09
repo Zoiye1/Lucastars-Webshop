@@ -247,6 +247,21 @@ export class BannerComponent extends HTMLElement {
                         display: none;
                     }
                 }
+                .link-button {
+                    font-size: 25px;
+                    border: none;
+                    background: var(--primary-color);
+                    color: white;
+                    padding: 5px 0;
+                    border-radius: 15px;
+                    font-weight: bold;
+                    width: 220px;
+                    margin: 10px;
+                }
+
+                .link-button:hover {
+                    background: var(--primary-color-dark);
+                }
             </style>
         `;
 
@@ -410,8 +425,8 @@ export class BannerComponent extends HTMLElement {
                 </div>
                 ${scrollableBanner}
                 <div class="buttons-container">
-                    <webshop-link-button>Mijn games</webshop-link-button>
-                    <webshop-link-button>Shop nu!</webshop-link-button>
+                    <a href="/my-games.html"><button class="link-button">Mijn games</button></a>
+                    <a href="/games.html"><button class="link-button">Shop nu!</button></a>
                 </div>
             </section>
         `;
