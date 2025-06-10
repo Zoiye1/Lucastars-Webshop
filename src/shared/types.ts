@@ -234,3 +234,10 @@ export type Tag = {
     /** Name of the tag */
     value: string;
 };
+
+export type UserSession = {
+    /** ID of the user */
+    userId: number;
+    /** Role of the user */
+    userRole?: string;
+};
