@@ -90,7 +90,14 @@ export class GamesController {
             return;
         }
 
-        const game: Game[] = await this._gameService.getGameById(id);
+        const withPlayUrl: boolean = req.query.withPlayUrl === "true";
+
+        if (withPlayUrl && (!req.userId || !req.userId || req.userRole !== "admin")) {
+            res.status(401).json({ error: "Unauthorized to access play URL" });
+            return;
+        }
+
+        const game: Game[] = await this._gameService.getGameById(id, withPlayUrl);
         res.status(200).json({ games: game });
     }
 

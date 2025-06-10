@@ -29,7 +29,6 @@ const tagController: TagController = new TagController();
 router.post("/auth/register", authController.register);
 router.post("/auth/login", authController.login);
 router.get("/games/search", (req, res) => gamesController.searchGames(req, res));
-router.get("/game-info", (req, res) => gamesController.getGameById(req, res));
 router.get("/games", (req, res) => gamesController.getGames(req, res));
 router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));
 router.get("/tags", (req, res) => tagController.getTags(req, res));
@@ -38,6 +37,7 @@ router.get("/five-random-games", (req, res) => gamesController.getFiveRandomGame
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
 
+router.get("/game-info", (req, res) => gamesController.getGameById(req, res));
 router.get("/auth/verify", (req, res) => authController.verify(req, res));
 router.get("/session", (req, res) => welcomeController.getSession(req, res));
 router.delete("/session", (req, res) => welcomeController.deleteSession(req, res));

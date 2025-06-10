@@ -119,8 +119,21 @@ export class GameService implements IGameService {
         }
     }
 
-    public async getGameById(id: number): Promise<Game[]> {
-        return this.executeGameByIdQuery(id);
+    public async getGameById(id: number, withPlayUrl?: boolean): Promise<Game[]> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const query: string = `
+                ${this.getGameBaseQuery(withPlayUrl)}
+                WHERE g.id = ?
+                GROUP BY g.id
+            `;
+
+            return await this._databaseService.query<Game[]>(connection, query, id);
+        }
+        finally {
+            connection.release();
+        }
     }
 
     public async getFiveRandomGames(): Promise<Game[]> {
@@ -176,28 +189,6 @@ export class GameService implements IGameService {
             const games: Game[] = await this._databaseService.query<Game[]>(connection, sqlQuery, `%${query}%`);
 
             return games;
-        }
-        finally {
-            connection.release();
-        }
-    }
-
-    private async executeGameByIdQuery(id: number): Promise<Game[]> {
-        const connection: PoolConnection = await this._databaseService.openConnection();
-
-        try {
-            const query: string = `
-            SELECT 
-                name,
-                thumbnail,
-                description,
-                price
-            FROM GAMES
-            WHERE
-                id = "${id}"
-        `;
-
-            return await this._databaseService.query<Game[]>(connection, query);
         }
         finally {
             connection.release();
