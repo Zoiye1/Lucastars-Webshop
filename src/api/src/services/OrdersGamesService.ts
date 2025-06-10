@@ -47,6 +47,7 @@ export class OrdersGamesService implements IOrdersGamesService {
                         'postalCode', ua.postalCode,
                         'city', ua.city,
                         'country', ua.country,
+                        'role', r.name,
                         'created', u.created
                     ) as 'user',
                     o.orderDate,
@@ -66,6 +67,7 @@ export class OrdersGamesService implements IOrdersGamesService {
                 LEFT JOIN games g ON og.gameId = g.id
                 LEFT JOIN users u ON o.userId = u.id
                 LEFT JOIN addresses ua ON o.addressId = ua.id
+                LEFT JOIN roles r ON u.roleId = r.id
                 GROUP BY o.id
                 ${sortByQuery}
                 LIMIT ? OFFSET ?
