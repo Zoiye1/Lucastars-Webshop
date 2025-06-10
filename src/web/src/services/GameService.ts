@@ -40,9 +40,11 @@ export class GameService implements IGameService {
         return gamesResponse;
     }
 
-    public async getGameById(id: number): Promise<Game[]> {
-        const url: string = `${VITE_API_URL}game-info?id=${encodeURIComponent(id)}`;
-        const response: Response = await fetch(url);
+    public async getGameById(id: number, withPlayUrl?: boolean): Promise<Game[]> {
+        const url: string = `${VITE_API_URL}game-info?id=${encodeURIComponent(id)}${withPlayUrl ? "&withPlayUrl=true" : ""}`;
+        const response: Response = await fetch(url, {
+            credentials: "include",
+        });
 
         const gamesResponse: GamesResponse = await response.json() as unknown as GamesResponse;
 
