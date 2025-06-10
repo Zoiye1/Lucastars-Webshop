@@ -24,6 +24,12 @@ export type SecretResponse = {
     userId: string;
 };
 
+export type PaymentReturnResponse = {
+    success: boolean;
+    message: string;
+    transactionId: string | null;
+};
+
 export type Payment = {
     orderId: number;
     value: number;

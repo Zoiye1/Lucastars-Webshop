@@ -27,5 +27,17 @@ export class CheckoutService {
         return await res.json() as unknown as PaymentResponse;
     }
 
-    public async getPaymentStatus();
+    public async getPaymentStatus(): Promise<string> {
+        const response = await fetch(`${VITE_API_URL}payments/status`, {
+            method: "GET",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch payment status");
+        }
+
+        const data = await response.json();
+        return data.paymentStatus; // e.g., "Paid", "Pending", etc.
+    }
 }

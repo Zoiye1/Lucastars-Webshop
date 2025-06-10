@@ -1,9 +1,5 @@
 import { html } from "@web/helpers/webComponents";
 import "@web/components/LinkButtonComponent";
-import { Game } from "@shared/types";
-import { IGameService } from "@web/interfaces/IGameService";
-import { GameService } from "@web/services/GameService";
-import { ICheckoutService } from "@api/interfaces/ICheckoutService";
 import { CheckoutService } from "@web/services/CheckoutService";
 
 /**
@@ -12,7 +8,7 @@ import { CheckoutService } from "@web/services/CheckoutService";
  * @remarks This class should be removed from the final product!
  */
 export class PaymentReturnComponent extends HTMLElement {
-    private _checkoutService: ICheckoutService = new CheckoutService();
+    private _checkoutService: CheckoutService = new CheckoutService();
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -21,6 +17,8 @@ export class PaymentReturnComponent extends HTMLElement {
 
     private async render(): Promise<void> {
         if (!this.shadowRoot) return;
+
+        await this._checkoutService.getPaymentStatus();
 
         // Now continue rendering actual content after data has arrived
         const styles: HTMLElement = html`

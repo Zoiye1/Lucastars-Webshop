@@ -42,7 +42,6 @@ export class CheckoutController {
             res.status(400);
             return;
         }
-        console.log("we are here");
         res.status(200).json({ transactionId });
     }
 
@@ -69,5 +68,16 @@ export class CheckoutController {
         }
 
         res.json(result);
+    }
+
+    public async getPaymentStatus(req: Request, res: Response): Promise<void> {
+        const userId: number | undefined = req.userId;
+
+        if (!userId) {
+            res.status(401).send("Unauthorized");
+            return;
+        }
+
+        await this._checkoutService.handlePaymentReturn(req, res); // Make sure this now sends JSON
     }
 }

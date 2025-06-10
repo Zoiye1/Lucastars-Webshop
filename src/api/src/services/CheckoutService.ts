@@ -1,6 +1,6 @@
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
-import { CheckoutItem, Game } from "@shared/types";
+import { CheckoutItem, Game, PaymentReturnResponse } from "@shared/types";
 import { ICheckoutService } from "@api/interfaces/ICheckoutService";
 import { Request, Response } from "express";
 import { PaymentResponse } from "@shared/types";
@@ -78,9 +78,6 @@ export class CheckoutService implements ICheckoutService {
         catch (e: unknown) {
             throw new Error(`Failed to get checkout info: ${e}`);
         }
-        finally {
-            connection.release();
-        }
         const res: Response = await fetch("https://psp.api.lucastars.hbo-ict.cloud/payments", {
             method: "POST",
             headers: {
@@ -98,13 +95,21 @@ export class CheckoutService implements ICheckoutService {
         });
 
         if (!res.ok) {
-            const errorText: string = await res.text(); // ← this will show the actual error message
-            console.error("PSP-aanvraag mislukt:", res.status, errorText);
             throw new Error(`PSP-aanvraag mislukt: ${res.status} ${errorText}`);
         }
-
         const data: unknown = (await res.json()) as unknown;
         if (data && typeof data === "object" && "transactionId" in data) {
+            // 3. Insert order
+            await this._databaseService.query(connection,
+                `
+                INSERT INTO payments (orderId, provider, amount, vat, paymentDate, status, transactionId)
+                VALUES (?, "IDEAL", ?, 0,  NOW(), 'Open', ?)
+                `,
+                orderId,
+                value,
+                data.transactionId
+            );
+            connection.release();
             return data.transactionId as string;
         }
         else {
@@ -247,7 +252,7 @@ export class CheckoutService implements ICheckoutService {
             }
 
             // Call PSP
-            const pspRes = await fetch(`https://psp.api.lucastars.hbo-ict.cloud/payments/${transactionId}`, {
+            const pspRes: Response = await fetch(`https://psp.api.lucastars.hbo-ict.cloud/payments/${transactionId}`, {
                 headers: {
                     Authorization: `Bearer ${process.env.LS_PSP_API_KEY}`,
                 },
@@ -261,7 +266,6 @@ export class CheckoutService implements ICheckoutService {
 
             const data = await pspRes.json();
             const status = data.status;
-
             // Update database
             await this._databaseService.query(
                 connection,
@@ -276,11 +280,9 @@ export class CheckoutService implements ICheckoutService {
                     "UPDATE orders SET status = 'Paid' WHERE id = ?",
                     orderId
                 );
-
-                // TODO: maybe unlock games or email confirmation here
             }
 
-            res.redirect("/my-games.html");
+            res.status(200).json({ paymentStatus: status });
         }
         catch (e) {
             console.error("Error in payment return:", e);
