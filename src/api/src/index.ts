@@ -6,6 +6,7 @@ import { config } from "dotenv";
 import express, { Express } from "express";
 import "express-async-errors";
 import { router } from "./routes";
+import { uploadsProxyMiddleWare } from "./middleware/uploadsProxyMiddleWare";
 
 // Create an Express application
 export const app: Express = express();
@@ -13,6 +14,12 @@ export const app: Express = express();
 // Load the .env files
 config();
 config({ path: ".env.local", override: true });
+
+// Serve files from LucaStars trough our own image proxy to avoid CORS issues for the frontend
+app.use("/uploads", uploadsProxyMiddleWare);
+
+// Serve static files from the "uploads" directory
+app.use("/uploads", express.static("uploads"));
 
 // Enable CORS headers
 app.use(cors({
