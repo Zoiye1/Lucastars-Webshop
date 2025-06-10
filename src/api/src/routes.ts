@@ -8,6 +8,7 @@ import { OrdersGamesController } from "@api/controllers/OrdersGamesController";
 import { AuthController } from "./controllers/AuthController";
 import { TagController } from "./controllers/TagController";
 import { requireRole } from "./middleware/rolesMiddleWare";
+import { ImageProxyController } from "./controllers/ImageProxyController";
 
 // Create a router
 export const router: Router = Router();
@@ -25,6 +26,7 @@ const ordersGamesController: OrdersGamesController = new OrdersGamesController()
 const authController: AuthController = new AuthController();
 const cartController: CartController = new CartController();
 const tagController: TagController = new TagController();
+const imageProxyController: ImageProxyController = new ImageProxyController();
 
 router.post("/auth/register", authController.register);
 router.post("/auth/login", authController.login);
@@ -59,6 +61,7 @@ router.get("/owned-games", (req, res) => gamesController.getOwnedGames(req, res)
 router.use(requireRole("admin"));
 router.get("/secret", (req, res) => welcomeController.getSecret(req, res));
 router.get("/orders", (req, res) => ordersGamesController.getOrders(req, res));
+router.get("/image-proxy", (req, res) => imageProxyController.getImage(req, res));
 
 // TODO: The following endpoints have to be implemented in their own respective controller
 router.get("/products", (_req, _res) => {
