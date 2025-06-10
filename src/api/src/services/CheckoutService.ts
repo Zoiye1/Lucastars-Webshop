@@ -2,7 +2,6 @@ import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
 import { CheckoutItem, Game, PaymentReturnResponse } from "@shared/types";
 import { ICheckoutService } from "@api/interfaces/ICheckoutService";
-import { Request, Response } from "express";
 import { PaymentResponse } from "@shared/types";
 
 type CartItemsResult = {
@@ -95,7 +94,7 @@ export class CheckoutService implements ICheckoutService {
         });
 
         if (!res.ok) {
-            throw new Error(`PSP-aanvraag mislukt: ${res.status} ${errorText}`);
+            throw new Error(`PSP-aanvraag mislukt: ${res.status} ${res.statusText}`);
         }
         const data: unknown = (await res.json()) as unknown;
         if (data && typeof data === "object" && "transactionId" in data) {
@@ -228,14 +227,7 @@ export class CheckoutService implements ICheckoutService {
         }
     }
 
-    public async handlePaymentReturn(req: Request, res: Response): Promise<void> {
-        const orderId: number = Number((req.query as { orderId: string }).orderId);
-
-        if (!orderId) {
-            res.status(400).send("Missing orderId");
-            return;
-        }
-
+    public async handlePaymentReturn(orderId: number): Promise<PaymentReturnResponse | undefined> {
         // Get transactionId for this order from DB
         const connection: PoolConnection = await this._databaseService.openConnection();
         try {
@@ -247,8 +239,7 @@ export class CheckoutService implements ICheckoutService {
 
             const transactionId: string = paymentRow[0]?.transactionId;
             if (!transactionId) {
-                res.status(404).send("No payment found for order");
-                return;
+                return undefined;
             }
 
             // Call PSP
@@ -259,13 +250,13 @@ export class CheckoutService implements ICheckoutService {
             });
 
             if (!pspRes.ok) {
-                const errText = await pspRes.text();
-                res.status(502).send(`Failed to check PSP: ${errText}`);
-                return;
+                const errText: string = await pspRes.text();
+                console.log(errText);
+                return undefined;
             }
 
-            const data = await pspRes.json();
-            const status = data.status;
+            const data: PaymentReturnResponse = await pspRes.json() as PaymentReturnResponse;
+            const status: string = data.status;
             // Update database
             await this._databaseService.query(
                 connection,
@@ -282,11 +273,14 @@ export class CheckoutService implements ICheckoutService {
                 );
             }
 
-            res.status(200).json({ paymentStatus: status });
+            return {
+                status: status,
+                transactionId: transactionId,
+            };
         }
-        catch (e) {
-            console.error("Error in payment return:", e);
-            res.status(500).send("Something went wrong");
+        catch (error) {
+            console.error("Error in payment return:", error);
+            return;
         }
         finally {
             connection.release();

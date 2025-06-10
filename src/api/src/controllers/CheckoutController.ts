@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ICheckoutService } from "@api/interfaces/ICheckoutService";
 import { CheckoutService } from "@api/services/CheckoutService";
-import { CheckoutItem, Payment } from "@shared/types";
+import { CheckoutItem, Payment, PaymentReturnResponse } from "@shared/types";
 
 export class CheckoutController {
     private readonly _checkoutService: ICheckoutService = new CheckoutService();
@@ -71,6 +71,7 @@ export class CheckoutController {
     }
 
     public async getPaymentStatus(req: Request, res: Response): Promise<void> {
+        const orderId: number = Number((req.query as { orderId: string }).orderId);
         const userId: number | undefined = req.userId;
 
         if (!userId) {
@@ -78,6 +79,13 @@ export class CheckoutController {
             return;
         }
 
-        await this._checkoutService.handlePaymentReturn(req, res); // Make sure this now sends JSON
+        const paymentReturnStatus: PaymentReturnResponse | undefined = await this._checkoutService.handlePaymentReturn(orderId);
+
+        if (!paymentReturnStatus) {
+            res.status(400).json({ error: "Failed to retrieve payment status" });
+            return;
+        }
+
+        res.status(200).json({ status: paymentReturnStatus.status, transactionId: paymentReturnStatus.transactionId });
     }
 }

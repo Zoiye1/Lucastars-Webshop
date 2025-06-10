@@ -1,4 +1,4 @@
-import { CheckoutItem, Payment, PaymentResponse } from "@shared/types";
+import { CheckoutItem, Payment, PaymentResponse, PaymentReturnResponse } from "@shared/types";
 
 export class CheckoutService {
     public async getCheckoutData(): Promise<CheckoutItem> {
@@ -27,9 +27,8 @@ export class CheckoutService {
         return await res.json() as unknown as PaymentResponse;
     }
 
-    public async getPaymentStatus(): Promise<string> {
-        const response = await fetch(`${VITE_API_URL}payments/status`, {
-            method: "GET",
+    public async getPaymentStatus(orderId: number): Promise<PaymentReturnResponse> {
+        const response: Response = await fetch(`${VITE_API_URL}payments/status?orderId=${encodeURIComponent(orderId)}`, {
             credentials: "include",
         });
 
@@ -37,7 +36,7 @@ export class CheckoutService {
             throw new Error("Failed to fetch payment status");
         }
 
-        const data = await response.json();
-        return data.paymentStatus; // e.g., "Paid", "Pending", etc.
+        const paymentReturnResponse: PaymentReturnResponse = await response.json() as unknown as PaymentReturnResponse;
+        return paymentReturnResponse;
     }
 }
