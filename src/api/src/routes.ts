@@ -7,6 +7,7 @@ import { GamesController } from "./controllers/GamesController";
 import { OrdersGamesController } from "@api/controllers/OrdersGamesController";
 import { AuthController } from "./controllers/AuthController";
 import { TagController } from "./controllers/TagController";
+import { Request, Response } from "express";
 
 // Create a router
 export const router: Router = Router();
@@ -71,6 +72,21 @@ router.post("/cart/add", (_req, _res) => {
 
 router.post("/Checkout/add", (_req, _res) => {
     throw new Error("Add a product to the cart");
+});
+
+// Add address lookup endpoint BEFORE session-required middleware
+router.get("/address-lookup", (req: Request, res: Response) => {
+    // Dummy implementation: always return the same data
+    // In production, you would call a real postcode API here
+    const { postalCode, houseNumber } = req.query;
+    if (!postalCode || !houseNumber) {
+        res.status(400).json({ error: "Missing postalCode or houseNumber" });
+        return;
+    }
+    res.json({
+        street: "Voorbeeldstraat",
+        city: "Voorbeeldstad",
+    });
 });
 
 export default router;

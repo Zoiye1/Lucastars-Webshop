@@ -43,14 +43,14 @@ export class CheckoutPageComponent extends HTMLElement {
             </div>
             <form id="address-form" style="display: flex; flex-direction: column; gap: 1rem;">
                 <div style="display: flex; gap: 1rem;">
-                    <div style="flex: 2;">
+                    <div style="flex: 1;">
                         <label style="display: flex; flex-direction: column; font-weight: 500;">
-                            Straat
+                            Postcode
                             <input 
                                 type="text" 
-                                name="street" 
-                                value="${this.item.street ?? ""}" 
-                                placeholder="Straatnaam" 
+                                name="postalCode" 
+                                value="${this.item.postalCode ?? ""}" 
+                                placeholder="1234 AB" 
                                 required 
                                 style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
                             />
@@ -69,18 +69,24 @@ export class CheckoutPageComponent extends HTMLElement {
                             />
                         </label>
                     </div>
+                    <div style="flex: 1; display: flex; align-items: flex-end;">
+                        <button type="button" id="lookup-address" style="padding: 0.5rem 1rem; margin-bottom: 0;">
+                            Zoek adres
+                        </button>
+                    </div>
                 </div>
                 <div style="display: flex; gap: 1rem;">
-                    <div style="flex: 1;">
+                    <div style="flex: 2;">
                         <label style="display: flex; flex-direction: column; font-weight: 500;">
-                            Postcode
+                            Straat
                             <input 
                                 type="text" 
-                                name="postalCode" 
-                                value="${this.item.postalCode ?? ""}" 
-                                placeholder="1234 AB" 
+                                name="street" 
+                                value="${this.item.street ?? ""}" 
+                                placeholder="Straatnaam" 
                                 required 
                                 style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
+                                readonly
                             />
                         </label>
                     </div>
@@ -94,6 +100,7 @@ export class CheckoutPageComponent extends HTMLElement {
                                 placeholder="Plaatsnaam" 
                                 required 
                                 style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
+                                readonly
                             />
                         </label>
                     </div>
@@ -133,6 +140,11 @@ export class CheckoutPageComponent extends HTMLElement {
                 const postalCode: string = formData.get("postalCode") as string;
                 const city: string = formData.get("city") as string;
 
+                if (!street || !city) {
+                    alert("Zoek eerst het adres op.");
+                    return;
+                }
+
                 const data: CheckoutItem = {
                     street: street,
                     houseNumber: houseNumber,
@@ -154,6 +166,32 @@ export class CheckoutPageComponent extends HTMLElement {
         container.appendChild(submitButton);
 
         this.shadowRoot.appendChild(container);
+
+        // After userInfo.innerHTML, add JS for lookup button
+        setTimeout(() => {
+            const addressForm = this.shadowRoot?.querySelector<HTMLFormElement>("#address-form");
+            const lookupBtn = this.shadowRoot?.querySelector<HTMLButtonElement>("#lookup-address");
+            if (lookupBtn && addressForm) {
+                lookupBtn.onclick = async () => {
+                    const formData = new FormData(addressForm);
+                    const postalCode = formData.get("postalCode") as string;
+                    const houseNumber = formData.get("houseNumber") as string;
+                    if (!postalCode || !houseNumber) {
+                        alert("Vul postcode en huisnummer in.");
+                        return;
+                    }
+                    try {
+                        const res = await fetch(`/address-lookup?postalCode=${encodeURIComponent(postalCode)}&houseNumber=${encodeURIComponent(houseNumber)}`);
+                        if (!res.ok) throw new Error("Adres niet gevonden");
+                        const data = await res.json();
+                        (addressForm.elements.namedItem("street") as HTMLInputElement).value = data.street || "";
+                        (addressForm.elements.namedItem("city") as HTMLInputElement).value = data.city || "";
+                    } catch {
+                        alert("Adres niet gevonden.");
+                    }
+                };
+            }
+        }, 0);
     }
 }
 
