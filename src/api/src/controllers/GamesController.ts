@@ -1,4 +1,5 @@
 import { IGameService } from "@api/interfaces/IGameService";
+import { GameImageService } from "@api/services/GameImageService";
 import { GameService } from "@api/services/GameService";
 import { Game, GetGamesOptions, PaginatedResponse } from "@shared/types";
 import { Request, Response } from "express";
@@ -8,6 +9,7 @@ import { Request, Response } from "express";
  */
 export class GamesController {
     private readonly _gameService: IGameService = new GameService();
+    private readonly _gameImageService: GameImageService = new GameImageService();
 
     /**
      * Handles the request to get all games.
@@ -145,5 +147,87 @@ export class GamesController {
 
         const games: Game[] = await this._gameService.searchGames(query);
         res.json({ games });
+    }
+
+    public async updateGame(req: Request, res: Response): Promise<void> {
+        // Check if the user is an admin.
+        if (!req.userId || req.userRole !== "admin") {
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        }
+
+        if (!req.fields || !req.fields.game) {
+            res.status(400).json({ error: "Missing game data" });
+            return;
+        }
+
+        const game: Game | undefined = JSON.parse(req.fields.game as unknown as string) as Game | undefined;
+
+        if (!game) {
+            res.status(400).json({ error: "Invalid game data" });
+            return;
+        }
+
+        if (
+            typeof game.id !== "number" ||
+            typeof game.sku !== "string" ||
+            typeof game.name !== "string" ||
+            typeof game.description !== "string" ||
+            typeof game.price !== "number" ||
+            !Array.isArray(game.tags) ||
+            !game.tags.every(tag => typeof tag === "string")
+        ) {
+            res.status(400).json({ error: "Invalid game structure" });
+            return;
+        }
+
+        // Check if the thumbnail is a valid image file. Only allow jpeg and png formats.
+        const allowedImageTypes: string[] = [
+            "image/jpeg",
+            "image/png",
+        ];
+
+        if (!req.files || !req.files.thumbnail || req.files.thumbnail.length !== 1) {
+            res.status(400).json({ error: "Missing thumbnail file" });
+            return;
+        }
+
+        if (!req.files.thumbnail[0].mimetype || !allowedImageTypes.includes(req.files.thumbnail[0].mimetype)) {
+            res.status(400).json({ error: "Invalid thumbnail file type. Only jpeg and png are allowed." });
+            return;
+        }
+
+        if (req.files.images) {
+            if (!Array.isArray(req.files.images)) {
+                res.status(400).json({ error: "Images must be an array" });
+                return;
+            }
+
+            // Check if the images are valid image files. Only allow jpeg and png formats.
+            for (const image of req.files.images) {
+                if (!image.mimetype || !allowedImageTypes.includes(image.mimetype)) {
+                    res.status(400).json({ error: "Invalid image file type. Only jpeg and png are allowed." });
+                    return;
+                }
+            }
+        }
+
+        // Delete all images. Kinda hacky since its not efficient, but for now it works.
+        await this._gameImageService.deleteImages(game.id);
+
+        // Upload the thumbnail.
+        game.thumbnail = await this._gameImageService.uploadImage(game.id, req.files.thumbnail[0]);
+
+        // Upload the images.
+        game.images = req.files.images
+            ? await Promise.all(req.files.images.map(image => this._gameImageService.uploadImage(game.id, image)))
+            : [];
+
+        await this._gameService.updateGame(game);
+
+        res.status(200).json({
+            message: "Game updated successfully",
+            game: game,
+        });
     }
 }

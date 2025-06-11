@@ -9,6 +9,7 @@ import { AuthController } from "./controllers/AuthController";
 import { TagController } from "./controllers/TagController";
 import { requireRole } from "./middleware/rolesMiddleWare";
 import { ImageProxyController } from "./controllers/ImageProxyController";
+import { formidableMiddleware } from "./middleware/formidableMiddleWare";
 
 // Create a router
 export const router: Router = Router();
@@ -62,6 +63,9 @@ router.use(requireRole("admin"));
 router.get("/secret", (req, res) => welcomeController.getSecret(req, res));
 router.get("/orders", (req, res) => ordersGamesController.getOrders(req, res));
 router.get("/image-proxy", (req, res) => imageProxyController.getImage(req, res));
+
+// Game CRUD operations
+router.put("/games/:id", formidableMiddleware, (req, res) => gamesController.updateGame(req, res));
 
 // TODO: The following endpoints have to be implemented in their own respective controller
 router.get("/products", (_req, _res) => {

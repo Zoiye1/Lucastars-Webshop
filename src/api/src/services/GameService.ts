@@ -214,4 +214,80 @@ export class GameService implements IGameService {
             connection.release();
         }
     }
+
+    public async updateGame(game: Game): Promise<Game> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const gameQuery: string = `
+                UPDATE games
+                SET 
+                    sku = ?,
+                    name = ?,
+                    thumbnail = ?,
+                    description = ?,
+                    price = ?,
+                    playUrl = ?,
+                    updated = NOW()
+                WHERE id = ?
+            `;
+
+            await this._databaseService.query<Game>(
+                connection,
+                gameQuery,
+                game.sku,
+                game.name,
+                game.thumbnail,
+                game.description,
+                game.price,
+                game.url,
+                game.id
+            );
+
+            const deleteImageQuery: string = `
+                DELETE FROM game_images WHERE gameId = ?;
+            `;
+            await this._databaseService.query<Game>(connection, deleteImageQuery, game.id);
+
+            if (game.images.length > 0) {
+                const insertImagesQuery: string = `
+                    INSERT INTO game_images (gameId, imageUrl)
+                    VALUES ${game.images.map(() => "(?, ?)").join(", ")}
+                `;
+
+                const imageParams: (number | string)[] = [];
+
+                for (const image of game.images) {
+                    imageParams.push(game.id, image);
+                }
+
+                await this._databaseService.query<Game>(connection, insertImagesQuery, ...imageParams);
+            }
+
+            const deleteTagsQuery: string = `
+                DELETE FROM games_tags WHERE gameId = ?;
+            `;
+            await this._databaseService.query<Game>(connection, deleteTagsQuery, game.id);
+
+            if (game.tags.length > 0) {
+                const insertTagsQuery: string = `
+                    INSERT INTO games_tags (gameId, tagId)
+                    VALUES ${game.tags.map(() => "(?, ?)").join(", ")}
+                `;
+
+                const tagParams: (number | string)[] = [];
+
+                for (const tag of game.tags) {
+                    tagParams.push(game.id, tag);
+                }
+
+                await this._databaseService.query<Game>(connection, insertTagsQuery, ...tagParams);
+            }
+
+            return game;
+        }
+        finally {
+            connection.release();
+        }
+    }
 }
