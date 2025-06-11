@@ -25,8 +25,7 @@ export type SecretResponse = {
 };
 
 export type PaymentReturnResponse = {
-    success: boolean;
-    message: string;
+    status: string;
     transactionId: string | null;
 };
 
