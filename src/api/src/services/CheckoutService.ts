@@ -87,9 +87,7 @@ export class CheckoutService implements ICheckoutService {
                 currency: "EUR",
                 value: value,
                 description: `Bestelling ${this.gameName}`,
-                redirectUrl: process.env.NODE_ENV === "development"
-                    ? `http://localhost:3000/payment-return?orderId=${orderId}`
-                    : `https://wiigiivuukii32-pb4sed2425..hbo-ict.cloud/payment-return?orderId=${orderId}`,
+                redirectUrl: `${process.env.WEB_URL}/payment-return?orderId=${orderId}`,
             }),
         });
 
