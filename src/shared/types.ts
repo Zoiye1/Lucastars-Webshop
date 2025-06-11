@@ -241,3 +241,10 @@ export type UserSession = {
     /** Role of the user */
     userRole?: string;
 };
+
+export type NotificationEvent = {
+    /** Message to be displayed in the notification */
+    message: string;
+    /** Type of the notification (success, warning, error) */
+    type: "success" | "warning" | "error";
+};

@@ -2,11 +2,13 @@ import "@web/components/LayoutComponent";
 import "@web/components/DashboardComponent";
 import { html } from "@web/helpers/webComponents";
 import { GameService } from "@web/services/GameService";
-import { Game, PaginatedResponse } from "@shared/types";
+import { Game, NotificationEvent, PaginatedResponse } from "@shared/types";
 import { DashboardComponent } from "@web/components/DashboardComponent";
 
 import { Tabulator, AjaxModule, PageModule, SortModule, FormatModule, InteractionModule, TooltipModule } from "tabulator-tables";
 import tabulatorCSS from "tabulator-tables/dist/css/tabulator_semanticui.min.css?raw";
+import { WebshopEventService } from "@web/services/WebshopEventService";
+import { WebshopEvent } from "@web/enums/WebshopEvent";
 
 type TabulatorParams = {
     page?: number;
@@ -16,6 +18,7 @@ type TabulatorParams = {
 
 class DashboardGamesPageComponent extends HTMLElement {
     private _gameService: GameService = new GameService();
+    private _webshopEventService: WebshopEventService = new WebshopEventService();
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -135,6 +138,13 @@ class DashboardGamesPageComponent extends HTMLElement {
                             if (confirm("Weet je zeker dat je dit spel wilt verwijderen?")) {
                                 await this._gameService.deleteGame(game.id);
                                 await cell.getRow().delete();
+                                this._webshopEventService.dispatchEvent<NotificationEvent>(
+                                    WebshopEvent.Notification,
+                                    {
+                                        type: "success",
+                                        message: `Game "${game.name}" succesvol verwijderd.`,
+                                    }
+                                );
                             }
                         });
 
