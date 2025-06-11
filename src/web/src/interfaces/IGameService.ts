@@ -14,4 +14,7 @@ export abstract class IGameService {
     public abstract getOwnedGames(): Promise<Game[]>;
     public abstract searchGames(query: string): Promise<Game[]>;
     public abstract getFiveRandomGames(): Promise<Game[]>;
+    public abstract createGame(game: Game, thumbnail: Blob, images: Blob[]): Promise<Game>;
+    public abstract updateGame(game: Game, thumbnail?: Blob, images?: Blob[]): Promise<Game>;
+    public abstract deleteGame(id: number): Promise<void>;
 }
