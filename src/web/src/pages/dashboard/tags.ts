@@ -8,7 +8,7 @@ import { TagService } from "@web/services/TagService";
 import { Tag } from "@shared/types";
 import { ConfirmModalComponent } from "@web/components/ConfirmModalComponent";
 
-import { Tabulator, PageModule, SortModule, FormatModule, InteractionModule } from "tabulator-tables";
+import { Tabulator, PageModule, SortModule, FormatModule, InteractionModule, AjaxModule } from "tabulator-tables";
 import tabulatorCSS from "tabulator-tables/dist/css/tabulator_semanticui.min.css?raw";
 
 class DashboardTagsPageComponent extends HTMLElement {
@@ -19,15 +19,13 @@ class DashboardTagsPageComponent extends HTMLElement {
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
 
-        void this.render();
+        this.render();
     }
 
-    private async render(): Promise<void> {
+    private render(): void {
         if (!this.shadowRoot) {
             return;
         }
-
-        const tags: Tag[] = await this._tagService.getTags();
 
         const styles: HTMLElement = html`
             <style>
@@ -61,7 +59,7 @@ class DashboardTagsPageComponent extends HTMLElement {
             </style>
         `;
 
-        Tabulator.registerModule([PageModule, SortModule, FormatModule, InteractionModule]);
+        Tabulator.registerModule([AjaxModule, PageModule, SortModule, FormatModule, InteractionModule]);
 
         const tableContainer: HTMLElement = html`<div></div>`;
 
@@ -84,7 +82,10 @@ class DashboardTagsPageComponent extends HTMLElement {
         requestAnimationFrame(() => {
             new Tabulator(tableContainer, {
                 layout: "fitColumns",
-                data: tags,
+                ajaxURL: " ",
+                ajaxRequestFunc: async (_url, _config, _params) => {
+                    return await this._tagService.getTags();
+                },
                 pagination: true,
                 paginationMode: "local",
                 paginationSize: 10,
