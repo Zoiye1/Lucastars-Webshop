@@ -10,6 +10,7 @@ import { TagController } from "./controllers/TagController";
 import { requireRole } from "./middleware/rolesMiddleWare";
 import { ImageProxyController } from "./controllers/ImageProxyController";
 import { formidableMiddleware } from "./middleware/formidableMiddleWare";
+import { ChartController } from "./controllers/ChartsController";
 
 // Create a router
 export const router: Router = Router();
@@ -28,6 +29,7 @@ const authController: AuthController = new AuthController();
 const cartController: CartController = new CartController();
 const tagController: TagController = new TagController();
 const imageProxyController: ImageProxyController = new ImageProxyController();
+const chartController: ChartController = new ChartController();
 
 router.post("/auth/register", authController.register);
 router.post("/auth/login", authController.login);
@@ -63,6 +65,11 @@ router.use(requireRole("admin"));
 router.get("/secret", (req, res) => welcomeController.getSecret(req, res));
 router.get("/orders", (req, res) => ordersGamesController.getOrders(req, res));
 router.get("/image-proxy", (req, res) => imageProxyController.getImage(req, res));
+
+// Chart operations
+router.get("/chart/turnover", (req, res) => chartController.getTurnoverByYear(req, res));
+router.get("/chart/orders", (req, res) => chartController.getOrdersByMonth(req, res));
+router.get("/chart/tags", (req, res) => chartController.getGamesTags(req, res));
 
 // Game CRUD operations
 router.post("/games", formidableMiddleware, (req, res) => gamesController.createGame(req, res));

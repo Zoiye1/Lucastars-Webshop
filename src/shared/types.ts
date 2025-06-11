@@ -248,3 +248,18 @@ export type NotificationEvent = {
     /** Type of the notification (success, warning, error) */
     type: "success" | "warning" | "error";
 };
+
+export type TurnoverByMonth = {
+    month: number;
+    turnover: number;
+};
+
+export type OrdersByMonth = {
+    date: string;
+    orderCount: number;
+};
+
+export type GameTagCount = {
+    tag: string;
+    count: number;
+};
