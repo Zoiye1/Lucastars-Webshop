@@ -1,4 +1,4 @@
-import { IUser } from "../../../shared/types";
+import { IUser, PaginatedResponse, PaginationOptions, PaginationSortOptions } from "../../../shared/types";
 import { DatabaseService } from "./DatabaseService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { hash, compare } from "bcrypt-ts/node";
@@ -32,6 +32,62 @@ export class UserService {
             LEFT JOIN addresses a ON u.id = a.userId
             LEFT JOIN roles r ON u.roleId = r.id
         `;
+    }
+
+    public async getUsers(options: PaginationOptions & PaginationSortOptions): Promise<PaginatedResponse<IUser>> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        const offset: number = (options.page - 1) * options.limit;
+
+        const sortDirection: string = options.sort === "desc" ? "DESC" : "ASC";
+        const sortByValues: Map<string, string> = new Map([
+            ["id", "u.id"],
+            ["email", "u.email"],
+            ["name", "u.firstName"],
+            ["username", "u.username"],
+            ["role", "r.name"],
+            ["created", "u.created"],
+        ]);
+
+        const sortByQuery: string = options.sortBy && sortByValues.has(options.sortBy)
+            ? `ORDER BY ${sortByValues.get(options.sortBy)} ${sortDirection}`
+            : "ORDER BY u.id DESC";
+
+        try {
+            const query: string = `
+                ${this._getUserBaseQuery()}
+                GROUP BY u.id
+                ${sortByQuery}
+                LIMIT ?
+                OFFSET ?
+            `;
+
+            const users: IUser[] = await this._databaseService.query(
+                connection,
+                query,
+                options.limit,
+                offset
+            );
+
+            const countResult: { totalCount: number }[] = await this._databaseService.query<{ totalCount: number }[]>(
+                connection,
+                "SELECT COUNT(DISTINCT u.id) as totalCount FROM users u"
+            );
+
+            const paginatedResponse: PaginatedResponse<IUser> = {
+                items: users,
+                pagination: {
+                    totalItems: countResult[0].totalCount,
+                    totalPages: Math.ceil(countResult[0].totalCount / options.limit),
+                    currentPage: options.page,
+                    itemsPerPage: options.limit,
+                },
+            };
+
+            return paginatedResponse;
+        }
+        finally {
+            connection.release();
+        }
     }
 
     public async getUserByUsername(username: string): Promise<IUser | undefined> {
