@@ -5,14 +5,17 @@ import "@web/components/ConfirmModalComponent";
 import { html } from "@web/helpers/webComponents";
 import { DashboardComponent } from "@web/components/DashboardComponent";
 import { TagService } from "@web/services/TagService";
-import { Tag } from "@shared/types";
+import { NotificationEvent, Tag } from "@shared/types";
 import { ConfirmModalComponent } from "@web/components/ConfirmModalComponent";
+import { WebshopEvent } from "@web/enums/WebshopEvent";
+import { WebshopEventService } from "@web/services/WebshopEventService";
 
 import { Tabulator, PageModule, SortModule, FormatModule, InteractionModule, AjaxModule } from "tabulator-tables";
 import tabulatorCSS from "tabulator-tables/dist/css/tabulator_semanticui.min.css?raw";
 
 class DashboardTagsPageComponent extends HTMLElement {
     private _tagService: TagService = new TagService();
+    private _webshopEventService: WebshopEventService = new WebshopEventService();
 
     private _confirmModal: ConfirmModalComponent = document.createElement("webshop-confirm-modal") as ConfirmModalComponent;
 
@@ -43,8 +46,10 @@ class DashboardTagsPageComponent extends HTMLElement {
                     color: var(--primary-color);
                 }
 
-                .action-btn.delete {
-                    color: red;
+                .action-buttons {
+                    display: flex;
+                    align-items: center;
+                    height: 100%;
                 }
 
                 .action-btn.icon {
@@ -67,6 +72,13 @@ class DashboardTagsPageComponent extends HTMLElement {
         dashboard.append(tableContainer);
 
         dashboard.pageTitle = "Tags";
+        dashboard.pageButton = {
+            title: "Nieuwe tag",
+            icon: "/images/icons/add-circle.svg",
+            action: () => {
+                location.href = "/dashboard/tag-form";
+            },
+        };
 
         const element: HTMLElement = html`
             <webshop-layout>
@@ -100,27 +112,50 @@ class DashboardTagsPageComponent extends HTMLElement {
                         width: 100,
                         headerSort: false,
                         formatter: cell => {
-                            const button: HTMLButtonElement = document.createElement("button");
-                            button.className = "action-btn icon";
+                            const tag: Tag = cell.getRow().getData() as Tag;
 
-                            const icon: HTMLImageElement = document.createElement("img");
-                            icon.src = "/images/icons/trash-red.svg";
-                            icon.alt = "Verwijderen";
-                            button.appendChild(icon);
+                            const editLink: HTMLAnchorElement = document.createElement("a");
+                            editLink.className = "action-btn icon";
+                            editLink.href = `/dashboard/tag-form?id=${tag.id}`;
 
-                            button.addEventListener("click", () => {
-                                const tag: Tag = cell.getRow().getData() as Tag;
+                            const editIcon: HTMLImageElement = document.createElement("img");
+                            editIcon.src = "/images/icons/pencil.svg";
+                            editIcon.alt = "Bewerken";
+                            editLink.appendChild(editIcon);
 
+                            const deleteButton: HTMLButtonElement = document.createElement("button");
+                            deleteButton.className = "action-btn icon";
+
+                            const deleteIcon: HTMLImageElement = document.createElement("img");
+                            deleteIcon.src = "/images/icons/trash-red.svg";
+                            deleteIcon.alt = "Verwijderen";
+                            deleteButton.appendChild(deleteIcon);
+
+                            deleteButton.addEventListener("click", () => {
                                 this._confirmModal.showModal(
                                     "Bevestig verwijderen",
-                                `Weet je zeker dat je de tag "${tag.value}" wilt verwijderen?`
+                                    `Weet je zeker dat je de tag "${tag.value}" wilt verwijderen?`
                                 );
 
-                                this._confirmModal.onConfirm = () => {
-                                    console.log("Tag verwijderen:", tag.id);
+                                this._confirmModal.onConfirm = async () => {
+                                    await this._tagService.deleteTag(tag.id);
+                                    await cell.getRow().delete();
+                                    this._webshopEventService.dispatchEvent<NotificationEvent>(
+                                        WebshopEvent.Notification,
+                                        {
+                                            type: "success",
+                                            message: `Tag "${tag.value}" succesvol verwijderd`,
+                                        }
+                                    );
                                 };
                             });
-                            return button;
+
+                            return html`
+                            <div class="action-buttons">
+                                ${editLink}
+                                ${deleteButton}
+                            </div>
+                        `;
                         },
                     },
                 ],
