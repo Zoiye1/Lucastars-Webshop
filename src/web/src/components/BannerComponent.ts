@@ -325,7 +325,7 @@ export class BannerComponent extends HTMLElement {
                         <a href="/game-info.html?id=${games[i].id}">
                             <div class="big-picture">
                                 <img id="big-img-${i}" alt="Main Screenshot of Game"
-                                     src="${games[i].thumbnail}"/>
+                                     src="${VITE_API_URL}uploads/${games[i].thumbnail}"/>
                             </div>
                         </a>
                         <div class="game-details">
@@ -334,7 +334,7 @@ export class BannerComponent extends HTMLElement {
                                 <div class="small-picture">
                                     <img
                                         alt="Screenshot"
-                                        src="${games[i].images[0]}"
+                                        src="${VITE_API_URL}uploads/${games[i].images[0]}"
                                         data-banner-index="${i}"
                                         data-image-src="${games[i].images[0]}"
                                         class="thumbnail"
@@ -345,7 +345,7 @@ export class BannerComponent extends HTMLElement {
                                     <div class="small-picture">
                                         <img
                                             alt="Screenshot"
-                                            src="${games[i].images[1]}"
+                                            src="${VITE_API_URL}uploads/${games[i].images[1]}"
                                             data-banner-index="${i}"
                                             data-image-src="${games[i].images[1]}"
                                             class="thumbnail"
@@ -358,7 +358,7 @@ export class BannerComponent extends HTMLElement {
                                     <div class="small-picture">
                                         <img
                                             alt="Screenshot"
-                                            src="${games[i].images[2]}"
+                                            src="${VITE_API_URL}uploads/${games[i].images[2]}"
                                             data-banner-index="${i}"
                                             data-image-src="${games[i].images[2]}"
                                             class="thumbnail"
@@ -371,7 +371,7 @@ export class BannerComponent extends HTMLElement {
                                     <div class="small-picture">
                                         <img
                                             alt="Screenshot"
-                                            src="${games[i].images[3]}"
+                                            src="${VITE_API_URL}uploads/${games[i].images[3]}"
                                             data-banner-index="${i}"
                                             data-image-src="${games[i].images[3]}"
                                             class="thumbnail"

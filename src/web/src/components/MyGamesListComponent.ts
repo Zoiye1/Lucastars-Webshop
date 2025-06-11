@@ -82,7 +82,7 @@ export class MyGamesListComponent extends HTMLElement {
                             gameId="${game.id}"
                             name="${game.name}"
                             description="${game.description}"
-                            image="${game.thumbnail}"
+                            image="${VITE_API_URL}uploads/${game.thumbnail}"
                         ></webshop-my-game>
                     `)}
                 </div>

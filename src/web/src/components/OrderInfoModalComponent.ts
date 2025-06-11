@@ -175,7 +175,7 @@ export class OrderItemsInfoModalComponent extends HTMLElement {
                 <tbody>
                     ${this._order.items.map(item => `
                         <tr>
-                            <td><img src="${item.thumbnail}" alt="${item.name}" /></td>
+                            <td><img src="${VITE_API_URL}uploads/${item.thumbnail}" alt="${item.name}" /></td>
                             <td>
                                 <div class="game-name">${item.name}</div>
                             </td>

@@ -183,7 +183,7 @@ export class SearchBarComponent extends HTMLElement {
         games.forEach(game => {
             const gameElement: HTMLElement = html`
                 <div class="result-game">
-                    <img src="${game.thumbnail}" alt="${game.name}" />
+                    <img src="${VITE_API_URL}uploads/${game.thumbnail}" alt="${game.name}" />
                     <div class="game-info">
                         <div class="game-name">${game.name}</div>
                         <div class="game-price">€${game.price}</div>
