@@ -26,8 +26,6 @@ describe("CartService", () => {
 
     test("getCart returns empty array if no items", async () => {
         const cartService: CartService = new CartService();
-        const mockDatabaseService: MockDatabaseService = createMockDatabaseService();
-        mockDatabaseService.query.mockResolvedValue([]);
 
         const result: CartItem[] = await cartService.getCart(99);
 
