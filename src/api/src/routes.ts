@@ -27,6 +27,7 @@ const cartController: CartController = new CartController();
 const tagController: TagController = new TagController();
 const userController: UserController = new UserController();
 
+// Public routes (no authentication required)
 router.post("/auth/register", authController.register);
 router.post("/auth/login", authController.login);
 router.get("/games/search", (req, res) => gamesController.searchGames(req, res));
@@ -39,7 +40,9 @@ router.get("/five-random-games", (req, res) => gamesController.getFiveRandomGame
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
 
+// Routes that require session checking but not necessarily valid session
 router.get("/auth/verify", (req, res) => authController.verify(req, res));
+router.post("/auth/logout", (req, res) => authController.logout(req, res)); // NEW LOGOUT ROUTE
 router.get("/session", (req, res) => welcomeController.getSession(req, res));
 router.delete("/session", (req, res) => welcomeController.deleteSession(req, res));
 router.delete("/session/expired", (req, res) => welcomeController.deleteExpiredSessions(req, res));

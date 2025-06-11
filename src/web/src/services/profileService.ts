@@ -1,4 +1,5 @@
-import { IUser } from "@shared/types";
+import { IUser, IAuthResponse } from "@shared/types";
+import { authService } from "@web/services/AuthService";
 
 declare const VITE_API_URL: string;
 
@@ -67,18 +68,8 @@ class ProfileService {
      */
     public async checkAuth(): Promise<boolean> {
         try {
-            console.log("ProfileService: Checking authentication at:", `${VITE_API_URL}auth/verify`);
-
-            const response: Response = await fetch(`${VITE_API_URL}auth/verify`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-            });
-
-            console.log("ProfileService: Auth check response:", response.ok);
-            return response.ok;
+            console.log("ProfileService: Checking authentication using AuthService");
+            return await authService.isLoggedIn();
         }
         catch (error: unknown) {
             console.error("ProfileService: Error checking auth:", error);
@@ -186,6 +177,32 @@ class ProfileService {
         catch (error: unknown) {
             console.error("ProfileService: Error updating address:", error);
             throw error;
+        }
+    }
+
+    /**
+     * Log out the current user using AuthService
+     */
+    public async logout(): Promise<void> {
+        try {
+            console.log("ProfileService: Logging out user via AuthService");
+
+            const result: IAuthResponse = await authService.logout();
+
+            if (result.success) {
+                console.log("ProfileService: Logout successful, redirecting to login");
+                window.location.href = "/login";
+            }
+            else {
+                console.error("ProfileService: Logout failed:", result.message);
+                // Still redirect even if logout "failed" to ensure user gets logged out
+                window.location.href = "/login";
+            }
+        }
+        catch (error: unknown) {
+            console.error("ProfileService: Error during logout:", error);
+            // Even if logout fails, redirect to login page
+            window.location.href = "/login";
         }
     }
 }

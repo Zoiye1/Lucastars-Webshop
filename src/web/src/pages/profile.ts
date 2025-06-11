@@ -4,6 +4,7 @@ import "@web/pages/profile/profileWelcome";
 import "@web/pages/profile/profileAccount";
 import "@web/pages/profile/profileAccountEdit";
 import { html } from "@web/helpers/webComponents";
+import { profileService } from "@web/services/profileService";
 
 interface Route {
     path: string;
@@ -19,6 +20,7 @@ class ProfilePageComponent extends HTMLElement {
     ];
 
     private currentRoute: string = "";
+    private isLoggingOut: boolean = false;
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -72,6 +74,34 @@ class ProfilePageComponent extends HTMLElement {
     public navigate(path: string): void {
         window.history.pushState({}, "", path);
         this.handleRouteChange();
+    }
+
+    private async handleLogout(): Promise<void> {
+        if (this.isLoggingOut) {
+            return;
+        }
+
+        this.isLoggingOut = true;
+        this.updateLogoutButton();
+
+        try {
+            await profileService.logout();
+        }
+        catch (error: unknown) {
+            console.error("Error during logout:", error);
+            // ProfileService already handles redirect even on error
+        }
+        finally {
+            this.isLoggingOut = false;
+        }
+    }
+
+    private updateLogoutButton(): void {
+        const logoutButton: HTMLButtonElement | null = this.shadowRoot?.querySelector(".logout-button") as HTMLButtonElement | null;
+        if (logoutButton) {
+            logoutButton.disabled = this.isLoggingOut;
+            logoutButton.textContent = this.isLoggingOut ? "Uitloggen..." : "Uitloggen";
+        }
     }
 
     private render(route: Route): void {
@@ -140,6 +170,36 @@ class ProfilePageComponent extends HTMLElement {
                     box-shadow: 0 4px 12px rgba(21, 158, 255, 0.3);
                 }
                 
+                .logout-section {
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 1px solid #e9ecef;
+                }
+                
+                .logout-button {
+                    width: 100%;
+                    padding: 12px 18px;
+                    background-color: #dc3545;
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    font-weight: 500;
+                    transition: all 0.3s ease;
+                }
+                
+                .logout-button:hover:not(:disabled) {
+                    background-color: #c82333;
+                    transform: translateY(-1px);
+                }
+                
+                .logout-button:disabled {
+                    background-color: #ccc;
+                    cursor: not-allowed;
+                    transform: none;
+                }
+                
                 @media (max-width: 768px) {
                     .profile-container {
                         flex-direction: column;
@@ -169,6 +229,10 @@ class ProfilePageComponent extends HTMLElement {
                                 <li><a href="/profile/account" class="${this.currentRoute === "/profile/account" || this.currentRoute === "/profile/account/edit" ? "active" : ""}">Mijn Account</a></li>
                             </ul>
                         </nav>
+                        
+                        <div class="logout-section">
+                            <button class="logout-button">Uitloggen</button>
+                        </div>
                     </aside>
                     <main class="profile-content">
                         <${route.component}></${route.component}>
@@ -190,6 +254,18 @@ class ProfilePageComponent extends HTMLElement {
                 }
             });
         });
+
+        // Add click handler for logout button and set initial state
+        const logoutButton: HTMLButtonElement | null = this.shadowRoot.querySelector(".logout-button");
+        if (logoutButton) {
+            // Set initial state
+            logoutButton.disabled = this.isLoggingOut;
+            logoutButton.textContent = this.isLoggingOut ? "Uitloggen..." : "Uitloggen";
+
+            logoutButton.addEventListener("click", () => {
+                void this.handleLogout();
+            });
+        }
 
         // Expose navigate method to child components
         const profileContent: Element | null = this.shadowRoot.querySelector(".profile-content");
