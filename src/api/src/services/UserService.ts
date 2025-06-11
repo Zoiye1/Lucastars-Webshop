@@ -1,11 +1,24 @@
+// api/src/services/UserService.ts
 import { IUser } from "../../../shared/types";
 import { DatabaseService } from "./DatabaseService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { hash, compare } from "bcrypt-ts/node";
 
-type UserPasswordQueryResult = {
+interface UserPasswordQueryResult {
     password: string;
-};
+}
+
+interface AddressData {
+    street?: string | null;
+    houseNumber?: string | null;
+    postalCode?: string | null;
+    city?: string | null;
+    country?: string | null;
+}
+
+interface ExistingAddressResult {
+    id: number;
+}
 
 export class UserService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
@@ -118,7 +131,7 @@ export class UserService {
         try {
             // Hash the password
             const hashedPassword: string = await hash(password, this.SALT_ROUNDS);
-            // const hashedPassword: string = password;
+
             const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
                 connection,
                 `
@@ -163,9 +176,154 @@ export class UserService {
 
             return await compare(password, hashedPassword);
         }
-        catch (error) {
+        catch (error: unknown) {
             console.error("Password verification error:", error);
             return false;
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    /**
+     * Update user information
+     */
+    public async updateUser(userId: number, updateData: Partial<IUser>): Promise<boolean> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            // Build dynamic update query
+            const updateFields: string[] = [];
+            const values: (string | null)[] = [];
+
+            if (updateData.firstName !== undefined) {
+                updateFields.push("firstName = ?");
+                values.push(updateData.firstName);
+            }
+            if (updateData.prefix !== undefined) {
+                updateFields.push("prefix = ?");
+                values.push(updateData.prefix || null);
+            }
+            if (updateData.lastName !== undefined) {
+                updateFields.push("lastName = ?");
+                values.push(updateData.lastName);
+            }
+
+            if (updateFields.length === 0) {
+                return true; // Nothing to update
+            }
+
+            // Add userId for WHERE clause
+            values.push(userId.toString());
+
+            const query: string = `
+                UPDATE users 
+                SET ${updateFields.join(", ")}, updated = CURRENT_TIMESTAMP
+                WHERE id = ?
+            `;
+
+            const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
+                connection,
+                query,
+                ...values
+            );
+
+            return result.affectedRows > 0;
+        }
+        catch (e: unknown) {
+            throw new Error(`Failed to update user: ${e}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    /**
+     * Update user address
+     */
+    public async updateUserAddress(userId: number, addressData: AddressData): Promise<boolean> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            // First check if address exists
+            const checkQuery: string = `
+                SELECT id FROM addresses WHERE userId = ?
+            `;
+
+            const existingAddress: ExistingAddressResult[] = await this._databaseService.query<ExistingAddressResult[]>(
+                connection,
+                checkQuery,
+                userId
+            );
+
+            if (existingAddress.length === 0) {
+                // Insert new address
+                const insertQuery: string = `
+                    INSERT INTO addresses (userId, street, houseNumber, postalCode, city, country)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+
+                const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
+                    connection,
+                    insertQuery,
+                    userId,
+                    addressData.street || null,
+                    addressData.houseNumber || null,
+                    addressData.postalCode || null,
+                    addressData.city || null,
+                    addressData.country || null
+                );
+
+                return result.affectedRows > 0;
+            }
+            else {
+                // Update existing address
+                const updateFields: string[] = [];
+                const values: (string | null)[] = [];
+
+                if (addressData.street !== undefined) {
+                    updateFields.push("street = ?");
+                    values.push(addressData.street);
+                }
+                if (addressData.houseNumber !== undefined) {
+                    updateFields.push("houseNumber = ?");
+                    values.push(addressData.houseNumber);
+                }
+                if (addressData.postalCode !== undefined) {
+                    updateFields.push("postalCode = ?");
+                    values.push(addressData.postalCode);
+                }
+                if (addressData.city !== undefined) {
+                    updateFields.push("city = ?");
+                    values.push(addressData.city);
+                }
+                if (addressData.country !== undefined) {
+                    updateFields.push("country = ?");
+                    values.push(addressData.country);
+                }
+
+                if (updateFields.length === 0) {
+                    return true; // Nothing to update
+                }
+
+                // Add userId for WHERE clause
+                values.push(userId.toString());
+
+                const updateQuery: string = `
+                    UPDATE addresses 
+                    SET ${updateFields.join(", ")}, updated_at = CURRENT_TIMESTAMP
+                    WHERE userId = ?
+                `;
+
+                const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
+                    connection,
+                    updateQuery,
+                    ...values
+                );
+
+                return result.affectedRows > 0;
+            }
+        }
+        catch (e: unknown) {
+            throw new Error(`Failed to update address: ${e}`);
         }
         finally {
             connection.release();

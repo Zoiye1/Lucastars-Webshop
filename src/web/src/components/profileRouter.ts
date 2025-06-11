@@ -8,11 +8,10 @@ interface Route {
 }
 
 export class ProfileRouterComponent extends HTMLElement {
-    private routes: Route[] = [
+    private readonly routes: Route[] = [
         { path: "/profile", component: "profile-welcome", title: "Welkom" },
         { path: "/profile/account", component: "profile-account", title: "Account" },
         { path: "/profile/account/edit", component: "profile-account-edit", title: "Account Bewerken" },
-        { path: "/profile/reviews", component: "profile-reviews", title: "Mijn Reviews" },
     ];
 
     private currentRoute: string = "";
@@ -21,14 +20,14 @@ export class ProfileRouterComponent extends HTMLElement {
         this.attachShadow({ mode: "open" });
 
         // Listen for popstate events (browser back/forward)
-        window.addEventListener("popstate", () => this.handleRouteChange());
+        window.addEventListener("popstate", this.handleRouteChange.bind(this));
 
         // Handle initial route
         this.handleRouteChange();
     }
 
     public disconnectedCallback(): void {
-        window.removeEventListener("popstate", () => this.handleRouteChange());
+        window.removeEventListener("popstate", this.handleRouteChange.bind(this));
     }
 
     private handleRouteChange(): void {
@@ -155,9 +154,6 @@ export class ProfileRouterComponent extends HTMLElement {
                         <ul class="sidebar-nav">
                             <li><a href="/profile" class="${this.currentRoute === "/profile" ? "active" : ""}">Dashboard</a></li>
                             <li><a href="/profile/account" class="${this.currentRoute === "/profile/account" || this.currentRoute === "/profile/account/edit" ? "active" : ""}">Mijn Account</a></li>
-                            <li><a href="/profile/reviews" class="${this.currentRoute === "/profile/reviews" ? "active" : ""}">Mijn Reviews</a></li>
-                            <li><a href="/profile/orders">Mijn Bestellingen</a></li>
-                            <li><a href="/profile/wishlist">Verlanglijst</a></li>
                         </ul>
                     </nav>
                 </aside>
@@ -171,7 +167,7 @@ export class ProfileRouterComponent extends HTMLElement {
         this.shadowRoot.append(styles, element);
 
         // Add click handlers to navigation links
-        this.shadowRoot.querySelectorAll(".sidebar-nav a").forEach(link => {
+        this.shadowRoot.querySelectorAll(".sidebar-nav a").forEach((link: Element) => {
             link.addEventListener("click", (e: Event) => {
                 e.preventDefault();
                 const href: string | null = (e.target as HTMLAnchorElement).getAttribute("href");

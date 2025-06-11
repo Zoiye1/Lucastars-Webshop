@@ -1,18 +1,10 @@
-// src/services/profileService.ts
+// src/web/services/profileService.ts
 import { IUser } from "@shared/types";
 
-export interface Review {
-    id: number;
-    userId: number;
-    gameId: number;
-    gameName: string;
-    gameThumbnail: string;
-    rating: number;
-    title: string;
-    content: string;
-    created: Date;
-    updated?: Date;
-    helpful: number;
+declare const VITE_API_URL: string;
+
+interface ApiError extends Error {
+    status?: number;
 }
 
 class ProfileService {
@@ -21,8 +13,7 @@ class ProfileService {
      */
     public async getCurrentUser(): Promise<IUser> {
         try {
-            const url: string = `${VITE_API_URL}users/me`;
-            const response: Response = await fetch(url, {
+            const response: Response = await fetch(`${VITE_API_URL}users/me`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -30,8 +21,16 @@ class ProfileService {
                 credentials: "include", // Include cookies for session
             });
 
+            if (response.status === 401) {
+                const error: ApiError = new Error("Not authenticated. Please log in.");
+                error.status = 401;
+                throw error;
+            }
+
             if (!response.ok) {
-                throw new Error(`Failed to fetch user data: ${response.statusText}`);
+                const error: ApiError = new Error(`Failed to fetch user data: ${response.statusText}`);
+                error.status = response.status;
+                throw error;
             }
 
             const data: IUser = await response.json() as IUser;
@@ -42,9 +41,30 @@ class ProfileService {
 
             return data;
         }
-        catch (error) {
+        catch (error: unknown) {
             console.error("Error fetching user data:", error);
             throw error;
+        }
+    }
+
+    /**
+     * Check if user is authenticated
+     */
+    public async checkAuth(): Promise<boolean> {
+        try {
+            const response: Response = await fetch(`${VITE_API_URL}auth/verify`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
+
+            return response.ok;
+        }
+        catch (error: unknown) {
+            console.error("Error checking auth:", error);
+            return false;
         }
     }
 
@@ -53,156 +73,41 @@ class ProfileService {
      */
     public async updateProfile(userId: number, data: Partial<IUser>): Promise<IUser> {
         try {
-            const url: string = `${VITE_API_URL}users/${userId}`;
-            const response: Response = await fetch(url, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(data),
-            });
+            // Separate user data and address data
+            const { street, houseNumber, postalCode, city, country, ...userData } = data;
 
-            if (!response.ok) {
-                throw new Error(`Failed to update profile: ${response.statusText}`);
+            // Update user data first if there's any user data to update
+            if (Object.keys(userData).length > 0) {
+                const response: Response = await fetch(`${VITE_API_URL}users/${userId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(userData),
+                });
+
+                if (!response.ok) {
+                    const error: ApiError = new Error(`Failed to update profile: ${response.statusText}`);
+                    error.status = response.status;
+                    throw error;
+                }
             }
 
-            const updatedUser: IUser = await response.json() as IUser;
+            // Update address if any address fields were provided
+            const addressData: Partial<IUser> = { street, houseNumber, postalCode, city, country };
+            const addressFields = [street, houseNumber, postalCode, city, country];
+            const hasAddressData: boolean = addressFields.some(value => value !== undefined);
 
-            // Convert date strings to Date objects
-            updatedUser.created = new Date(updatedUser.created);
-            updatedUser.updated = new Date(updatedUser.updated);
+            if (hasAddressData) {
+                await this.updateAddress(userId, addressData);
+            }
 
-            return updatedUser;
+            // Fetch and return the updated user
+            return await this.getCurrentUser();
         }
-        catch (error) {
+        catch (error: unknown) {
             console.error("Error updating profile:", error);
-            throw error;
-        }
-    }
-
-    /**
-     * Get user's reviews
-     */
-    public async getUserReviews(userId: number): Promise<Review[]> {
-        try {
-            const url: string = `${VITE_API_URL}users/${userId}/reviews`;
-            const response: Response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to fetch reviews: ${response.statusText}`);
-            }
-
-            const reviews: Review[] = await response.json() as Review[];
-
-            // Convert date strings to Date objects
-            return reviews.map(review => ({
-                ...review,
-                created: new Date(review.created),
-                updated: review.updated ? new Date(review.updated) : undefined,
-            }));
-        }
-        catch (error) {
-            console.error("Error fetching reviews:", error);
-            throw error;
-        }
-    }
-
-    /**
-     * Create a new review
-     */
-    public async createReview(gameId: number, reviewData: {
-        rating: number;
-        title: string;
-        content: string;
-    }): Promise<Review> {
-        try {
-            const url: string = `${VITE_API_URL}games/${gameId}/reviews`;
-            const response: Response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(reviewData),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to create review: ${response.statusText}`);
-            }
-
-            const review: Review = await response.json() as Review;
-            review.created = new Date(review.created);
-
-            return review;
-        }
-        catch (error) {
-            console.error("Error creating review:", error);
-            throw error;
-        }
-    }
-
-    /**
-     * Update a review
-     */
-    public async updateReview(reviewId: number, reviewData: {
-        rating?: number;
-        title?: string;
-        content?: string;
-    }): Promise<Review> {
-        try {
-            const url: string = `${VITE_API_URL}reviews/${reviewId}`;
-            const response: Response = await fetch(url, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(reviewData),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to update review: ${response.statusText}`);
-            }
-
-            const review: Review = await response.json() as Review;
-            review.created = new Date(review.created);
-            review.updated = review.updated ? new Date(review.updated) : undefined;
-
-            return review;
-        }
-        catch (error) {
-            console.error("Error updating review:", error);
-            throw error;
-        }
-    }
-
-    /**
-     * Delete a review
-     */
-    public async deleteReview(reviewId: number): Promise<void> {
-        try {
-            const url: string = `${VITE_API_URL}reviews/${reviewId}`;
-            const response: Response = await fetch(url, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to delete review: ${response.statusText}`);
-            }
-        }
-        catch (error) {
-            console.error("Error deleting review:", error);
             throw error;
         }
     }
@@ -210,29 +115,43 @@ class ProfileService {
     /**
      * Update user address
      */
-    public async updateAddress(userId: number, addressData: {
-        street?: string;
-        houseNumber?: string;
-        postalCode?: string;
-        city?: string;
-        country?: string;
-    }): Promise<void> {
+    public async updateAddress(userId: number, addressData: Partial<IUser>): Promise<void> {
         try {
-            const url: string = `${VITE_API_URL}users/${userId}/address`;
-            const response: Response = await fetch(url, {
+            // Filter address data to only include address fields and convert null to undefined
+            const filteredAddressData: Record<string, string | undefined> = {};
+
+            if (addressData.street !== undefined) {
+                filteredAddressData.street = addressData.street || undefined;
+            }
+            if (addressData.houseNumber !== undefined) {
+                filteredAddressData.houseNumber = addressData.houseNumber || undefined;
+            }
+            if (addressData.postalCode !== undefined) {
+                filteredAddressData.postalCode = addressData.postalCode || undefined;
+            }
+            if (addressData.city !== undefined) {
+                filteredAddressData.city = addressData.city || undefined;
+            }
+            if (addressData.country !== undefined) {
+                filteredAddressData.country = addressData.country || undefined;
+            }
+
+            const response: Response = await fetch(`${VITE_API_URL}users/${userId}/address`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify(addressData),
+                body: JSON.stringify(filteredAddressData),
             });
 
             if (!response.ok) {
-                throw new Error(`Failed to update address: ${response.statusText}`);
+                const error: ApiError = new Error(`Failed to update address: ${response.statusText}`);
+                error.status = response.status;
+                throw error;
             }
         }
-        catch (error) {
+        catch (error: unknown) {
             console.error("Error updating address:", error);
             throw error;
         }

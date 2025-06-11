@@ -7,6 +7,7 @@ import { GamesController } from "./controllers/GamesController";
 import { OrdersGamesController } from "@api/controllers/OrdersGamesController";
 import { AuthController } from "./controllers/AuthController";
 import { TagController } from "./controllers/TagController";
+import { UserController } from "./controllers/UserController";
 
 // Create a router
 export const router: Router = Router();
@@ -24,6 +25,7 @@ const ordersGamesController: OrdersGamesController = new OrdersGamesController()
 const authController: AuthController = new AuthController();
 const cartController: CartController = new CartController();
 const tagController: TagController = new TagController();
+const userController: UserController = new UserController();
 
 router.post("/auth/register", authController.register);
 router.post("/auth/login", authController.login);
@@ -45,6 +47,7 @@ router.get("/welcome", (req, res) => welcomeController.getWelcome(req, res));
 router.get("/game-info", (req, res) => gamesController.getGameById(req, res));
 router.get("/games", (req, res) => gamesController.getGames(req, res));
 router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));
+router.get("/users/me", (req, res) => userController.getCurrentUser(req, res));
 
 // NOTE: After this line, all endpoints will require a valid session.
 router.use(requireValidSessionMiddleware);
@@ -56,6 +59,8 @@ router.post("/checkout", (req, res) => checkoutController.postCheckout(req, res)
 
 router.get("/owned-games", (req, res) => gamesController.getOwnedGames(req, res));
 router.get("/secret", (req, res) => welcomeController.getSecret(req, res));
+router.put("/users/:id", (req, res) => userController.updateUser(req, res));
+router.put("/users/:id/address", (req, res) => userController.updateAddress(req, res));
 
 // TODO: The following endpoints have to be implemented in their own respective controller
 router.get("/products", (_req, _res) => {

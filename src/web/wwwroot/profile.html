@@ -12,7 +12,7 @@
             background-color: #f5f5f5;
             min-height: 100vh;
         }
-        
+       
         /* Loading state */
         .profile-loading {
             display: flex;
@@ -20,8 +20,8 @@
             align-items: center;
             min-height: 100vh;
         }
-        
-        /* Header styles (assuming you have a header component) */
+       
+        /* Header styles */
         .profile-header {
             background-color: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -32,37 +32,24 @@
 <body>
     <!-- Your existing header component -->
     <webshop-header></webshop-header>
-    
+   
     <!-- Profile router component -->
     <profile-router></profile-router>
-    
+   
     <!-- Loading component (hidden by default) -->
     <webshop-loading></webshop-loading>
-    
+   
     <!-- Load components -->
     <script type="module">
         // Import all necessary components
-        import "/src/components/LoadingComponent.js";
-        import "/src/components/profileRouter.js";
-        import "/src/pages/profile/profileWelcome.js";
-        import "/src/pages/profile/profileAccount.js";
-        import "/src/pages/profile/profileAccountEdit.js";
-        import "/src/pages/profile/profileReviews.js";
-        
+        import "/src/components/LoadingComponent.ts";
+        import "/src/components/profileRouter.ts";
+        import "/src/pages/profile/profileWelcome.ts";
+        import "/src/pages/profile/profileAccount.ts";
+        import "/src/pages/profile/profileAccountEdit.ts";
+       
         // Import services
-        import { authService } from "/src/services/AuthService.js";
-        import { profileService } from "/src/services/profileService.js";
-        
-        // Check authentication on load
-        async function checkAuth() {
-            const isLoggedIn = await authService.isLoggedIn();
-            if (!isLoggedIn) {
-                window.location.href = "/login.html";
-            }
-        }
-        
-        // Initialize
-        checkAuth();
+        import { profileService } from "/src/services/profileService.ts";
     </script>
 </body>
 </html>
