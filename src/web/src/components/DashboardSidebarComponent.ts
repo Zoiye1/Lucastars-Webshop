@@ -78,7 +78,7 @@ class DashboardSidebarComponent extends HTMLElement {
                     <span class="icon">
                         <img src="/images/icons/account.svg" alt="Users Icon">
                     </span>
-                    <span class="label">Users</span>
+                    <span class="label">Gebruikers</span>
                 </a>
             </div>
         `;

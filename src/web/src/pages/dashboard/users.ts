@@ -136,7 +136,7 @@ class DashboardUsersPageComponent extends HTMLElement {
         const dashboard: DashboardComponent = document.createElement("webshop-dashboard") as DashboardComponent;
         dashboard.append(tableContainer);
 
-        dashboard.pageTitle = "Users";
+        dashboard.pageTitle = "Gebruikers";
 
         const element: HTMLElement = html`
             <webshop-layout>
