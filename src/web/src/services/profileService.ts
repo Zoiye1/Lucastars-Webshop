@@ -1,4 +1,3 @@
-// src/web/services/profileService.ts
 import { IUser } from "@shared/types";
 
 declare const VITE_API_URL: string;

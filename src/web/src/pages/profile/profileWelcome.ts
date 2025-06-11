@@ -3,10 +3,6 @@ import { html } from "@web/helpers/webComponents";
 import { profileService } from "@web/services/profileService";
 import { IUser } from "@shared/types";
 
-interface ProfileRouterComponent extends HTMLElement {
-    navigate(path: string): void;
-}
-
 interface LoadingComponent extends HTMLElement {
     show(): void;
     hide(): void;
@@ -90,6 +86,25 @@ export class ProfileWelcomeComponent extends HTMLElement {
         }
     }
 
+    private formatDate(date: Date): string {
+        return new Intl.DateTimeFormat("nl-NL", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        }).format(date);
+    }
+
+    private navigate(path: string): void {
+        // Dispatch custom event to parent component
+        const profileContent: Element | null = this.closest(".profile-content");
+        if (profileContent) {
+            profileContent.dispatchEvent(new CustomEvent("profile-navigate", {
+                detail: { path },
+                bubbles: true,
+            }));
+        }
+    }
+
     private render(): void {
         if (!this.shadowRoot || !this.user) {
             return;
@@ -113,6 +128,69 @@ export class ProfileWelcomeComponent extends HTMLElement {
                 .subtitle {
                     color: #666;
                     font-size: 16px;
+                }
+                
+                .profile-overview {
+                    margin: 40px 0;
+                }
+                
+                .profile-overview h2 {
+                    color: #333;
+                    margin-bottom: 20px;
+                }
+                
+                .overview-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 20px;
+                    margin-bottom: 30px;
+                }
+                
+                .overview-card {
+                    background-color: #f8f9fa;
+                    border-radius: 15px;
+                    padding: 20px;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                    transition: transform 0.2s ease;
+                }
+                
+                .overview-card:hover {
+                    transform: translateY(-2px);
+                }
+                
+                .overview-card h3 {
+                    color: #333;
+                    margin: 0 0 15px 0;
+                    font-size: 18px;
+                }
+                
+                .card-content {
+                    margin-bottom: 15px;
+                }
+                
+                .card-content p {
+                    margin: 8px 0;
+                    color: #555;
+                }
+                
+                .empty-info {
+                    color: #999;
+                    font-style: italic;
+                }
+                
+                .card-action {
+                    display: inline-block;
+                    padding: 8px 16px;
+                    background-color: #159eff;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 10px;
+                    font-size: 14px;
+                    transition: background-color 0.3s ease;
+                }
+                
+                .card-action:hover {
+                    background-color: #0078cd;
                 }
                 
                 .quick-actions {
@@ -160,10 +238,39 @@ export class ProfileWelcomeComponent extends HTMLElement {
                 <p class="subtitle">Beheer je account en bekijk je activiteiten</p>
             </div>
             
+            <div class="profile-overview">
+                <h2>Account overzicht</h2>
+                <div class="overview-grid">
+                    <div class="overview-card">
+                        <h3>Persoonlijke gegevens</h3>
+                        <div class="card-content">
+                            <p><strong>Naam:</strong> ${fullName}</p>
+                            <p><strong>E-mail:</strong> ${this.user.email}</p>
+                            <p><strong>Gebruikersnaam:</strong> ${this.user.username}</p>
+                            <p><strong>Lid sinds:</strong> ${this.formatDate(this.user.created)}</p>
+                        </div>
+                        <a href="/profile/account" class="card-action">Bekijk details</a>
+                    </div>
+                    
+                    <div class="overview-card">
+                        <h3>Adresgegevens</h3>
+                        <div class="card-content">
+                            ${this.user.street && this.user.houseNumber
+                                ? `<p><strong>Adres:</strong> ${this.user.street} ${this.user.houseNumber}</p>
+                                 <p><strong>Plaats:</strong> ${this.user.postalCode} ${this.user.city}</p>
+                                 <p><strong>Land:</strong> ${this.user.country || "Nederland"}</p>`
+                                : "<p class=\"empty-info\">Geen adresgegevens ingevuld</p>"
+                            }
+                        </div>
+                        <a href="/profile/account/edit" class="card-action">Bewerk gegevens</a>
+                    </div>
+                </div>
+            </div>
+            
             <div class="quick-actions">
                 <h2>Snelle acties</h2>
                 <div class="action-buttons">
-                    <a href="/profile/account" class="action-button">Account bekijken</a>
+                    <a href="/profile/account" class="action-button">Volledig profiel bekijken</a>
                     <a href="/profile/account/edit" class="action-button secondary">Profiel bewerken</a>
                 </div>
             </div>
@@ -178,10 +285,7 @@ export class ProfileWelcomeComponent extends HTMLElement {
                 const href: string | null = (e.target as HTMLAnchorElement).getAttribute("href");
                 if (href?.startsWith("/profile")) {
                     e.preventDefault();
-                    const router: ProfileRouterComponent | null = this.closest("profile-router") as ProfileRouterComponent;
-                    if (router) {
-                        router.navigate(href);
-                    }
+                    this.navigate(href);
                 }
             });
         });

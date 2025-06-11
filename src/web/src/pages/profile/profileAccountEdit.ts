@@ -3,10 +3,6 @@ import { html } from "@web/helpers/webComponents";
 import { profileService } from "@web/services/profileService";
 import { IUser } from "@shared/types";
 
-interface ProfileRouterComponent extends HTMLElement {
-    navigate(path: string): void;
-}
-
 interface LoadingComponent extends HTMLElement {
     show(): void;
     hide(): void;
@@ -70,6 +66,17 @@ export class ProfileAccountEditComponent extends HTMLElement {
         }
     }
 
+    private navigate(path: string): void {
+        // Dispatch custom event to parent component
+        const profileContent: Element | null = this.closest(".profile-content");
+        if (profileContent) {
+            profileContent.dispatchEvent(new CustomEvent("profile-navigate", {
+                detail: { path },
+                bubbles: true,
+            }));
+        }
+    }
+
     private async handleSubmit(event: Event): Promise<void> {
         event.preventDefault();
 
@@ -99,10 +106,7 @@ export class ProfileAccountEditComponent extends HTMLElement {
 
             // Navigate back after a delay
             setTimeout(() => {
-                const router: ProfileRouterComponent | null = this.closest("profile-router") as ProfileRouterComponent;
-                if (router) {
-                    router.navigate("/profile/account");
-                }
+                this.navigate("/profile/account");
             }, 2000);
         }
         catch (error: unknown) {
@@ -368,10 +372,7 @@ export class ProfileAccountEditComponent extends HTMLElement {
                 const href: string | null = (e.target as HTMLAnchorElement).getAttribute("href");
                 if (href && href.startsWith("/profile")) {
                     e.preventDefault();
-                    const router: ProfileRouterComponent | null = this.closest("profile-router") as ProfileRouterComponent;
-                    if (router) {
-                        router.navigate(href);
-                    }
+                    this.navigate(href);
                 }
             });
         });

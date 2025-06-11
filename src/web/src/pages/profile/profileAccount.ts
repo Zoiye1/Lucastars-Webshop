@@ -3,10 +3,6 @@ import { html } from "@web/helpers/webComponents";
 import { profileService } from "@web/services/profileService";
 import { IUser } from "@shared/types";
 
-interface ProfileRouterComponent extends HTMLElement {
-    navigate(path: string): void;
-}
-
 interface LoadingComponent extends HTMLElement {
     show(): void;
     hide(): void;
@@ -66,6 +62,17 @@ export class ProfileAccountComponent extends HTMLElement {
                     <a href="/profile" style="color: #159eff;">Terug naar dashboard</a>
                 </div>
             `;
+        }
+    }
+
+    private navigate(path: string): void {
+        // Dispatch custom event to parent component
+        const profileContent: Element | null = this.closest(".profile-content");
+        if (profileContent) {
+            profileContent.dispatchEvent(new CustomEvent("profile-navigate", {
+                detail: { path },
+                bubbles: true,
+            }));
         }
     }
 
@@ -243,10 +250,7 @@ export class ProfileAccountComponent extends HTMLElement {
         if (editButton) {
             editButton.addEventListener("click", (e: Event) => {
                 e.preventDefault();
-                const router: ProfileRouterComponent | null = this.closest("profile-router") as ProfileRouterComponent;
-                if (router) {
-                    router.navigate("/profile/account/edit");
-                }
+                this.navigate("/profile/account/edit");
             });
         }
     }
