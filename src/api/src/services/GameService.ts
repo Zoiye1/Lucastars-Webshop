@@ -1,5 +1,5 @@
 import { IGameService } from "@api/interfaces/IGameService";
-import { PoolConnection } from "mysql2/promise";
+import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
 import { Game, GetGamesOptions, PaginatedResponse } from "@shared/types";
 
@@ -209,6 +209,60 @@ export class GameService implements IGameService {
         `;
 
             return await this._databaseService.query<Game[]>(connection, query);
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    public async createGame(game: Game): Promise<Game> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            // Insert game
+            const insertGameQuery: string = `
+                INSERT INTO games (sku, name, thumbnail, description, price, playUrl, created, updated)
+                VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+            `;
+            const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
+                connection,
+                insertGameQuery,
+                game.sku,
+                game.name,
+                game.thumbnail,
+                game.description,
+                game.price,
+                game.url
+            );
+            game.id = result.insertId;
+
+            // Insert images if any
+            if (game.images.length > 0) {
+                const insertImagesQuery: string = `
+                    INSERT INTO game_images (gameId, imageUrl)
+                    VALUES ${game.images.map(() => "(?, ?)").join(", ")}
+                `;
+                const imageParams: (number | string)[] = [];
+                for (const image of game.images) {
+                    imageParams.push(game.id, image);
+                }
+                await this._databaseService.query(connection, insertImagesQuery, ...imageParams);
+            }
+
+            // Insert tags if any
+            if (game.tags.length > 0) {
+                const insertTagsQuery: string = `
+                    INSERT INTO games_tags (gameId, tagId)
+                    VALUES ${game.tags.map(() => "(?, ?)").join(", ")}
+                `;
+                const tagParams: (number | string)[] = [];
+                for (const tag of game.tags) {
+                    tagParams.push(game.id, tag);
+                }
+                await this._databaseService.query(connection, insertTagsQuery, ...tagParams);
+            }
+
+            return game;
         }
         finally {
             connection.release();

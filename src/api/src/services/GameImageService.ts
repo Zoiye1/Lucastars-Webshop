@@ -32,8 +32,6 @@ export class GameImageService {
 
         const uploadDir: string = path.resolve(this._uploadsDir, "games", gameId.toString());
 
-        console.log(`Uploading image for game ${gameId} to ${uploadDir} for file ${fileName}`);
-
         await fs.mkdir(uploadDir, { recursive: true });
 
         const destPath: string = path.join(uploadDir, fileName);

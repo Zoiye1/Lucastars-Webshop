@@ -4,6 +4,12 @@ import { GameService } from "@api/services/GameService";
 import { Game, GetGamesOptions, PaginatedResponse } from "@shared/types";
 import { Request, Response } from "express";
 
+type GameValidationResult = {
+    valid: boolean;
+    error?: string;
+    game?: Game;
+};
+
 /**
  * This controller is responsible for handling requests related to games.
  */
@@ -149,6 +155,42 @@ export class GamesController {
         res.json({ games });
     }
 
+    public async createGame(req: Request, res: Response): Promise<void> {
+        // Check if the user is an admin.
+        if (!req.userId || req.userRole !== "admin") {
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        }
+
+        const validation: GameValidationResult = this.validateGameRequest(req, false);
+
+        if (!validation.valid) {
+            res.status(400).json({ error: validation.error });
+            return;
+        }
+
+        const game: Game = validation.game as Game;
+
+        // Create the game first to get its ID.
+        const createdGame: Game = await this._gameService.createGame(game);
+
+        // Upload the thumbnail.
+        createdGame.thumbnail = await this._gameImageService.uploadImage(createdGame.id, req.files!.thumbnail![0]);
+
+        // Upload the images.
+        createdGame.images = req.files!.images
+            ? await Promise.all(req.files!.images.map(image => this._gameImageService.uploadImage(createdGame.id, image)))
+            : [];
+
+        // Update the game with image URLs.
+        await this._gameService.updateGame(createdGame);
+
+        res.status(201).json({
+            message: "Game created successfully",
+            game: createdGame,
+        });
+    }
+
     public async updateGame(req: Request, res: Response): Promise<void> {
         // Check if the user is an admin.
         if (!req.userId || req.userRole !== "admin") {
@@ -156,71 +198,24 @@ export class GamesController {
             return;
         }
 
-        if (!req.fields || !req.fields.game) {
-            res.status(400).json({ error: "Missing game data" });
+        const validation: GameValidationResult = this.validateGameRequest(req, true);
+
+        if (!validation.valid) {
+            res.status(400).json({ error: validation.error });
             return;
         }
 
-        const game: Game | undefined = JSON.parse(req.fields.game as unknown as string) as Game | undefined;
-
-        if (!game) {
-            res.status(400).json({ error: "Invalid game data" });
-            return;
-        }
-
-        if (
-            typeof game.id !== "number" ||
-            typeof game.sku !== "string" ||
-            typeof game.name !== "string" ||
-            typeof game.description !== "string" ||
-            typeof game.price !== "number" ||
-            !Array.isArray(game.tags) ||
-            !game.tags.every(tag => typeof tag === "string")
-        ) {
-            res.status(400).json({ error: "Invalid game structure" });
-            return;
-        }
-
-        // Check if the thumbnail is a valid image file. Only allow jpeg and png formats.
-        const allowedImageTypes: string[] = [
-            "image/jpeg",
-            "image/png",
-        ];
-
-        if (!req.files || !req.files.thumbnail || req.files.thumbnail.length !== 1) {
-            res.status(400).json({ error: "Missing thumbnail file" });
-            return;
-        }
-
-        if (!req.files.thumbnail[0].mimetype || !allowedImageTypes.includes(req.files.thumbnail[0].mimetype)) {
-            res.status(400).json({ error: "Invalid thumbnail file type. Only jpeg and png are allowed." });
-            return;
-        }
-
-        if (req.files.images) {
-            if (!Array.isArray(req.files.images)) {
-                res.status(400).json({ error: "Images must be an array" });
-                return;
-            }
-
-            // Check if the images are valid image files. Only allow jpeg and png formats.
-            for (const image of req.files.images) {
-                if (!image.mimetype || !allowedImageTypes.includes(image.mimetype)) {
-                    res.status(400).json({ error: "Invalid image file type. Only jpeg and png are allowed." });
-                    return;
-                }
-            }
-        }
+        const game: Game = validation.game as Game;
 
         // Delete all images. Kinda hacky since its not efficient, but for now it works.
         await this._gameImageService.deleteImages(game.id);
 
         // Upload the thumbnail.
-        game.thumbnail = await this._gameImageService.uploadImage(game.id, req.files.thumbnail[0]);
+        game.thumbnail = await this._gameImageService.uploadImage(game.id, req.files!.thumbnail![0]);
 
         // Upload the images.
-        game.images = req.files.images
-            ? await Promise.all(req.files.images.map(image => this._gameImageService.uploadImage(game.id, image)))
+        game.images = req.files!.images
+            ? await Promise.all(req.files!.images.map(image => this._gameImageService.uploadImage(game.id, image)))
             : [];
 
         await this._gameService.updateGame(game);
@@ -229,5 +224,65 @@ export class GamesController {
             message: "Game updated successfully",
             game: game,
         });
+    }
+
+    /**
+     * Validates the game request for create and update.
+     * @returns A validation result indicating whether the request is valid or not.
+     */
+    private validateGameRequest(req: Request, requireId: boolean = false): GameValidationResult {
+        if (!req.fields || !req.fields.game) {
+            return { valid: false, error: "Missing game data" };
+        }
+
+        let game: Game | undefined;
+        try {
+            game = JSON.parse(req.fields.game as unknown as string) as Game | undefined;
+        }
+        catch {
+            return { valid: false, error: "Invalid game data" };
+        }
+
+        if (!game) {
+            return { valid: false, error: "Invalid game data" };
+        }
+
+        if (
+            (requireId && typeof game.id !== "number") ||
+            typeof game.sku !== "string" ||
+            typeof game.name !== "string" ||
+            typeof game.description !== "string" ||
+            typeof game.price !== "number" ||
+            !Array.isArray(game.tags) ||
+            !game.tags.every(tag => typeof tag === "string")
+        ) {
+            return { valid: false, error: "Invalid game structure" };
+        }
+
+        const allowedImageTypes: string[] = [
+            "image/jpeg",
+            "image/png",
+        ];
+
+        if (!req.files || !req.files.thumbnail || req.files.thumbnail.length !== 1) {
+            return { valid: false, error: "Missing thumbnail file" };
+        }
+
+        if (!req.files.thumbnail[0].mimetype || !allowedImageTypes.includes(req.files.thumbnail[0].mimetype)) {
+            return { valid: false, error: "Invalid thumbnail file type. Only jpeg and png are allowed." };
+        }
+
+        if (req.files.images) {
+            if (!Array.isArray(req.files.images)) {
+                return { valid: false, error: "Images must be an array" };
+            }
+            for (const image of req.files.images) {
+                if (!image.mimetype || !allowedImageTypes.includes(image.mimetype)) {
+                    return { valid: false, error: "Invalid image file type. Only jpeg and png are allowed." };
+                }
+            }
+        }
+
+        return { valid: true, game: game };
     }
 }
