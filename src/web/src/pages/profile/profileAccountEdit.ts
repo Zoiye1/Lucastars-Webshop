@@ -1,5 +1,4 @@
-// src/pages/profile/profileAccountEdit.ts
-import { html } from "@web/helpers/webComponents";
+// src/pages/profile/profileAccountEdit.ts (Fixed)
 import { profileService } from "@web/services/profileService";
 import { IUser } from "@shared/types";
 
@@ -130,15 +129,15 @@ export class ProfileAccountEditComponent extends HTMLElement {
     }
 
     private updateSubmitButton(): void {
-        const submitButton: Element | null = this.shadowRoot?.querySelector(".submit-button");
-        if (submitButton instanceof HTMLButtonElement) {
+        const submitButton: HTMLButtonElement | null = this.shadowRoot?.querySelector(".submit-button") as HTMLButtonElement | null;
+        if (submitButton) {
             submitButton.disabled = this.isSubmitting;
             submitButton.textContent = this.isSubmitting ? "Bezig met opslaan..." : "Opslaan";
         }
     }
 
     private showSuccessMessage(): void {
-        const messageDiv: Element | null = this.shadowRoot?.querySelector(".message");
+        const messageDiv: HTMLElement | null = this.shadowRoot?.querySelector(".message") as HTMLElement | null;
         if (messageDiv) {
             messageDiv.innerHTML = `
                 <div style="padding: 15px; background-color: #d4edda; color: #155724; border-radius: 10px; margin-bottom: 20px;">
@@ -149,7 +148,7 @@ export class ProfileAccountEditComponent extends HTMLElement {
     }
 
     private showUpdateError(): void {
-        const messageDiv: Element | null = this.shadowRoot?.querySelector(".message");
+        const messageDiv: HTMLElement | null = this.shadowRoot?.querySelector(".message") as HTMLElement | null;
         if (messageDiv) {
             messageDiv.innerHTML = `
                 <div style="padding: 15px; background-color: #f8d7da; color: #721c24; border-radius: 10px; margin-bottom: 20px;">
@@ -392,8 +391,8 @@ export class ProfileAccountEditComponent extends HTMLElement {
         this.shadowRoot.appendChild(content);
 
         // Add event listeners
-        const form: Element | null = this.shadowRoot.querySelector("form");
-        if (form instanceof HTMLFormElement) {
+        const form: HTMLFormElement | null = this.shadowRoot.querySelector("form");
+        if (form) {
             form.addEventListener("submit", e => this.handleSubmit(e));
         }
 

@@ -1,5 +1,3 @@
-// src/pages/profile/profileAccount.ts
-import { html } from "@web/helpers/webComponents";
 import { profileService } from "@web/services/profileService";
 import { IUser } from "@shared/types";
 

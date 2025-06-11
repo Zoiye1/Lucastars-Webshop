@@ -1,4 +1,4 @@
-// api/src/services/UserService.ts
+// api/src/services/UserService.ts (Fixed)
 import { IUser } from "../../../shared/types";
 import { DatabaseService } from "./DatabaseService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
@@ -238,7 +238,7 @@ export class UserService {
     }
 
     /**
-     * Update user address
+     * Update user address - FIXED VERSION
      */
     public async updateUserAddress(userId: number, addressData: AddressData): Promise<boolean> {
         const connection: PoolConnection = await this._databaseService.openConnection();
@@ -275,29 +275,29 @@ export class UserService {
                 return result.affectedRows > 0;
             }
             else {
-                // Update existing address
+                // Update existing address - REMOVED updated_at reference
                 const updateFields: string[] = [];
                 const values: (string | null)[] = [];
 
                 if (addressData.street !== undefined) {
                     updateFields.push("street = ?");
-                    values.push(addressData.street);
+                    values.push(addressData.street || null);
                 }
                 if (addressData.houseNumber !== undefined) {
                     updateFields.push("houseNumber = ?");
-                    values.push(addressData.houseNumber);
+                    values.push(addressData.houseNumber || null);
                 }
                 if (addressData.postalCode !== undefined) {
                     updateFields.push("postalCode = ?");
-                    values.push(addressData.postalCode);
+                    values.push(addressData.postalCode || null);
                 }
                 if (addressData.city !== undefined) {
                     updateFields.push("city = ?");
-                    values.push(addressData.city);
+                    values.push(addressData.city || null);
                 }
                 if (addressData.country !== undefined) {
                     updateFields.push("country = ?");
-                    values.push(addressData.country);
+                    values.push(addressData.country || null);
                 }
 
                 if (updateFields.length === 0) {
@@ -307,9 +307,10 @@ export class UserService {
                 // Add userId for WHERE clause
                 values.push(userId.toString());
 
+                // FIXED: Removed reference to updated_at column
                 const updateQuery: string = `
                     UPDATE addresses 
-                    SET ${updateFields.join(", ")}, updated_at = CURRENT_TIMESTAMP
+                    SET ${updateFields.join(", ")}
                     WHERE userId = ?
                 `;
 
@@ -323,6 +324,7 @@ export class UserService {
             }
         }
         catch (e: unknown) {
+            console.error("Error in updateUserAddress:", e);
             throw new Error(`Failed to update address: ${e}`);
         }
         finally {

@@ -1,5 +1,4 @@
-// src/pages/profile/profileWelcome.ts
-import { html } from "@web/helpers/webComponents";
+// src/pages/profile/profileWelcome.ts (Fixed)
 import { profileService } from "@web/services/profileService";
 import { IUser } from "@shared/types";
 

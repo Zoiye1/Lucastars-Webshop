@@ -120,7 +120,7 @@ class ProfileService {
 
             // Update address if any address fields were provided
             const addressData: Partial<IUser> = { street, houseNumber, postalCode, city, country };
-            const addressFields: (string | undefined)[] = [street, houseNumber, postalCode, city, country];
+            const addressFields: (string | null | undefined)[] = [street, houseNumber, postalCode, city, country];
             const hasAddressData: boolean = addressFields.some(value => value !== undefined);
 
             if (hasAddressData) {
@@ -146,22 +146,22 @@ class ProfileService {
             console.log("ProfileService: Updating address for user:", userId, "with data:", addressData);
 
             // Filter address data to only include address fields and convert null to undefined
-            const filteredAddressData: Record<string, string | undefined> = {};
+            const filteredAddressData: Record<string, string | null> = {};
 
             if (addressData.street !== undefined) {
-                filteredAddressData.street = addressData.street || undefined;
+                filteredAddressData.street = addressData.street || null;
             }
             if (addressData.houseNumber !== undefined) {
-                filteredAddressData.houseNumber = addressData.houseNumber || undefined;
+                filteredAddressData.houseNumber = addressData.houseNumber || null;
             }
             if (addressData.postalCode !== undefined) {
-                filteredAddressData.postalCode = addressData.postalCode || undefined;
+                filteredAddressData.postalCode = addressData.postalCode || null;
             }
             if (addressData.city !== undefined) {
-                filteredAddressData.city = addressData.city || undefined;
+                filteredAddressData.city = addressData.city || null;
             }
             if (addressData.country !== undefined) {
-                filteredAddressData.country = addressData.country || undefined;
+                filteredAddressData.country = addressData.country || null;
             }
 
             console.log("ProfileService: Filtered address data:", filteredAddressData);
