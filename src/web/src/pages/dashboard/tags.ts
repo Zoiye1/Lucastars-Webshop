@@ -73,7 +73,7 @@ class DashboardTagsPageComponent extends HTMLElement {
 
         dashboard.pageTitle = "Tags";
         dashboard.pageButton = {
-            title: "Nieuwe tag",
+            title: "Voeg tag toe",
             icon: "/images/icons/add-circle.svg",
             action: () => {
                 location.href = "/dashboard/tag-form";
@@ -90,14 +90,10 @@ class DashboardTagsPageComponent extends HTMLElement {
         this.shadowRoot.firstChild?.remove();
         this.shadowRoot.append(styles, element);
 
-        // Wait for the DOM to be fully rendered before initializing Tabulator
-        requestAnimationFrame(() => {
-            new Tabulator(tableContainer, {
+        // Hack: Wait for the DOM to be fully rendered before initializing Tabulator
+        setTimeout(async () => {
+            const table: Tabulator = new Tabulator(tableContainer, {
                 layout: "fitColumns",
-                ajaxURL: " ",
-                ajaxRequestFunc: async (_url, _config, _params) => {
-                    return await this._tagService.getTags();
-                },
                 pagination: true,
                 paginationMode: "local",
                 paginationSize: 10,
@@ -162,7 +158,11 @@ class DashboardTagsPageComponent extends HTMLElement {
                 initialSort: [{ column: "id", dir: "asc" }],
                 popupContainer: tableContainer,
             });
-        });
+
+            const tags: Tag[] = await this._tagService.getTags();
+
+            await table.replaceData(tags);
+        }, 100);
     }
 }
 
