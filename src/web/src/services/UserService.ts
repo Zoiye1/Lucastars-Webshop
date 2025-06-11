@@ -17,10 +17,24 @@ export class UserService {
             url += `&sortBy=${sortBy}`;
         }
 
-        const res: Response = await fetch(url, {
+        const response: Response = await fetch(url, {
             credentials: "include",
         });
 
-        return await res.json() as unknown as PaginatedResponse<IUser>;
+        return await response.json() as unknown as PaginatedResponse<IUser>;
+    }
+
+    public async toggleAdminRole(userId: number): Promise<string> {
+        const response: Response = await fetch(`${VITE_API_URL}users/${userId}/toggle-admin`, {
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to update user role");
+        }
+
+        const role: string = await response.json() as unknown as string;
+
+        return role;
     }
 }

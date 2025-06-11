@@ -1,15 +1,20 @@
 import "@web/components/LayoutComponent";
 import "@web/components/DashboardComponent";
 import "@web/components/UserInfoModalComponent";
+import "@web/components/ConfirmModalComponent";
 
 import { html } from "@web/helpers/webComponents";
 import { DashboardComponent } from "@web/components/DashboardComponent";
-import { IUser, PaginatedResponse } from "@shared/types";
+import { IUser, NotificationEvent, PaginatedResponse } from "@shared/types";
 import { UserService } from "@web/services/UserService";
 import { UserInfoModalComponent } from "@web/components/UserInfoModalComponent";
+import { ConfirmModalComponent } from "@web/components/ConfirmModalComponent";
+import { WebshopEventService } from "@web/services/WebshopEventService";
+import { WebshopEvent } from "@web/enums/WebshopEvent";
 
 import { Tabulator, AjaxModule, PageModule, SortModule, FormatModule, InteractionModule, TooltipModule, CellComponent } from "tabulator-tables";
 import tabulatorCSS from "tabulator-tables/dist/css/tabulator_semanticui.min.css?raw";
+import { authService } from "@web/services/AuthService";
 
 type TabulatorParams = {
     page?: number;
@@ -19,16 +24,18 @@ type TabulatorParams = {
 
 class DashboardUsersPageComponent extends HTMLElement {
     private _userService: UserService = new UserService();
+    private _webshopEventService: WebshopEventService = new WebshopEventService();
 
     private _userInfoModal: UserInfoModalComponent = document.createElement("user-info-modal") as UserInfoModalComponent;
+    private _confirmModal: ConfirmModalComponent = document.createElement("webshop-confirm-modal") as ConfirmModalComponent;
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
 
-        this.render();
+        void this.render();
     }
 
-    private render(): void {
+    private async render(): Promise<void> {
         if (!this.shadowRoot) {
             return;
         }
@@ -48,8 +55,10 @@ class DashboardUsersPageComponent extends HTMLElement {
                     color: var(--primary-color);
                 }
 
-                .action-btn.delete {
-                    color: red;
+                .action-buttons {
+                    display: flex;
+                    align-items: center;
+                    height: 100%;
                 }
 
                 .action-btn.icon {
@@ -67,6 +76,8 @@ class DashboardUsersPageComponent extends HTMLElement {
         Tabulator.registerModule([AjaxModule, PageModule, SortModule, FormatModule, InteractionModule, TooltipModule]);
 
         const tableContainer: HTMLElement = html`<div></div>`;
+
+        const currentUser: IUser | undefined = await authService.getUser();
 
         new Tabulator(tableContainer, {
             layout: "fitColumns",
@@ -112,20 +123,57 @@ class DashboardUsersPageComponent extends HTMLElement {
                     width: 100,
                     headerSort: false,
                     formatter: cell => {
-                        const button: HTMLButtonElement = document.createElement("button");
-                        button.className = "action-btn icon";
+                        const user: IUser = cell.getRow().getData() as IUser;
 
-                        const icon: HTMLImageElement = document.createElement("img");
-                        icon.src = "/images/icons/eye-outline.svg";
-                        icon.alt = "Details";
-                        button.appendChild(icon);
+                        const viewButton: HTMLButtonElement = document.createElement("button");
+                        viewButton.className = "action-btn icon";
 
-                        button.addEventListener("click", (event: MouseEvent) => {
-                            event.stopPropagation();
-                            const user: IUser = cell.getData() as IUser;
+                        const viewIcon: HTMLImageElement = document.createElement("img");
+                        viewIcon.src = "/images/icons/eye-outline.svg";
+                        viewIcon.alt = "Details";
+                        viewButton.appendChild(viewIcon);
+
+                        viewButton.addEventListener("click", () => {
                             this._userInfoModal.showModal(user);
                         });
-                        return button;
+
+                        const roleButton: HTMLButtonElement = document.createElement("button");
+                        roleButton.className = "action-btn icon";
+
+                        const roleIcon: HTMLImageElement = document.createElement("img");
+                        roleIcon.src = "/images/icons/admin-shield.svg";
+                        roleIcon.alt = "Verwijderen";
+                        roleButton.appendChild(roleIcon);
+
+                        roleButton.addEventListener("click", () => {
+                            this._confirmModal.showModal(
+                                "Bevestig rol verandering",
+                                `Weet je zeker dat je ${user.username} een ${user.role === "admin" ? "gebruiker" : "administrator"} wilt maken?`
+                            );
+
+                            this._confirmModal.onConfirm = async () => {
+                                const newRole: string = await this._userService.toggleAdminRole(user.id);
+
+                                await cell.getRow().update({
+                                    role: newRole,
+                                });
+
+                                this._webshopEventService.dispatchEvent<NotificationEvent>(
+                                    WebshopEvent.Notification,
+                                    {
+                                        type: "success",
+                                        message: `${user.username} is nu een ${newRole === "admin" ? "administrator" : "gebruiker"}`,
+                                    }
+                                );
+                            };
+                        });
+
+                        return html`
+                            <div class="action-buttons">
+                                ${viewButton}
+                                ${currentUser?.id !== user.id ? roleButton : ""}
+                            </div>
+                        `;
                     },
                 },
             ],
@@ -142,19 +190,13 @@ class DashboardUsersPageComponent extends HTMLElement {
             <webshop-layout>
                 ${dashboard}
                 ${this._userInfoModal}
+                ${this._confirmModal}
             </webshop-layout>
         `;
 
         this.shadowRoot.firstChild?.remove();
         this.shadowRoot.append(styles, element);
     }
-
-    private nameFormatter = (cell: CellComponent): string => {
-        const user: IUser = cell.getData() as IUser;
-
-        const parts: string[] = [user.firstName, user.prefix, user.lastName].filter(part => part !== null);
-        return parts.join(" ").trim();
-    };
 
     private isoDateTimeFormatter = (cell: CellComponent): string => {
         const value: string = cell.getValue() as string;
