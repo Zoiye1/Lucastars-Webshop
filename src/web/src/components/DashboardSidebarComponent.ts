@@ -18,7 +18,7 @@ class DashboardSidebarComponent extends HTMLElement {
                     display: flex;
                     flex-direction: column;
                     width: 200px;
-                    background-color: #f4f4f4;
+                    background-color: #ffffff;
                     border: 1px solid #ddd;
                     border-radius: 10px;
                 }
