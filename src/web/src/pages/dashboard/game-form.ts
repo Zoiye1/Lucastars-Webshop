@@ -15,12 +15,13 @@ import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import filepondCoreCSS from "filepond/dist/filepond.min.css?raw";
 import filepondPreviewCSS from "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css?raw";
 
-import Quill from "quill";
+import Quill, { Delta, Op } from "quill";
 import quillThemeCSS from "quill/dist/quill.snow.css?raw";
 import quillCoreCSS from "quill/dist/quill.core.css?raw";
 
 import TomSelect from "tom-select";
 import tomSelectCSS from "tom-select/dist/css/tom-select.css?raw";
+import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 
 /**
  * This page displays form for creating or editing a game.
@@ -317,6 +318,22 @@ export class GameFormPageComponent extends HTMLElement {
             form.querySelector("#description-editor") as HTMLDivElement,
             {
                 theme: "snow",
+                modules: {
+                    clipboard: {
+                        matchers: [
+                            ["*", (_node: Node, delta: Delta) => {
+                                // Remove attributes from all ops in the delta
+                                delta.ops.forEach((op: Op) => {
+                                    if (op.attributes) {
+                                        delete op.attributes;
+                                    }
+                                });
+
+                                return delta;
+                            }],
+                        ],
+                    },
+                },
             }
         );
 
@@ -394,13 +411,17 @@ export class GameFormPageComponent extends HTMLElement {
         const form: HTMLFormElement = event.target as HTMLFormElement;
         const formData: FormData = new FormData(form);
 
+        const gameDescription: string = new QuillDeltaToHtmlConverter(quillEditor.getContents().ops, {
+            inlineStyles: false,
+        }).convert();
+
         const game: Game = {
             id: this._game ? this._game.id : 0,
             name: formData.get("name") as string,
             sku: formData.get("sku") as string,
             price: parseFloat(formData.get("price") as string),
             url: formData.get("playUrl") as string,
-            description: quillEditor.root.innerHTML,
+            description: gameDescription,
             tags: (tomSelect.getValue() as string[]).map(tag => tag.trim()),
             thumbnail: "",
             images: [],

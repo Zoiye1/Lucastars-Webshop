@@ -27,6 +27,7 @@
         "filepond-plugin-file-validate-type": "^1.2.9",
         "filepond-plugin-image-preview": "^4.6.12",
         "quill": "^2.0.3",
+        "quill-delta-to-html": "^0.12.1",
         "tabulator-tables": "^6.3.1",
         "tom-select": "^2.4.3",
         "toolcool-range-slider": "^4.0.28"
