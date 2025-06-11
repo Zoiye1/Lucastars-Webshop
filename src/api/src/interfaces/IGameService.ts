@@ -9,4 +9,5 @@ export abstract class IGameService {
     public abstract getFiveRandomGames(): Promise<Game[]>;
     public abstract createGame(game: Game): Promise<Game>;
     public abstract updateGame(game: Game): Promise<Game>;
+    public abstract softDeleteGame(id: number): Promise<void>;
 }

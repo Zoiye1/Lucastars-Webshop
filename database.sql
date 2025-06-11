@@ -6,6 +6,7 @@ CREATE TABLE `games` (
   `description` text,
   `price` decimal(10,2) NOT NULL COMMENT 'Price in Euros',
   `playUrl` varchar(255) NOT NULL,
+  `deleted` boolean NOT NULL DEFAULT false,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

@@ -47,26 +47,23 @@ export class GameService implements IGameService {
             ? `ORDER BY g.${options.sortBy} ${options.sort === "desc" ? "DESC" : "ASC"}`
             : `ORDER BY g.name ${options.sort === "desc" ? "DESC" : "ASC"}`;
 
-        let whereClause: string = "";
+        let whereClause: string = "WHERE g.deleted = 0";
         const whereClauseValues: number[] = [];
         let tagJoin: string = "";
 
         if (options.tags && options.tags.length > 0) {
             tagJoin = "JOIN games_tags gt ON g.id = gt.gameId";
-            whereClause += whereClause ? " AND " : "WHERE ";
-            whereClause += `gt.tagId IN (${options.tags.map(() => "?").join(",")})`;
+            whereClause += ` AND gt.tagId IN (${options.tags.map(() => "?").join(",")})`;
             whereClauseValues.push(...options.tags);
         }
 
         if (options.minPrice) {
-            whereClause += whereClause ? " AND " : "WHERE ";
-            whereClause += "g.price >= ?";
+            whereClause += " AND g.price >= ?";
             whereClauseValues.push(options.minPrice);
         }
 
         if (options.maxPrice) {
-            whereClause += whereClause ? " AND " : "WHERE ";
-            whereClause += "g.price <= ?";
+            whereClause += " AND g.price <= ?";
             whereClauseValues.push(options.maxPrice);
         }
 
@@ -125,7 +122,7 @@ export class GameService implements IGameService {
         try {
             const query: string = `
                 ${this.getGameBaseQuery(withPlayUrl)}
-                WHERE g.id = ?
+                WHERE g.id = ? AND g.deleted = 0
                 GROUP BY g.id
             `;
 
@@ -153,7 +150,7 @@ export class GameService implements IGameService {
                 ${this.getGameBaseQuery(true)}
                 JOIN orders_games og ON g.id = og.gameId
                 JOIN orders o ON og.orderId = o.id
-                WHERE o.userId = ? AND o.status = "paid" ${gameIdCondition}
+                WHERE g.deleted = 0 AND o.userId = ? AND o.status = "paid" ${gameIdCondition}
                 GROUP BY g.id
             `;
 
@@ -181,7 +178,7 @@ export class GameService implements IGameService {
         try {
             const sqlQuery: string = `
                 ${this.getGameBaseQuery()}
-                WHERE g.name LIKE ?
+                WHERE g.deleted = 0 AND g.name LIKE ?
                 GROUP BY g.id
                 ORDER BY g.name
             `;
@@ -202,7 +199,7 @@ export class GameService implements IGameService {
             const query: string = `
                 ${this.getGameBaseQuery()}
                 JOIN games_tags gt ON g.id = gt.gameId
-                WHERE gt.tagId IN (3, 5)
+                WHERE g.deleted = 0 AND gt.tagId IN (3, 5)
                 GROUP BY g.id
                 ORDER BY RAND()
                 LIMIT 5;
@@ -339,6 +336,22 @@ export class GameService implements IGameService {
             }
 
             return game;
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    public async softDeleteGame(id: number): Promise<void> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const deleteGameQuery: string = `
+                UPDATE games
+                SET deleted = 1, updated = NOW()
+                WHERE id = ?
+            `;
+            await this._databaseService.query<Game>(connection, deleteGameQuery, id);
         }
         finally {
             connection.release();

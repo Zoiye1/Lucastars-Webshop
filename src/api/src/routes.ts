@@ -67,7 +67,7 @@ router.get("/image-proxy", (req, res) => imageProxyController.getImage(req, res)
 // Game CRUD operations
 router.post("/games", formidableMiddleware, (req, res) => gamesController.createGame(req, res));
 router.put("/games/:id", formidableMiddleware, (req, res) => gamesController.updateGame(req, res));
-// router.delete("/games/:id", formidableMiddleware, (req, res) => gamesController.deleteGame(req, res));
+router.delete("/games/:id", (req, res) => gamesController.deleteGame(req, res));
 
 // TODO: The following endpoints have to be implemented in their own respective controller
 router.get("/products", (_req, _res) => {

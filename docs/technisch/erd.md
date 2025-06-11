@@ -19,6 +19,7 @@ Table games {
   description text
   price decimal(10, 2) [not null, note: "Price in Euros"]
   playUrl varchar [not null]
+  deleted boolean [not null, default: false]
   created timestamp [not null, default: `now()`]
   updated timestamp [not null, default: `now()`]
 }

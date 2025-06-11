@@ -117,6 +117,7 @@ export class OrdersGamesService implements IOrdersGamesService {
                 g.price
             FROM games g
             LEFT JOIN orders_games og ON og.gameId = g.id
+            WHERE g.deleted = 0
             GROUP BY g.id
             ORDER BY COUNT(og.gameId) DESC, g.name
             LIMIT 10

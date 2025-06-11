@@ -285,4 +285,23 @@ export class GamesController {
 
         return { valid: true, game: game };
     }
+
+    public async deleteGame(req: Request, res: Response): Promise<void> {
+        // Check if the user is an admin.
+        if (!req.userId || req.userRole !== "admin") {
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        }
+
+        const id: number = Number(req.params.id);
+
+        if (!id) {
+            res.status(400).json({ error: "Missing 'id' parameter" });
+            return;
+        }
+
+        await this._gameService.softDeleteGame(id);
+
+        res.status(200).json({ message: "Game deleted successfully" });
+    }
 }
