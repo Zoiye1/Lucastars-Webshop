@@ -40,6 +40,7 @@ router.get("/games", (req, res) => gamesController.getGames(req, res));
 router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));
 router.get("/tags", (req, res) => tagController.getTags(req, res));
 router.get("/five-random-games", (req, res) => gamesController.getFiveRandomGames(req, res));
+router.get("/tags/:id", (req, res) => tagController.getTagById(req, res));
 
 // NOTE: After this line, all endpoints will check for a session.
 router.use(sessionMiddleware);
@@ -79,6 +80,11 @@ router.get("/chart/tags", (req, res) => chartController.getGamesTags(req, res));
 router.post("/games", formidableMiddleware, (req, res) => gamesController.createGame(req, res));
 router.put("/games/:id", formidableMiddleware, (req, res) => gamesController.updateGame(req, res));
 router.delete("/games/:id", (req, res) => gamesController.deleteGame(req, res));
+
+// Tag CRUD operations
+router.post("/tags", (req, res) => tagController.createTag(req, res));
+router.put("/tags/:id", (req, res) => tagController.updateTag(req, res));
+router.delete("/tags/:id", (req, res) => tagController.deleteTag(req, res));
 
 // TODO: The following endpoints have to be implemented in their own respective controller
 router.get("/products", (_req, _res) => {
