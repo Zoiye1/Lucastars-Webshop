@@ -196,7 +196,7 @@ class ProfilePageComponent extends HTMLElement {
         if (profileContent) {
             // Custom event to allow child components to navigate
             profileContent.addEventListener("profile-navigate", (e: Event) => {
-                const customEvent = e as CustomEvent<{ path: string }>;
+                const customEvent: CustomEvent<{ path: string }> = e as CustomEvent<{ path: string }>;
                 this.navigate(customEvent.detail.path);
             });
         }
