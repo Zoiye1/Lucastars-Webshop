@@ -1,15 +1,18 @@
 import "@web/components/LayoutComponent";
 import "@web/components/DashboardComponent";
 
-import { Tag } from "@shared/types";
+import { NotificationEvent, Tag } from "@shared/types";
 import { html } from "@web/helpers/webComponents";
 import { DashboardComponent } from "@web/components/DashboardComponent";
 import { TagService } from "@web/services/TagService";
+import { WebshopEvent } from "@web/enums/WebshopEvent";
+import { WebshopEventService } from "@web/services/WebshopEventService";
 
 /**
  * This page displays form for creating or editing a tag.
  */
 export class TagFormPageComponent extends HTMLElement {
+    private _webshopEventService: WebshopEventService = new WebshopEventService();
     private _tagService: TagService = new TagService();
 
     private _tag?: Tag;
@@ -159,7 +162,17 @@ export class TagFormPageComponent extends HTMLElement {
             await this._tagService.updateTag(tag);
         }
 
-        window.location.href = "/dashboard/tags";
+        this._webshopEventService.dispatchEvent<NotificationEvent>(
+            WebshopEvent.Notification,
+            {
+                type: "success",
+                message: `Tag ${this._tag ? "bewerkt" : "toegevoegd"}! Je wordt nu teruggestuurd naar de game lijst.`,
+            }
+        );
+
+        setTimeout(() => {
+            window.location.href = "/dashboard/tags";
+        }, 2000);
     }
 }
 

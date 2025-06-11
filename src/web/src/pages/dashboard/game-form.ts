@@ -1,11 +1,13 @@
 import "@web/components/LayoutComponent";
 import "@web/components/DashboardComponent";
 
-import { Game, Tag } from "@shared/types";
+import { Game, NotificationEvent, Tag } from "@shared/types";
 import { html } from "@web/helpers/webComponents";
 import { DashboardComponent } from "@web/components/DashboardComponent";
 import { GameService } from "@web/services/GameService";
 import { TagService } from "@web/services/TagService";
+import { WebshopEventService } from "@web/services/WebshopEventService";
+import { WebshopEvent } from "@web/enums/WebshopEvent";
 
 import * as FilePond from "filepond";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
@@ -27,6 +29,8 @@ import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
  * This page displays form for creating or editing a game.
  */
 export class GameFormPageComponent extends HTMLElement {
+    private _webshopEventService: WebshopEventService = new WebshopEventService();
+
     private _gameService: GameService = new GameService();
     private _tagService: TagService = new TagService();
 
@@ -434,7 +438,17 @@ export class GameFormPageComponent extends HTMLElement {
             await this._gameService.updateGame(game, thumbnailFile.file, imageFiles.map(file => file.file));
         }
 
-        window.location.href = "/dashboard/games?success=true";
+        this._webshopEventService.dispatchEvent<NotificationEvent>(
+            WebshopEvent.Notification,
+            {
+                type: "success",
+                message: `Game ${this._game ? "bewerkt" : "toegevoegd"}! Je wordt nu teruggestuurd naar de game lijst.`,
+            }
+        );
+
+        setTimeout(() => {
+            window.location.href = "/dashboard/games";
+        }, 2000);
     }
 }
 
