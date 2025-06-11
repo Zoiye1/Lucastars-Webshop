@@ -15,12 +15,6 @@ export const app: Express = express();
 config();
 config({ path: ".env.local", override: true });
 
-// Serve files from LucaStars trough our own image proxy to avoid CORS issues for the frontend
-app.use("/uploads", uploadsProxyMiddleWare);
-
-// Serve static files from the "uploads" directory
-app.use("/uploads", express.static("uploads"));
-
 // Enable CORS headers
 app.use(cors({
     credentials: true,
@@ -28,6 +22,12 @@ app.use(cors({
         callback(null, requestOrigin);
     },
 }));
+
+// Serve files from LucaStars trough our own image proxy to avoid CORS issues for the frontend
+app.use("/uploads", uploadsProxyMiddleWare);
+
+// Serve static files from the "uploads" directory
+app.use("/uploads", express.static("uploads"));
 
 // Enable JSON-body support for requests
 app.use(express.json());
