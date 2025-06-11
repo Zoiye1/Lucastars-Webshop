@@ -46,9 +46,17 @@ export class UserController {
     }
 
     public async toggleAdminRole(req: Request, res: Response): Promise<void> {
-        const userId: string = req.params.id;
+        const userId: number | undefined = req.params.id ? parseInt(req.params.id) : undefined;
 
-        const updatedRole: IUser = await this._userService.toggleAdminRole(userId);
+        if (!userId || isNaN(userId)) {
+            res.status(400).json({
+                error: "Invalid user ID",
+            });
+
+            return;
+        }
+
+        const updatedRole: string = await this._userService.toggleAdminRole(userId);
 
         res.json(updatedRole);
     }
