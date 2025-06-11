@@ -27,6 +27,7 @@ class DashboardGamesPageComponent extends HTMLElement {
         if (!this.shadowRoot) {
             return;
         }
+
         const styles: HTMLElement = html`
             <style>
                 ${tabulatorCSS}
@@ -36,14 +37,27 @@ class DashboardGamesPageComponent extends HTMLElement {
                 }
 
                 .action-btn {
+                    padding: 0;
                     background: transparent;
                     border: none;
                     cursor: pointer;
                     color: var(--primary-color);
                 }
 
-                .action-btn.delete {
-                    color: red;
+                .action-buttons {
+                    display: flex;
+                    align-items: center;
+                    height: 100%;
+                }
+
+                .action-btn.icon {
+                    display: flex;
+                    height: 100%;
+                    align-items: center;
+                }
+
+                .tabulator-cell:has(.action-btn.icon) {
+                    padding: 0;
                 }
             </style>
         `;
@@ -91,6 +105,47 @@ class DashboardGamesPageComponent extends HTMLElement {
                 { title: "SKU", field: "sku", width: 200 },
                 { title: "Tags", field: "tags", tooltip: true, formatterParams: { separator: "," }, width: 150 },
                 { title: "Prijs", field: "price", formatter: "money", formatterParams: { symbol: "€", precision: 2 }, width: 100 },
+                {
+                    title: "Acties",
+                    width: 100,
+                    headerSort: false,
+                    formatter: cell => {
+                        const game: Game = cell.getRow().getData() as Game;
+
+                        const editLink: HTMLAnchorElement = document.createElement("a");
+                        editLink.className = "action-btn icon";
+                        editLink.href = `/dashboard/game-form?id=${game.id}`;
+
+                        const editIcon: HTMLImageElement = document.createElement("img");
+                        editIcon.src = "/images/icons/pencil.svg";
+                        editIcon.alt = "Bewerken";
+                        editLink.appendChild(editIcon);
+
+                        const deleteButton: HTMLButtonElement = document.createElement("button");
+                        deleteButton.className = "action-btn icon";
+
+                        const deleteIcon: HTMLImageElement = document.createElement("img");
+                        deleteIcon.src = "/images/icons/trash-red.svg";
+                        deleteIcon.alt = "Verwijderen";
+                        deleteButton.appendChild(deleteIcon);
+
+                        deleteButton.addEventListener("click", async () => {
+                            const game: Game = cell.getRow().getData() as Game;
+
+                            if (confirm("Weet je zeker dat je dit spel wilt verwijderen?")) {
+                                await this._gameService.deleteGame(game.id);
+                                await cell.getRow().delete();
+                            }
+                        });
+
+                        return html`
+                            <div class="action-buttons">
+                                ${editLink}
+                                ${deleteButton}
+                            </div>
+                        `;
+                    },
+                },
             ],
             initialSort: [{ column: "id", dir: "asc" }],
             popupContainer: tableContainer,
@@ -100,6 +155,13 @@ class DashboardGamesPageComponent extends HTMLElement {
         dashboard.append(tableContainer);
 
         dashboard.pageTitle = "Games";
+        dashboard.pageButton = {
+            title: "Voeg game toe",
+            icon: "/images/icons/add-circle.svg",
+            action: () => {
+                location.href = "/dashboard/game-form";
+            },
+        };
 
         const element: HTMLElement = html`
             <webshop-layout>
