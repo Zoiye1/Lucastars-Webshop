@@ -65,51 +65,6 @@ class DashboardTagsPageComponent extends HTMLElement {
 
         const tableContainer: HTMLElement = html`<div></div>`;
 
-        new Tabulator(tableContainer, {
-            layout: "fitColumns",
-            data: tags,
-            pagination: true,
-            paginationMode: "local",
-            paginationSize: 10,
-            paginationSizeSelector: true,
-            paginationCounter: "rows",
-            sortMode: "local",
-            columns: [
-                { title: "ID", field: "id", width: 75 },
-                { title: "Naam", field: "value" },
-                {
-                    title: "Acties",
-                    width: 100,
-                    headerSort: false,
-                    formatter: cell => {
-                        const button: HTMLButtonElement = document.createElement("button");
-                        button.className = "action-btn icon";
-
-                        const icon: HTMLImageElement = document.createElement("img");
-                        icon.src = "/images/icons/trash-red.svg";
-                        icon.alt = "Verwijderen";
-                        button.appendChild(icon);
-
-                        button.addEventListener("click", () => {
-                            const tag: Tag = cell.getRow().getData() as Tag;
-
-                            this._confirmModal.showModal(
-                                "Bevestig verwijderen",
-                                `Weet je zeker dat je de tag "${tag.value}" wilt verwijderen?`
-                            );
-
-                            this._confirmModal.onConfirm = () => {
-                                console.log("Tag verwijderen:", tag.id);
-                            };
-                        });
-                        return button;
-                    },
-                },
-            ],
-            initialSort: [{ column: "id", dir: "asc" }],
-            popupContainer: tableContainer,
-        });
-
         const dashboard: DashboardComponent = document.createElement("webshop-dashboard") as DashboardComponent;
         dashboard.append(tableContainer);
 
@@ -124,6 +79,54 @@ class DashboardTagsPageComponent extends HTMLElement {
 
         this.shadowRoot.firstChild?.remove();
         this.shadowRoot.append(styles, element);
+
+        // Wait for the DOM to be fully rendered before initializing Tabulator
+        requestAnimationFrame(() => {
+            new Tabulator(tableContainer, {
+                layout: "fitColumns",
+                data: tags,
+                pagination: true,
+                paginationMode: "local",
+                paginationSize: 10,
+                paginationSizeSelector: true,
+                paginationCounter: "rows",
+                sortMode: "local",
+                columns: [
+                    { title: "ID", field: "id", width: 75 },
+                    { title: "Naam", field: "value" },
+                    {
+                        title: "Acties",
+                        width: 100,
+                        headerSort: false,
+                        formatter: cell => {
+                            const button: HTMLButtonElement = document.createElement("button");
+                            button.className = "action-btn icon";
+
+                            const icon: HTMLImageElement = document.createElement("img");
+                            icon.src = "/images/icons/trash-red.svg";
+                            icon.alt = "Verwijderen";
+                            button.appendChild(icon);
+
+                            button.addEventListener("click", () => {
+                                const tag: Tag = cell.getRow().getData() as Tag;
+
+                                this._confirmModal.showModal(
+                                    "Bevestig verwijderen",
+                                `Weet je zeker dat je de tag "${tag.value}" wilt verwijderen?`
+                                );
+
+                                this._confirmModal.onConfirm = () => {
+                                    console.log("Tag verwijderen:", tag.id);
+                                };
+                            });
+                            return button;
+                        },
+                    },
+                ],
+                initialSort: [{ column: "id", dir: "asc" }],
+                popupContainer: tableContainer,
+            });
+        });
     }
 }
 
