@@ -4,6 +4,7 @@ declare global {
             sessionId?: string;
             userId?: number;
             userRole?: string;
+            formidableParsed?: boolean;
         }
     }
 
