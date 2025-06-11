@@ -30,10 +30,16 @@ class DashboardSidebarComponent extends HTMLElement {
                     text-decoration: none;
                     color: #333;
                     font-size: 16px;
+                    gap: 6px;
                 }
 
                 .sidebar-item:hover {
                     background-color: #e0e0e0;
+                }
+
+                .icon {
+                    width: 24px;
+                    height: 24px;
                 }
             </style>
         `;
@@ -41,22 +47,30 @@ class DashboardSidebarComponent extends HTMLElement {
         const element: HTMLElement = html`
             <div class="sidebar">
                 <a href="/dashboard/" class="sidebar-item">
-                    <span class="icon">🏠</span>
+                    <span class="icon">
+                        <img src="/images/icons/home.svg" alt="Dashboard Icon">
+                    </span>
                     <span class="label">Dashboard</span>
                 </a>
 
                 <a href="/dashboard/orders" class="sidebar-item">
-                    <span class="icon">📦</span>
+                    <span class="icon">
+                        <img src="/images/icons/package.svg" alt="Orders Icon">
+                    </span>
                     <span class="label">Orders</span>
                 </a>
 
                 <a href="/dashboard/games" class="sidebar-item">
-                    <span class="icon">🛒</span>
+                    <span class="icon">
+                        <img src="/images/icons/gamepad.svg" alt="Games Icon">
+                    </span>
                     <span class="label">Games</span>
                 </a>
 
                 <a href="/dashboard/tags" class="sidebar-item">
-                    <span class="icon">🛒</span>
+                    <span class="icon">
+                        <img src="/images/icons/tag.svg" alt="Tags Icon">
+                    </span>
                     <span class="label">Tags</span>
                 </a>
             </div>
