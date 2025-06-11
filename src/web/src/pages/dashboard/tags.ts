@@ -1,15 +1,20 @@
 import "@web/components/LayoutComponent";
 import "@web/components/DashboardComponent";
+import "@web/components/ConfirmModalComponent";
+
 import { html } from "@web/helpers/webComponents";
 import { DashboardComponent } from "@web/components/DashboardComponent";
 import { TagService } from "@web/services/TagService";
 import { Tag } from "@shared/types";
+import { ConfirmModalComponent } from "@web/components/ConfirmModalComponent";
 
 import { Tabulator, PageModule, SortModule, FormatModule, InteractionModule } from "tabulator-tables";
 import tabulatorCSS from "tabulator-tables/dist/css/tabulator_semanticui.min.css?raw";
 
 class DashboardTagsPageComponent extends HTMLElement {
     private _tagService: TagService = new TagService();
+
+    private _confirmModal: ConfirmModalComponent = document.createElement("webshop-confirm-modal") as ConfirmModalComponent;
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -85,11 +90,17 @@ class DashboardTagsPageComponent extends HTMLElement {
                         icon.alt = "Verwijderen";
                         button.appendChild(icon);
 
-                        button.addEventListener("click", (event: MouseEvent) => {
-                            event.stopPropagation();
-                            if (confirm("Weet je zeker dat je deze tag wilt verwijderen?")) {
-                                console.log("Tag verwijderen:", cell.getData().id);
-                            }
+                        button.addEventListener("click", () => {
+                            const tag: Tag = cell.getRow().getData() as Tag;
+
+                            this._confirmModal.showModal(
+                                "Bevestig verwijderen",
+                                `Weet je zeker dat je de tag "${tag.value}" wilt verwijderen?`
+                            );
+
+                            this._confirmModal.onConfirm = () => {
+                                console.log("Tag verwijderen:", tag.id);
+                            };
                         });
                         return button;
                     },
@@ -107,6 +118,7 @@ class DashboardTagsPageComponent extends HTMLElement {
         const element: HTMLElement = html`
             <webshop-layout>
                 ${dashboard}
+                ${this._confirmModal}
             </webshop-layout>
         `;
 

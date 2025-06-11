@@ -1,9 +1,12 @@
 import "@web/components/LayoutComponent";
 import "@web/components/DashboardComponent";
+import "@web/components/ConfirmModalComponent";
+
 import { html } from "@web/helpers/webComponents";
 import { GameService } from "@web/services/GameService";
 import { Game, NotificationEvent, PaginatedResponse } from "@shared/types";
 import { DashboardComponent } from "@web/components/DashboardComponent";
+import { ConfirmModalComponent } from "@web/components/ConfirmModalComponent";
 
 import { Tabulator, AjaxModule, PageModule, SortModule, FormatModule, InteractionModule, TooltipModule } from "tabulator-tables";
 import tabulatorCSS from "tabulator-tables/dist/css/tabulator_semanticui.min.css?raw";
@@ -19,6 +22,8 @@ type TabulatorParams = {
 class DashboardGamesPageComponent extends HTMLElement {
     private _gameService: GameService = new GameService();
     private _webshopEventService: WebshopEventService = new WebshopEventService();
+
+    private _confirmModal: ConfirmModalComponent = document.createElement("webshop-confirm-modal") as ConfirmModalComponent;
 
     public connectedCallback(): void {
         this.attachShadow({ mode: "open" });
@@ -132,20 +137,25 @@ class DashboardGamesPageComponent extends HTMLElement {
                         deleteIcon.alt = "Verwijderen";
                         deleteButton.appendChild(deleteIcon);
 
-                        deleteButton.addEventListener("click", async () => {
+                        deleteButton.addEventListener("click", () => {
                             const game: Game = cell.getRow().getData() as Game;
 
-                            if (confirm("Weet je zeker dat je dit spel wilt verwijderen?")) {
+                            this._confirmModal.showModal(
+                                "Bevestig verwijderen",
+                                `Weet je zeker dat je het spel "${game.name}" wilt verwijderen?`
+                            );
+
+                            this._confirmModal.onConfirm = async () => {
                                 await this._gameService.deleteGame(game.id);
                                 await cell.getRow().delete();
                                 this._webshopEventService.dispatchEvent<NotificationEvent>(
                                     WebshopEvent.Notification,
                                     {
                                         type: "success",
-                                        message: `Game "${game.name}" succesvol verwijderd.`,
+                                        message: `Game "${game.name}" succesvol verwijderd`,
                                     }
                                 );
-                            }
+                            };
                         });
 
                         return html`
@@ -176,6 +186,7 @@ class DashboardGamesPageComponent extends HTMLElement {
         const element: HTMLElement = html`
             <webshop-layout>
                 ${dashboard}
+                ${this._confirmModal}
             </webshop-layout>
         `;
 
