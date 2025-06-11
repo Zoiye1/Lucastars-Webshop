@@ -44,4 +44,12 @@ export class UserController {
         const paginatedResult: PaginatedResponse<IUser> = await this._userService.getUsers(options);
         res.json(paginatedResult);
     }
+
+    public async toggleAdminRole(req: Request, res: Response): Promise<void> {
+        const userId: string = req.params.id;
+
+        const updatedRole: IUser = await this._userService.toggleAdminRole(userId);
+
+        res.json(updatedRole);
+    }
 }

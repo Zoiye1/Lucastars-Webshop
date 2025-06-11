@@ -68,6 +68,7 @@ router.get("/secret", (req, res) => welcomeController.getSecret(req, res));
 router.get("/orders", (req, res) => ordersGamesController.getOrders(req, res));
 router.get("/image-proxy", (req, res) => imageProxyController.getImage(req, res));
 router.get("/users", (req, res) => userController.getUsers(req, res));
+router.get("/users/:id/toggle-admin", (req, res) => userController.toggleAdminRole(req, res));
 
 // Chart operations
 router.get("/chart/turnover", (req, res) => chartController.getTurnoverByYear(req, res));

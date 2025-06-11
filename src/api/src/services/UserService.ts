@@ -229,4 +229,36 @@ export class UserService {
             connection.release();
         }
     }
+
+    public async toggleAdminRole(userId: number): Promise<string> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            const user: IUser | undefined = await this.getUserById(userId);
+
+            if (!user) {
+                throw new Error(`User with ID ${userId} not found.`);
+            }
+
+            const newRoleId: number | null = user.role === "admin" ? null : 1;
+
+            await this._databaseService.query<ResultSetHeader>(
+                connection,
+                `
+                UPDATE users
+                SET roleId = ?
+                WHERE id = ?
+                `,
+                newRoleId,
+                userId
+            );
+
+            return newRoleId === null ? "" : "admin";
+        }
+        catch (e: unknown) {
+            throw new Error(`Failed to toggle admin role for user ID ${userId}: ${e}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
 }
