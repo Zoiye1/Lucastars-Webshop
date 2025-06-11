@@ -97,7 +97,7 @@ export type CartResponse = {
  */
 export type Game = {
     /** ID of the game */
-    id: string;
+    id: number;
     /** SKU (stock keeping unit) of the game */
     sku: string;
     /** Name of the game */
