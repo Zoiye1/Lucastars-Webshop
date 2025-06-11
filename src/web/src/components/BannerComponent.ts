@@ -336,7 +336,7 @@ export class BannerComponent extends HTMLElement {
                                         alt="Screenshot"
                                         src="${VITE_API_URL}uploads/${games[i].images[0]}"
                                         data-banner-index="${i}"
-                                        data-image-src="${games[i].images[0]}"
+                                        data-image-src="${VITE_API_URL}uploads/${games[i].images[0]}"
                                         class="thumbnail"
                                     />
                                 </div>
@@ -347,7 +347,7 @@ export class BannerComponent extends HTMLElement {
                                             alt="Screenshot"
                                             src="${VITE_API_URL}uploads/${games[i].images[1]}"
                                             data-banner-index="${i}"
-                                            data-image-src="${games[i].images[1]}"
+                                            data-image-src="${VITE_API_URL}uploads/${games[i].images[1]}"
                                             class="thumbnail"
                                         />
                                     </div>
@@ -360,7 +360,7 @@ export class BannerComponent extends HTMLElement {
                                             alt="Screenshot"
                                             src="${VITE_API_URL}uploads/${games[i].images[2]}"
                                             data-banner-index="${i}"
-                                            data-image-src="${games[i].images[2]}"
+                                            data-image-src="${VITE_API_URL}uploads/${games[i].images[2]}"
                                             class="thumbnail"
                                         />
                                     </div>
@@ -373,7 +373,7 @@ export class BannerComponent extends HTMLElement {
                                             alt="Screenshot"
                                             src="${VITE_API_URL}uploads/${games[i].images[3]}"
                                             data-banner-index="${i}"
-                                            data-image-src="${games[i].images[3]}"
+                                            data-image-src="${VITE_API_URL}uploads/${games[i].images[3]}"
                                             class="thumbnail"
                                         />
                                     </div>
