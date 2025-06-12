@@ -115,11 +115,6 @@ class AuthService {
                 const data: IAuthResponse = JSON.parse(text) as IAuthResponse;
                 console.log("Parsed response data:", data);
 
-                // Update login state if successful
-                if (data.success) {
-                    this._isLoggedIn = true;
-                }
-
                 return data;
             }
             catch (parseError) {
@@ -186,11 +181,6 @@ class AuthService {
                 const data: IAuthResponse = JSON.parse(text) as IAuthResponse;
                 console.log("Parsed login response data:", data);
 
-                // Update login state if successful
-                if (data.success) {
-                    this._isLoggedIn = true;
-                }
-
                 return data;
             }
             catch (parseError) {
@@ -232,8 +222,8 @@ class AuthService {
             console.log("AuthService: Logout response status:", response.status, response.statusText);
 
             // Always reset login state regardless of response
-            this._isLoggedIn = false;
-            this._isLoggedInPromise = null;
+            this._user = undefined;
+            this._getUserPromise = null;
 
             // Try to read the response text
             let text: string;
@@ -280,8 +270,8 @@ class AuthService {
             console.error("AuthService: Logout error:", errorMessage);
 
             // Always reset login state even on error
-            this._isLoggedIn = false;
-            this._isLoggedInPromise = null;
+            this._user = undefined;
+            this._getUserPromise = null;
 
             return {
                 success: true, // Still return success to allow redirect

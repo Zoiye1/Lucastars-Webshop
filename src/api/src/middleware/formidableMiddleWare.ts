@@ -10,7 +10,7 @@ export async function formidableMiddleware(req: Request, _res: Response, next: N
     }
 
     // eslint-disable-next-line @typescript-eslint/typedef
-    const form = formidable({
+    const form = new formidable.IncomingForm({
         allowEmptyFiles: false,
     });
 
