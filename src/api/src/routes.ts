@@ -67,7 +67,8 @@ router.get("/cart", (req, res) => cartController.getCart(req, res));
 router.delete("/cart/:gameId", (req, res) => cartController.deleteCartItem(req, res));
 router.get("/checkout", (req, res) => checkoutController.getCheckout(req, res));
 router.post("/checkout", (req, res) => checkoutController.postCheckout(req, res));
-router.post("/payments/create", (req, res) => checkoutController.createPayment(req, res));router.get("/address-lookup", (req, res) => addressLookupController.getAddressLookup(req, res));
+router.post("/payments/create", (req, res) => checkoutController.createPayment(req, res));
+router.get("/address-lookup", (req, res) => addressLookupController.getAddressLookup(req, res));
 router.get("/owned-games", (req, res) => gamesController.getOwnedGames(req, res));
 
 // NOTE: After this line, all endpoints will require the user to have the "admin" role.
