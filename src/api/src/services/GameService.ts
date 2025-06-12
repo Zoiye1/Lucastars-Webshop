@@ -236,13 +236,16 @@ export class GameService implements IGameService {
             // Insert images if any
             if (game.images.length > 0) {
                 const insertImagesQuery: string = `
-                    INSERT INTO game_images (gameId, imageUrl)
-                    VALUES ${game.images.map(() => "(?, ?)").join(", ")}
+                    INSERT INTO game_images (gameId, imageUrl, sortOrder)
+                    VALUES ${game.images.map(() => "(?, ?, ?)").join(", ")}
                 `;
+
                 const imageParams: (number | string)[] = [];
-                for (const image of game.images) {
-                    imageParams.push(game.id, image);
-                }
+
+                game.images.forEach((image, index) => {
+                    imageParams.push(game.id, image, index);
+                });
+
                 await this._databaseService.query(connection, insertImagesQuery, ...imageParams);
             }
 
@@ -253,9 +256,11 @@ export class GameService implements IGameService {
                     VALUES ${game.tags.map(() => "(?, ?)").join(", ")}
                 `;
                 const tagParams: (number | string)[] = [];
+
                 for (const tag of game.tags) {
                     tagParams.push(game.id, tag);
                 }
+
                 await this._databaseService.query(connection, insertTagsQuery, ...tagParams);
             }
 
@@ -302,15 +307,15 @@ export class GameService implements IGameService {
 
             if (game.images.length > 0) {
                 const insertImagesQuery: string = `
-                    INSERT INTO game_images (gameId, imageUrl)
-                    VALUES ${game.images.map(() => "(?, ?)").join(", ")}
+                    INSERT INTO game_images (gameId, imageUrl, sortOrder)
+                    VALUES ${game.images.map(() => "(?, ?, ?)").join(", ")}
                 `;
 
                 const imageParams: (number | string)[] = [];
 
-                for (const image of game.images) {
-                    imageParams.push(game.id, image);
-                }
+                game.images.forEach((image, index) => {
+                    imageParams.push(game.id, image, index);
+                });
 
                 await this._databaseService.query<Game>(connection, insertImagesQuery, ...imageParams);
             }
