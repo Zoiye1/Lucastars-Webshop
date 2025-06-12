@@ -53,7 +53,7 @@ export class OrdersGamesService implements IOrdersGamesService {
                     o.orderDate,
                     o.status,
                     o.totalAmount,
-                    o.transactionId,
+                    p.transactionId,
                     JSON_ARRAYAGG(
                         JSON_OBJECT(
                             'gameId', g.id,
@@ -63,6 +63,7 @@ export class OrdersGamesService implements IOrdersGamesService {
                         )
                     ) as 'items'
                 FROM orders o
+                LEFT JOIN payments p ON p.orderId = o.id
                 LEFT JOIN orders_games og ON og.orderId = o.id
                 LEFT JOIN games g ON og.gameId = g.id
                 LEFT JOIN users u ON o.userId = u.id
