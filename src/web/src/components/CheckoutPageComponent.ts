@@ -152,11 +152,6 @@ export class CheckoutPageComponent extends HTMLElement {
                     return;
                 }
 
-                if (!street || !city) {
-                    alert("Zoek eerst het adres op.");
-                    return;
-                }
-
                 if (!street || !houseNumber || !postalCode || !city) {
                     alert("Vul alle velden in.");
                     return;
