@@ -12,4 +12,6 @@ export enum WebshopEvent {
     GamesListLoaded = "gamesListLoaded",
     /** Represents the Item added to cart event */
     AddToCart = "addToCart",
+    /** Represents the notification event */
+    Notification = "notification",
 };

@@ -212,7 +212,7 @@ export class GameInfoComponent extends HTMLElement {
                     </div>
                 </header>
                 <div class="image-container">
-                    <img src="${game[0].thumbnail}" alt="game-cover" />
+                    <img src="${VITE_API_URL}uploads/${game[0].thumbnail}" alt="game-cover" />
                 </div>
                 <div class="game-info">
                     <p class="price">${game[0].price}</p>

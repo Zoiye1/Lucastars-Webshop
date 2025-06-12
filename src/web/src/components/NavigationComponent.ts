@@ -1,3 +1,4 @@
+import { IUser } from "@shared/types";
 import { html } from "@web/helpers/webComponents";
 import { authService } from "@web/services/AuthService";
 
@@ -19,6 +20,7 @@ export class NavigationComponent extends HTMLElement {
         }
 
         const isLoggedIn: boolean = await authService.isLoggedIn();
+        const user: IUser | undefined = await authService.getUser();
 
         const styles: HTMLElement = html`
             <style>
@@ -78,6 +80,10 @@ export class NavigationComponent extends HTMLElement {
 
                 .dropbtn:hover {
                     background-color: #d6d6d6;
+                }
+
+                .dropbtn span {
+                    vertical-align: super;
                 }
 
                 .dropdown {
@@ -167,6 +173,7 @@ export class NavigationComponent extends HTMLElement {
                 <div class ="dropdown">
                     <button class ="dropbtn">
                         <img src="/images/icons/account.svg" />
+                        <span>${user ? `Welkom, ${user.username}` : ""}</span>
                     </button>
                     <div class ="dropdown-content">
                         ${!isLoggedIn
@@ -175,8 +182,9 @@ export class NavigationComponent extends HTMLElement {
                             <a href="/register.html">Registreren</a>
                         `
 : `
-                            <a href="/index.html">Account</a>
+                            <a href="/profile.html">Account</a>
                             <a href="/my-games.html">Mijn spellen</a>
+                            ${user?.role === "admin" ? "<a href=\"/dashboard/index.html\">Dashboard</a>" : ""}
                         `}
                     </div>
                 </div>

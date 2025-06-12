@@ -1,5 +1,5 @@
 import { IGameService } from "@api/interfaces/IGameService";
-import { PoolConnection } from "mysql2/promise";
+import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
 import { Game, GetGamesOptions, PaginatedResponse } from "@shared/types";
 
@@ -9,7 +9,7 @@ import { Game, GetGamesOptions, PaginatedResponse } from "@shared/types";
 export class GameService implements IGameService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
 
-    private getGameBaseQuery(): string {
+    private getGameBaseQuery(withPlayUrl: boolean = false): string {
         return `
             SELECT 
                 g.id,
@@ -18,6 +18,7 @@ export class GameService implements IGameService {
                 g.thumbnail,
                 g.description,
                 g.price,
+                ${withPlayUrl ? "g.playUrl as url," : ""}
                 COALESCE(
                     (SELECT JSON_ARRAYAGG(gi.imageUrl)
                      FROM game_images gi
@@ -46,26 +47,23 @@ export class GameService implements IGameService {
             ? `ORDER BY g.${options.sortBy} ${options.sort === "desc" ? "DESC" : "ASC"}`
             : `ORDER BY g.name ${options.sort === "desc" ? "DESC" : "ASC"}`;
 
-        let whereClause: string = "";
+        let whereClause: string = "WHERE g.deleted = 0";
         const whereClauseValues: number[] = [];
         let tagJoin: string = "";
 
         if (options.tags && options.tags.length > 0) {
             tagJoin = "JOIN games_tags gt ON g.id = gt.gameId";
-            whereClause += whereClause ? " AND " : "WHERE ";
-            whereClause += `gt.tagId IN (${options.tags.map(() => "?").join(",")})`;
+            whereClause += ` AND gt.tagId IN (${options.tags.map(() => "?").join(",")})`;
             whereClauseValues.push(...options.tags);
         }
 
         if (options.minPrice) {
-            whereClause += whereClause ? " AND " : "WHERE ";
-            whereClause += "g.price >= ?";
+            whereClause += " AND g.price >= ?";
             whereClauseValues.push(options.minPrice);
         }
 
         if (options.maxPrice) {
-            whereClause += whereClause ? " AND " : "WHERE ";
-            whereClause += "g.price <= ?";
+            whereClause += " AND g.price <= ?";
             whereClauseValues.push(options.maxPrice);
         }
 
@@ -118,8 +116,21 @@ export class GameService implements IGameService {
         }
     }
 
-    public async getGameById(id: number): Promise<Game[]> {
-        return this.executeGameByIdQuery(id);
+    public async getGameById(id: number, withPlayUrl?: boolean): Promise<Game[]> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const query: string = `
+                ${this.getGameBaseQuery(withPlayUrl)}
+                WHERE g.id = ? AND g.deleted = 0
+                GROUP BY g.id
+            `;
+
+            return await this._databaseService.query<Game[]>(connection, query, id);
+        }
+        finally {
+            connection.release();
+        }
     }
 
     public async getFiveRandomGames(): Promise<Game[]> {
@@ -136,10 +147,10 @@ export class GameService implements IGameService {
             const gameIdCondition: string = gameId ? "AND g.id = ?" : "";
 
             const query: string = `
-                ${this.getGameBaseQuery()}
+                ${this.getGameBaseQuery(true)}
                 JOIN orders_games og ON g.id = og.gameId
                 JOIN orders o ON og.orderId = o.id
-                WHERE o.userId = ? AND o.status = "paid" ${gameIdCondition}
+                WHERE g.deleted = 0 AND o.userId = ? AND o.status = "paid" ${gameIdCondition}
                 GROUP BY g.id
             `;
 
@@ -167,7 +178,7 @@ export class GameService implements IGameService {
         try {
             const sqlQuery: string = `
                 ${this.getGameBaseQuery()}
-                WHERE g.name LIKE ?
+                WHERE g.deleted = 0 AND g.name LIKE ?
                 GROUP BY g.id
                 ORDER BY g.name
             `;
@@ -181,19 +192,17 @@ export class GameService implements IGameService {
         }
     }
 
-    private async executeGameByIdQuery(id: number): Promise<Game[]> {
+    private async executeFiveRandomGamesQuery(): Promise<Game[]> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         try {
             const query: string = `
-            SELECT 
-                name,
-                thumbnail,
-                description,
-                price
-            FROM GAMES
-            WHERE
-                id = "${id}"
+                ${this.getGameBaseQuery()}
+                JOIN games_tags gt ON g.id = gt.gameId
+                WHERE g.deleted = 0 AND gt.tagId IN (3, 5)
+                GROUP BY g.id
+                ORDER BY RAND()
+                LIMIT 5;
         `;
 
             return await this._databaseService.query<Game[]>(connection, query);
@@ -203,20 +212,151 @@ export class GameService implements IGameService {
         }
     }
 
-    private async executeFiveRandomGamesQuery(): Promise<Game[]> {
+    public async createGame(game: Game): Promise<Game> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         try {
-            const query: string = `
-                ${this.getGameBaseQuery()}
-                JOIN games_tags gt ON g.id = gt.gameId
-                WHERE gt.tagId IN (3, 5)
-                GROUP BY g.id
-                ORDER BY RAND()
-                LIMIT 5;
-        `;
+            // Insert game
+            const insertGameQuery: string = `
+                INSERT INTO games (sku, name, thumbnail, description, price, playUrl, created, updated)
+                VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+            `;
+            const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
+                connection,
+                insertGameQuery,
+                game.sku,
+                game.name,
+                game.thumbnail,
+                game.description,
+                game.price,
+                game.url
+            );
+            game.id = result.insertId;
 
-            return await this._databaseService.query<Game[]>(connection, query);
+            // Insert images if any
+            if (game.images.length > 0) {
+                const insertImagesQuery: string = `
+                    INSERT INTO game_images (gameId, imageUrl, sortOrder)
+                    VALUES ${game.images.map(() => "(?, ?, ?)").join(", ")}
+                `;
+
+                const imageParams: (number | string)[] = [];
+
+                game.images.forEach((image, index) => {
+                    imageParams.push(game.id, image, index);
+                });
+
+                await this._databaseService.query(connection, insertImagesQuery, ...imageParams);
+            }
+
+            // Insert tags if any
+            if (game.tags.length > 0) {
+                const insertTagsQuery: string = `
+                    INSERT INTO games_tags (gameId, tagId)
+                    VALUES ${game.tags.map(() => "(?, ?)").join(", ")}
+                `;
+                const tagParams: (number | string)[] = [];
+
+                for (const tag of game.tags) {
+                    tagParams.push(game.id, tag);
+                }
+
+                await this._databaseService.query(connection, insertTagsQuery, ...tagParams);
+            }
+
+            return game;
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    public async updateGame(game: Game): Promise<Game> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const gameQuery: string = `
+                UPDATE games
+                SET 
+                    sku = ?,
+                    name = ?,
+                    thumbnail = ?,
+                    description = ?,
+                    price = ?,
+                    playUrl = ?,
+                    updated = NOW()
+                WHERE id = ?
+            `;
+
+            await this._databaseService.query<Game>(
+                connection,
+                gameQuery,
+                game.sku,
+                game.name,
+                game.thumbnail,
+                game.description,
+                game.price,
+                game.url,
+                game.id
+            );
+
+            const deleteImageQuery: string = `
+                DELETE FROM game_images WHERE gameId = ?;
+            `;
+            await this._databaseService.query<Game>(connection, deleteImageQuery, game.id);
+
+            if (game.images.length > 0) {
+                const insertImagesQuery: string = `
+                    INSERT INTO game_images (gameId, imageUrl, sortOrder)
+                    VALUES ${game.images.map(() => "(?, ?, ?)").join(", ")}
+                `;
+
+                const imageParams: (number | string)[] = [];
+
+                game.images.forEach((image, index) => {
+                    imageParams.push(game.id, image, index);
+                });
+
+                await this._databaseService.query<Game>(connection, insertImagesQuery, ...imageParams);
+            }
+
+            const deleteTagsQuery: string = `
+                DELETE FROM games_tags WHERE gameId = ?;
+            `;
+            await this._databaseService.query<Game>(connection, deleteTagsQuery, game.id);
+
+            if (game.tags.length > 0) {
+                const insertTagsQuery: string = `
+                    INSERT INTO games_tags (gameId, tagId)
+                    VALUES ${game.tags.map(() => "(?, ?)").join(", ")}
+                `;
+
+                const tagParams: (number | string)[] = [];
+
+                for (const tag of game.tags) {
+                    tagParams.push(game.id, tag);
+                }
+
+                await this._databaseService.query<Game>(connection, insertTagsQuery, ...tagParams);
+            }
+
+            return game;
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    public async softDeleteGame(id: number): Promise<void> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const deleteGameQuery: string = `
+                UPDATE games
+                SET deleted = 1, updated = NOW()
+                WHERE id = ?
+            `;
+            await this._databaseService.query<Game>(connection, deleteGameQuery, id);
         }
         finally {
             connection.release();

@@ -1,5 +1,6 @@
 import { ISessionService } from "@api/interfaces/ISessionService";
 import { SessionService } from "@api/services/SessionService";
+import { UserSession } from "@shared/types";
 import { NextFunction, Request, Response } from "express";
 
 const sessionService: ISessionService = new SessionService();
@@ -19,9 +20,10 @@ export async function sessionMiddleware(req: Request, _res: Response, next: Next
 
     req.sessionId = sessionIdHeader || sessionIdCookie;
 
-    const userId: number | undefined = await sessionService.getUserIdBySession(req.sessionId);
+    const user: UserSession | undefined = await sessionService.getUserBySession(req.sessionId);
 
-    req.userId = userId;
+    req.userId = user?.userId;
+    req.userRole = user?.userRole;
 
     next();
 }

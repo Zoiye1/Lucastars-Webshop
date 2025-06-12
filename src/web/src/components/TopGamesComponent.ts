@@ -186,7 +186,7 @@ export class TopGamesComponent extends HTMLElement {
             .map(([gameId, { name, thumbnail, price }]) => ({
                 gameId,
                 name,
-                thumbnail,
+                thumbnail: `${VITE_API_URL}uploads/${thumbnail}`,
                 price,
             }))
             .slice(0, topN);

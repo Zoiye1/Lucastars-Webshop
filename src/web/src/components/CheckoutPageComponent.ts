@@ -1,9 +1,11 @@
-import { CheckoutItem } from "@shared/types";
+import { AddressLookupResponse, CheckoutItem, Payment, PaymentResponse } from "@shared/types";
 import "@web/components/CheckoutPageComponent";
 import { CheckoutService } from "@web/services/CheckoutService";
+import { PostalCodeService } from "@web/services/PostalCodeService";
 
 export class CheckoutPageComponent extends HTMLElement {
     private _checkoutService = new CheckoutService();
+    private _postalCodeService = new PostalCodeService();
 
     private item?: CheckoutItem;
 
@@ -43,14 +45,14 @@ export class CheckoutPageComponent extends HTMLElement {
             </div>
             <form id="address-form" style="display: flex; flex-direction: column; gap: 1rem;">
                 <div style="display: flex; gap: 1rem;">
-                    <div style="flex: 2;">
+                    <div style="flex: 1;">
                         <label style="display: flex; flex-direction: column; font-weight: 500;">
-                            Straat
+                            Postcode
                             <input 
                                 type="text" 
-                                name="street" 
-                                value="${this.item.street ?? ""}" 
-                                placeholder="Straatnaam" 
+                                name="postalCode" 
+                                value="${this.item.postalCode ?? ""}" 
+                                placeholder="1234 AB" 
                                 required 
                                 style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
                             />
@@ -69,18 +71,24 @@ export class CheckoutPageComponent extends HTMLElement {
                             />
                         </label>
                     </div>
+                    <div style="flex: 1; display: flex; align-items: flex-end;">
+                        <button type="button" id="lookup-address" style="padding: 0.5rem 1rem; margin-bottom: 0;">
+                            Zoek adres
+                        </button>
+                    </div>
                 </div>
                 <div style="display: flex; gap: 1rem;">
-                    <div style="flex: 1;">
+                    <div style="flex: 2;">
                         <label style="display: flex; flex-direction: column; font-weight: 500;">
-                            Postcode
+                            Straat
                             <input 
                                 type="text" 
-                                name="postalCode" 
-                                value="${this.item.postalCode ?? ""}" 
-                                placeholder="1234 AB" 
+                                name="street" 
+                                value="${this.item.street ?? ""}" 
+                                placeholder="Straatnaam" 
                                 required 
                                 style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
+                                readonly
                             />
                         </label>
                     </div>
@@ -94,6 +102,7 @@ export class CheckoutPageComponent extends HTMLElement {
                                 placeholder="Plaatsnaam" 
                                 required 
                                 style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
+                                readonly
                             />
                         </label>
                     </div>
@@ -114,7 +123,9 @@ export class CheckoutPageComponent extends HTMLElement {
             </form>
         `;
 
-        const submitButton: HTMLElement = document.createElement("button");
+        const submitButton: HTMLButtonElement = document.createElement("button");
+        submitButton.type = "submit";
+        submitButton.setAttribute("form", "address-form");
         submitButton.textContent = "Bestelling plaatsen";
         submitButton.style.padding = "0.75rem";
         submitButton.style.backgroundColor = "var(--primary-color)";
@@ -123,9 +134,12 @@ export class CheckoutPageComponent extends HTMLElement {
         submitButton.style.borderRadius = "8px";
         submitButton.style.fontSize = "1rem";
         submitButton.style.cursor = "pointer";
-        submitButton.onclick = async () => {
-            // Haal adresgegevens op uit het formulier
-            const addressForm: HTMLFormElement | null | undefined = this.shadowRoot?.querySelector<HTMLFormElement>("#address-form");
+
+        userInfo.querySelector<HTMLFormElement>("#address-form")!.onsubmit = async (event: SubmitEvent) => {
+            event.preventDefault();
+
+            const addressForm: HTMLFormElement | null = event.target as HTMLFormElement | null;
+
             if (addressForm) {
                 const formData: FormData = new FormData(addressForm);
                 const street: string = formData.get("street") as string;
@@ -133,16 +147,32 @@ export class CheckoutPageComponent extends HTMLElement {
                 const postalCode: string = formData.get("postalCode") as string;
                 const city: string = formData.get("city") as string;
 
+                if (!street || !city) {
+                    alert("Zoek eerst het adres op.");
+                    return;
+                }
+
+                if (!street || !houseNumber || !postalCode || !city) {
+                    alert("Vul alle velden in.");
+                    return;
+                }
                 const data: CheckoutItem = {
+                    orderId: null,
                     street: street,
                     houseNumber: houseNumber,
                     postalCode: postalCode,
                     city: city,
-                    totalPrice: this.item!.totalPrice,
+                    totalPrice: Number(localStorage.getItem("cart-total")) || 0,
                 };
-
-                await this._checkoutService.submitCheckout(data);
-                location.href = "/my-games.html";
+                console.log(data);
+                const result: CheckoutItem = await this._checkoutService.submitCheckout(data);
+                const data2: Payment = {
+                    orderId: result.orderId ?? 0,
+                    value: this.item?.totalPrice ?? 0,
+                };
+                const transactionId: PaymentResponse = await this._checkoutService.createPayment(data2);
+                console.log(transactionId.transactionId);
+                location.href = `https://psp.api.lucastars.hbo-ict.cloud/checkout/${transactionId.transactionId}`;
             }
             else {
                 alert("Vul het adres in.");
@@ -154,6 +184,33 @@ export class CheckoutPageComponent extends HTMLElement {
         container.appendChild(submitButton);
 
         this.shadowRoot.appendChild(container);
+
+        const addressForm: HTMLFormElement | null = this.shadowRoot.querySelector("#address-form");
+        const lookupBtn: HTMLButtonElement | null = this.shadowRoot.querySelector("#lookup-address");
+
+        if (lookupBtn && addressForm) {
+            lookupBtn.onclick = async () => {
+                const formData: FormData = new FormData(addressForm);
+                const postalCode: string = formData.get("postalCode") as string;
+                const houseNumber: string = formData.get("houseNumber") as string;
+
+                if (!postalCode || !houseNumber) {
+                    alert("Vul postcode en huisnummer in.");
+                    return;
+                }
+
+                const addressLookup: AddressLookupResponse = await this._postalCodeService.getAddressByPostalCode(postalCode, houseNumber);
+
+                if (!addressLookup.street || !addressLookup.city) {
+                    alert("Adres niet gevonden.");
+                    return;
+                }
+
+                // Vul de straat en stad in het formulier
+                (addressForm.elements.namedItem("street") as HTMLInputElement).value = addressLookup.street;
+                (addressForm.elements.namedItem("city") as HTMLInputElement).value = addressLookup.city;
+            };
+        }
     }
 }
 

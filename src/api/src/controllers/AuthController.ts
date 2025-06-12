@@ -120,11 +120,12 @@ export class AuthController {
     };
 
     /**
- * Login a user
- */
+     * Login a user
+     */
     public login = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { email, password } = req.body as { email: string; password: string };
+            const loginData: { email: string; password: string } = req.body as { email: string; password: string };
+            const { email, password } = loginData;
 
             // Basic validation
             if (!email || !password) {
@@ -200,11 +201,86 @@ export class AuthController {
         }
     };
 
-    public verify(req: Request, res: Response): void {
+    /**
+     * Verify if user is authenticated
+     */
+    public async verify(req: Request, res: Response): Promise<void> {
+        if (!req.userId) {
+            res.status(200).json(<AuthVerifyResponse>{
+                user: null,
+            });
+
+            return;
+        }
+
+        const user: IUser | undefined = await this._userService.getUserById(req.userId);
+
         const response: AuthVerifyResponse = {
-            loggedIn: req.userId !== undefined,
+            user: user ?? null,
         };
 
         res.status(200).json(response);
     }
+
+    /**
+     * Logout the current user
+     */
+    public logout = async (req: Request, res: Response): Promise<void> => {
+        try {
+            console.log("Logout request received for user:", req.userId || "unknown");
+
+            // Get session from cookie
+            const sessionId: string | undefined = req.cookies.session as string | undefined;
+
+            if (!sessionId) {
+                const errorResponse: AuthReponse = {
+                    success: false,
+                    message: "No active session found",
+                };
+                console.log("Sending error response:", errorResponse);
+                res.status(401).json(errorResponse);
+                return;
+            }
+
+            // Delete the session from database
+            const sessionDeleted: boolean = await this._sessionService.deleteSession(sessionId);
+
+            if (!sessionDeleted) {
+                console.warn(`Failed to delete session ${sessionId} from database`);
+                // Continue with cookie clearing even if database deletion failed
+            }
+
+            // Clear the session cookie
+            res.clearCookie("session", {
+                httpOnly: true,
+                sameSite: "strict",
+                secure: process.env.NODE_ENV === "production",
+            });
+
+            const successResponse: AuthReponse = {
+                success: true,
+                message: "Logged out successfully",
+            };
+
+            console.log(`User ${req.userId || "unknown"} logged out successfully`);
+            res.status(200).json(successResponse);
+        }
+        catch (error) {
+            console.error("Logout error:", error);
+
+            // Even if there's an error, clear the cookie to ensure logout
+            res.clearCookie("session", {
+                httpOnly: true,
+                sameSite: "strict",
+                secure: process.env.NODE_ENV === "production",
+            });
+
+            const errorResponse: AuthReponse = {
+                success: false,
+                message: "Error during logout, but session cleared",
+            };
+            console.log("Sending error response:", errorResponse);
+            res.status(500).json(errorResponse);
+        }
+    };
 }

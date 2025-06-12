@@ -1,11 +1,23 @@
-import { IUser } from "../../../shared/types";
+import { IUser, PaginatedResponse, PaginationOptions, PaginationSortOptions } from "../../../shared/types";
 import { DatabaseService } from "./DatabaseService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { hash, compare } from "bcrypt-ts/node";
 
-type UserPasswordQueryResult = {
+interface UserPasswordQueryResult {
     password: string;
-};
+}
+
+interface AddressData {
+    street?: string | null;
+    houseNumber?: string | null;
+    postalCode?: string | null;
+    city?: string | null;
+    country?: string | null;
+}
+
+interface ExistingAddressResult {
+    id: number;
+}
 
 export class UserService {
     private readonly _databaseService: DatabaseService = new DatabaseService();
@@ -25,11 +37,69 @@ export class UserService {
                 a.postalCode,
                 a.city,
                 a.country,
+                r.name AS role,
                 u.created,
                 u.updated
             FROM users u
             LEFT JOIN addresses a ON u.id = a.userId
+            LEFT JOIN roles r ON u.roleId = r.id
         `;
+    }
+
+    public async getUsers(options: PaginationOptions & PaginationSortOptions): Promise<PaginatedResponse<IUser>> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        const offset: number = (options.page - 1) * options.limit;
+
+        const sortDirection: string = options.sort === "desc" ? "DESC" : "ASC";
+        const sortByValues: Map<string, string> = new Map([
+            ["id", "u.id"],
+            ["email", "u.email"],
+            ["name", "u.firstName"],
+            ["username", "u.username"],
+            ["role", "r.name"],
+            ["created", "u.created"],
+        ]);
+
+        const sortByQuery: string = options.sortBy && sortByValues.has(options.sortBy)
+            ? `ORDER BY ${sortByValues.get(options.sortBy)} ${sortDirection}`
+            : "ORDER BY u.id DESC";
+
+        try {
+            const query: string = `
+                ${this._getUserBaseQuery()}
+                GROUP BY u.id
+                ${sortByQuery}
+                LIMIT ?
+                OFFSET ?
+            `;
+
+            const users: IUser[] = await this._databaseService.query(
+                connection,
+                query,
+                options.limit,
+                offset
+            );
+
+            const countResult: { totalCount: number }[] = await this._databaseService.query<{ totalCount: number }[]>(
+                connection,
+                "SELECT COUNT(DISTINCT u.id) as totalCount FROM users u"
+            );
+
+            const paginatedResponse: PaginatedResponse<IUser> = {
+                items: users,
+                pagination: {
+                    totalItems: countResult[0].totalCount,
+                    totalPages: Math.ceil(countResult[0].totalCount / options.limit),
+                    currentPage: options.page,
+                    itemsPerPage: options.limit,
+                },
+            };
+
+            return paginatedResponse;
+        }
+        finally {
+            connection.release();
+        }
     }
 
     public async getUserByUsername(username: string): Promise<IUser | undefined> {
@@ -118,7 +188,7 @@ export class UserService {
         try {
             // Hash the password
             const hashedPassword: string = await hash(password, this.SALT_ROUNDS);
-            // const hashedPassword: string = password;
+
             const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
                 connection,
                 `
@@ -163,9 +233,188 @@ export class UserService {
 
             return await compare(password, hashedPassword);
         }
-        catch (error) {
+        catch (error: unknown) {
             console.error("Password verification error:", error);
             return false;
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    /**
+     * Update user information
+     */
+    public async updateUser(userId: number, updateData: Partial<IUser>): Promise<boolean> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            // Build dynamic update query
+            const updateFields: string[] = [];
+            const values: (string | null)[] = [];
+
+            if (updateData.firstName !== undefined) {
+                updateFields.push("firstName = ?");
+                values.push(updateData.firstName);
+            }
+            if (updateData.prefix !== undefined) {
+                updateFields.push("prefix = ?");
+                values.push(updateData.prefix || null);
+            }
+            if (updateData.lastName !== undefined) {
+                updateFields.push("lastName = ?");
+                values.push(updateData.lastName);
+            }
+
+            if (updateFields.length === 0) {
+                return true; // Nothing to update
+            }
+
+            // Add userId for WHERE clause
+            values.push(userId.toString());
+
+            const query: string = `
+                UPDATE users 
+                SET ${updateFields.join(", ")}, updated = CURRENT_TIMESTAMP
+                WHERE id = ?
+            `;
+
+            const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
+                connection,
+                query,
+                ...values
+            );
+
+            return result.affectedRows > 0;
+        }
+        catch (e: unknown) {
+            throw new Error(`Failed to update user: ${e}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    /**
+     * Update user address - FIXED VERSION
+     */
+    public async updateUserAddress(userId: number, addressData: AddressData): Promise<boolean> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            // First check if address exists
+            const checkQuery: string = `
+                SELECT id FROM addresses WHERE userId = ?
+            `;
+
+            const existingAddress: ExistingAddressResult[] = await this._databaseService.query<ExistingAddressResult[]>(
+                connection,
+                checkQuery,
+                userId
+            );
+
+            if (existingAddress.length === 0) {
+                // Insert new address
+                const insertQuery: string = `
+                    INSERT INTO addresses (userId, street, houseNumber, postalCode, city, country)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+
+                const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
+                    connection,
+                    insertQuery,
+                    userId,
+                    addressData.street || null,
+                    addressData.houseNumber || null,
+                    addressData.postalCode || null,
+                    addressData.city || null,
+                    addressData.country || null
+                );
+
+                return result.affectedRows > 0;
+            }
+            else {
+                // Update existing address - REMOVED updated_at reference
+                const updateFields: string[] = [];
+                const values: (string | null)[] = [];
+
+                if (addressData.street !== undefined) {
+                    updateFields.push("street = ?");
+                    values.push(addressData.street || null);
+                }
+                if (addressData.houseNumber !== undefined) {
+                    updateFields.push("houseNumber = ?");
+                    values.push(addressData.houseNumber || null);
+                }
+                if (addressData.postalCode !== undefined) {
+                    updateFields.push("postalCode = ?");
+                    values.push(addressData.postalCode || null);
+                }
+                if (addressData.city !== undefined) {
+                    updateFields.push("city = ?");
+                    values.push(addressData.city || null);
+                }
+                if (addressData.country !== undefined) {
+                    updateFields.push("country = ?");
+                    values.push(addressData.country || null);
+                }
+
+                if (updateFields.length === 0) {
+                    return true; // Nothing to update
+                }
+
+                // Add userId for WHERE clause
+                values.push(userId.toString());
+
+                // FIXED: Removed reference to updated_at column
+                const updateQuery: string = `
+                    UPDATE addresses 
+                    SET ${updateFields.join(", ")}
+                    WHERE userId = ?
+                `;
+
+                const result: ResultSetHeader = await this._databaseService.query<ResultSetHeader>(
+                    connection,
+                    updateQuery,
+                    ...values
+                );
+
+                return result.affectedRows > 0;
+            }
+        }
+        catch (e: unknown) {
+            console.error("Error in updateUserAddress:", e);
+            throw new Error(`Failed to update address: ${e}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    public async toggleAdminRole(userId: number): Promise<string> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            const user: IUser | undefined = await this.getUserById(userId);
+
+            if (!user) {
+                throw new Error(`User with ID ${userId} not found.`);
+            }
+
+            const newRoleId: number | null = user.role === "admin" ? null : 1;
+
+            await this._databaseService.query<ResultSetHeader>(
+                connection,
+                `
+                UPDATE users
+                SET roleId = ?
+                WHERE id = ?
+                `,
+                newRoleId,
+                userId
+            );
+
+            return newRoleId === null ? "" : "admin";
+        }
+        catch (e: unknown) {
+            throw new Error(`Failed to toggle admin role for user ID ${userId}: ${e}`);
         }
         finally {
             connection.release();
