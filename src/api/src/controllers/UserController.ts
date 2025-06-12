@@ -1,4 +1,3 @@
-// api/src/controllers/UserController.ts
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
 import { IUser } from "@shared/types";
@@ -61,16 +60,19 @@ export class UserController {
                 return;
             }
 
-            const updateData: UpdateUserRequest = req.body;
+            const updateData: UpdateUserRequest = req.body as UpdateUserRequest;
 
             // Only allow updating certain fields
-            const allowedFields: (keyof UpdateUserRequest)[] = ["firstName", "prefix", "lastName"];
-            const filteredData: Partial<IUser> = {};
+            const filteredData: Partial<UpdateUserRequest> = {};
 
-            for (const field of allowedFields) {
-                if (updateData[field] !== undefined) {
-                    (filteredData as any)[field] = updateData[field];
-                }
+            if (updateData.firstName !== undefined) {
+                filteredData.firstName = updateData.firstName;
+            }
+            if (updateData.prefix !== undefined) {
+                filteredData.prefix = updateData.prefix;
+            }
+            if (updateData.lastName !== undefined) {
+                filteredData.lastName = updateData.lastName;
             }
 
             const success: boolean = await this._userService.updateUser(userId, filteredData);
@@ -104,16 +106,25 @@ export class UserController {
                 return;
             }
 
-            const addressData: UpdateAddressRequest = req.body;
+            const addressData: UpdateAddressRequest = req.body as UpdateAddressRequest;
 
             // Validate address fields
-            const allowedFields: (keyof UpdateAddressRequest)[] = ["street", "houseNumber", "postalCode", "city", "country"];
-            const filteredData: Record<string, string | null> = {};
+            const filteredData: Partial<UpdateAddressRequest> = {};
 
-            for (const field of allowedFields) {
-                if (addressData[field] !== undefined) {
-                    filteredData[field] = addressData[field] || null;
-                }
+            if (addressData.street !== undefined) {
+                filteredData.street = addressData.street || undefined;
+            }
+            if (addressData.houseNumber !== undefined) {
+                filteredData.houseNumber = addressData.houseNumber || undefined;
+            }
+            if (addressData.postalCode !== undefined) {
+                filteredData.postalCode = addressData.postalCode || undefined;
+            }
+            if (addressData.city !== undefined) {
+                filteredData.city = addressData.city || undefined;
+            }
+            if (addressData.country !== undefined) {
+                filteredData.country = addressData.country || undefined;
             }
 
             const success: boolean = await this._userService.updateUserAddress(userId, filteredData);
