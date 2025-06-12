@@ -1,3 +1,5 @@
+import { Fields, Files } from "formidable";
+
 declare global {
     namespace Express {
         export interface Request {
@@ -5,6 +7,8 @@ declare global {
             userId?: number;
             userRole?: string;
             formidableParsed?: boolean;
+            fields?: Fields;
+            files?: Files;
         }
     }
 
