@@ -16,10 +16,21 @@
         "@hboictcloud/vite-plugin-typechecks": "^1.x",
         "@testing-library/dom": "10.4.0",
         "@testing-library/user-event": "14.6.1",
+        "@types/quill": "^2.0.14",
+        "@types/tabulator-tables": "^6.2.6",
         "glob": "11.0.1",
         "jsdom": "26.0.0"
     },
     "dependencies": {
+        "chart.js": "^4.4.9",
+        "filepond": "^4.32.7",
+        "filepond-plugin-file-validate-size": "^2.2.8",
+        "filepond-plugin-file-validate-type": "^1.2.9",
+        "filepond-plugin-image-preview": "^4.6.12",
+        "quill": "^2.0.3",
+        "quill-delta-to-html": "^0.12.1",
+        "tabulator-tables": "^6.3.1",
+        "tom-select": "^2.4.3",
         "toolcool-range-slider": "^4.0.28"
     }
 }

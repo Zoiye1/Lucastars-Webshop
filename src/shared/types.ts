@@ -58,18 +58,28 @@ export type CartItem = {
     description: string;
     price: number;
 };
+
 /**
- * Represents the query options for getting games
+ * Represents the query options for pagination
  */
-export type GetGamesOptions = {
+export type PaginationOptions = {
     /** Page number for pagination */
     page: number;
     /** Number of items per page */
     limit: number;
+};
+
+export type PaginationSortOptions = {
     /** Sort order for the games */
     sort?: "asc" | "desc";
     /** Sort field for the games */
-    sortBy?: "name" | "price" | "created";
+    sortBy?: string;
+};
+
+/**
+ * Represents the query options for getting games
+ */
+export type GetGamesOptions = PaginationOptions & PaginationSortOptions & {
     /** Filter for tags */
     tags?: number[];
     /** Minimum price for filtering */
@@ -77,6 +87,11 @@ export type GetGamesOptions = {
     /** Maximum price for filtering */
     maxPrice?: number;
 };
+
+/**
+ * Represents the query options for getting orders
+ */
+export type GetOrdersOptions = PaginationOptions & PaginationSortOptions;
 
 /**
  * Represents a list of games
@@ -99,7 +114,7 @@ export type CartResponse = {
  */
 export type Game = {
     /** ID of the game */
-    id: string;
+    id: number;
     /** SKU (stock keeping unit) of the game */
     sku: string;
     /** Name of the game */
@@ -144,6 +159,16 @@ export type OrdersGames = {
     price: number;
 };
 
+export type Order = {
+    id: number;
+    user: IUser;
+    items: OrdersGames[];
+    orderDate: Date;
+    status: string;
+    totalAmount: number;
+    transactionId: string | null;
+};
+
 export interface IUser {
     id: number;
     username: string;
@@ -156,6 +181,7 @@ export interface IUser {
     postalCode: string | null;
     city: string | null;
     country: string | null;
+    role: string | null;
     created: Date;
     updated: Date;
 }
@@ -194,7 +220,7 @@ export type AuthReponse = {
 };
 
 export type AuthVerifyResponse = {
-    loggedIn: boolean;
+    user: IUser | null;
 };
 
 /**
@@ -287,3 +313,32 @@ export interface AddressUpdateDTO {
     city?: string;
     country?: string;
 }
+
+export type UserSession = {
+    /** ID of the user */
+    userId: number;
+    /** Role of the user */
+    userRole?: string;
+};
+
+export type NotificationEvent = {
+    /** Message to be displayed in the notification */
+    message: string;
+    /** Type of the notification (success, warning, error) */
+    type: "success" | "warning" | "error";
+};
+
+export type TurnoverByMonth = {
+    month: number;
+    turnover: number;
+};
+
+export type OrdersByMonth = {
+    date: string;
+    orderCount: number;
+};
+
+export type GameTagCount = {
+    tag: string;
+    count: number;
+};

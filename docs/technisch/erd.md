@@ -19,6 +19,7 @@ Table games {
   description text
   price decimal(10, 2) [not null, note: "Price in Euros"]
   playUrl varchar [not null]
+  deleted boolean [not null, default: false]
   created timestamp [not null, default: `now()`]
   updated timestamp [not null, default: `now()`]
 }
@@ -51,6 +52,7 @@ Table users {
   email varchar [unique, not null]
   phoneNumber varchar
   password varchar [not null]
+  roleId integer [null, ref: > roles.id]
   created timestamp [not null, default: `now()`]
   updated timestamp [not null, default: `now()`]
 }
@@ -111,5 +113,10 @@ Table sessions {
   id varchar [not null, pk]
   userId integer [not null, ref: - users.id]
   created timestamp [not null, default: `now()`]
+}
+
+Table roles {
+  id integer [not null, pk, increment]
+  name varchar [unique, not null]
 }
 ```

@@ -2,10 +2,12 @@ import { ISessionService } from "@api/interfaces/ISessionService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
 import { v4 as uuidv4 } from "uuid";
+import { UserSession } from "@shared/types";
 
 type SessionQueryResult = {
     id: string;
     userId: number;
+    role: string | null;
     created: Date;
 };
 
@@ -41,16 +43,18 @@ export class SessionService implements ISessionService {
         }
     }
 
-    public async getUserIdBySession(sessionId: string): Promise<number | undefined> {
+    public async getUserBySession(sessionId: string): Promise<UserSession | undefined> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         try {
             const result: SessionQueryResult[] = await this._databaseService.query<SessionQueryResult[]>(
                 connection,
                 `
-                SELECT id, userId, created
-                FROM sessions
-                WHERE id = ?
+                SELECT s.id, s.userId, r.name as role, s.created
+                FROM sessions s
+                LEFT JOIN users u ON u.id = s.userId
+                LEFT JOIN roles r ON r.id = u.roleId
+                WHERE s.id = ?
                 `,
                 sessionId
             );
@@ -70,7 +74,10 @@ export class SessionService implements ISessionService {
             }
 
             // Otherwise, return the userId.
-            return result[0].userId;
+            return {
+                userId: result[0].userId,
+                userRole: result[0].role ?? undefined,
+            };
         }
         catch (e: unknown) {
             throw new Error(`Failed to get user from session: ${e}`);

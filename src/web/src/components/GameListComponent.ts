@@ -177,7 +177,7 @@ export class GameListComponent extends HTMLElement {
                 <webshop-select-game
                     gameId="${game.id}"
                     name="${game.name}"
-                    image="${game.thumbnail}"
+                    image="${VITE_API_URL}uploads/${game.thumbnail}"
                     price="${game.price}"
                 ></webshop-select-game>
             `;

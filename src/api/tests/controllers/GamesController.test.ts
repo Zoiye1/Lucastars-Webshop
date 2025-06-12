@@ -33,7 +33,7 @@ describe("GamesController", () => {
             const mockedGames: PaginatedResponse<Game> = {
                 items: [
                     {
-                        id: "1",
+                        id: 1,
                         sku: "game-sku-1",
                         name: "Game 1",
                         thumbnail: "https://example.com/thumbnail1.jpg",
@@ -43,7 +43,7 @@ describe("GamesController", () => {
                         tags: [],
                     },
                     {
-                        id: "2",
+                        id: 2,
                         sku: "game-sku-2",
                         name: "Game 2",
                         thumbnail: "https://example.com/thumbnail2.jpg",
@@ -105,7 +105,7 @@ describe("GamesController", () => {
             // Arrange
             const mockedGames: Game[] = [
                 {
-                    id: "1",
+                    id: 1,
                     sku: "game-sku-1",
                     name: "Game 1",
                     thumbnail: "https://example.com/thumbnail1.jpg",
@@ -144,7 +144,7 @@ describe("GamesController", () => {
             // Arrange
             const mockedGames: Game[] = [
                 {
-                    id: "16",
+                    id: 16,
                     sku: "game-sku-1",
                     name: "Game 1",
                     thumbnail: "https://example.com/thumbnail1.jpg",

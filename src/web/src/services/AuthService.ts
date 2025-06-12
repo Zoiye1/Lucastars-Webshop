@@ -1,45 +1,59 @@
-import { IUserRegisterDTO, IAuthResponse, AuthVerifyResponse } from "@shared/types";
+import { IUserRegisterDTO, IAuthResponse, AuthVerifyResponse, IUser } from "@shared/types";
 
 class AuthService {
-    private _isLoggedIn: boolean = false;
-    private _isLoggedInPromise: Promise<boolean> | null = null;
+    private _user: IUser | undefined;
+    private _getUserPromise: Promise<IUser | undefined> | null = null;
 
     public constructor() {
-        void this.isLoggedIn();
+        void this.getUser();
     }
 
     /**
-     * Checks if the user is logged in by checking the with the API
+     * Get the logged in user.
      */
-    public async isLoggedIn(): Promise<boolean> {
+    public async getUser(): Promise<IUser | undefined> {
         // If a request is already in progress return the same promise to avoid multiple calls to our api
-        if (this._isLoggedInPromise) {
-            return this._isLoggedInPromise;
+        if (this._getUserPromise) {
+            return this._getUserPromise;
         }
 
         // If we already know the user is logged in return true
-        if (this._isLoggedIn) {
-            return true;
+        if (this._user) {
+            return this._user;
         }
 
         // If we don't know if the user is logged in then make a request to the api
-        this._isLoggedInPromise = (async () => {
+        this._getUserPromise = (async () => {
             try {
                 const successResponse: AuthVerifyResponse = await this.verifyLoggedIn();
-                this._isLoggedIn = successResponse.loggedIn;
-                return this._isLoggedIn;
+                this._user = successResponse.user ?? undefined;
+                return this._user;
             }
             catch {
-                this._isLoggedIn = false;
-                return false;
+                this._user = undefined;
+                return undefined;
             }
             finally {
                 // Clear the cached promise once the request is complete
-                this._isLoggedInPromise = null;
+                this._getUserPromise = null;
             }
         })();
 
-        return this._isLoggedInPromise;
+        return this._getUserPromise;
+    }
+
+    /**
+     * Check if the user is logged in.
+     */
+    public async isLoggedIn(): Promise<boolean> {
+        try {
+            const user: IUser | undefined = await this.getUser();
+            return user !== undefined;
+        }
+        catch (error) {
+            console.error("Error checking if user is logged in:", error);
+            return false;
+        }
     }
 
     private async verifyLoggedIn(): Promise<AuthVerifyResponse> {
@@ -100,11 +114,6 @@ class AuthService {
             try {
                 const data: IAuthResponse = JSON.parse(text) as IAuthResponse;
                 console.log("Parsed response data:", data);
-
-                // Update login state if successful
-                if (data.success) {
-                    this._isLoggedIn = true;
-                }
 
                 return data;
             }
@@ -172,11 +181,6 @@ class AuthService {
                 const data: IAuthResponse = JSON.parse(text) as IAuthResponse;
                 console.log("Parsed login response data:", data);
 
-                // Update login state if successful
-                if (data.success) {
-                    this._isLoggedIn = true;
-                }
-
                 return data;
             }
             catch (parseError) {
@@ -218,8 +222,8 @@ class AuthService {
             console.log("AuthService: Logout response status:", response.status, response.statusText);
 
             // Always reset login state regardless of response
-            this._isLoggedIn = false;
-            this._isLoggedInPromise = null;
+            this._user = undefined;
+            this._getUserPromise = null;
 
             // Try to read the response text
             let text: string;
@@ -266,8 +270,8 @@ class AuthService {
             console.error("AuthService: Logout error:", errorMessage);
 
             // Always reset login state even on error
-            this._isLoggedIn = false;
-            this._isLoggedInPromise = null;
+            this._user = undefined;
+            this._getUserPromise = null;
 
             return {
                 success: true, // Still return success to allow redirect

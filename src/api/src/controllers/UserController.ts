@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
-import { IUser } from "@shared/types";
+import { IUser, PaginatedResponse, PaginationOptions, PaginationSortOptions } from "@shared/types";
 
 interface UpdateUserRequest {
     firstName?: string;
@@ -18,6 +18,62 @@ interface UpdateAddressRequest {
 
 export class UserController {
     private readonly _userService: UserService = new UserService();
+
+    public async getUsers(req: Request, res: Response): Promise<void> {
+        const options: PaginationOptions & PaginationSortOptions = {
+            page: parseInt(req.query.page as string, 10) || 1,
+            limit: parseInt(req.query.limit as string, 10) || 10,
+            sort: req.query.sort ? (req.query.sort as "asc" | "desc") : undefined,
+            sortBy: req.query.sortBy ? (req.query.sortBy as string) : undefined,
+        };
+
+        if (options.page < 1) {
+            res.status(400).json({
+                error: "Page must be greater than 0",
+            });
+            return;
+        }
+
+        if (options.limit < 1) {
+            res.status(400).json({
+                error: "Limit must be greater than 0",
+            });
+            return;
+        }
+
+        if (options.sort && !["asc", "desc"].includes(options.sort)) {
+            res.status(400).json({
+                error: "Invalid sort value",
+            });
+            return;
+        }
+
+        if (options.sortBy && !["id", "email", "username", "name", "role", "created"].includes(options.sortBy)) {
+            res.status(400).json({
+                error: "Invalid sortBy value",
+            });
+            return;
+        }
+
+        const paginatedResult: PaginatedResponse<IUser> = await this._userService.getUsers(options);
+        res.json(paginatedResult);
+    }
+
+    public async toggleAdminRole(req: Request, res: Response): Promise<void> {
+        const userId: number | undefined = req.params.id ? parseInt(req.params.id) : undefined;
+
+        if (!userId || isNaN(userId)) {
+            res.status(400).json({
+                error: "Invalid user ID",
+            });
+
+            return;
+        }
+
+        const updatedRole: string = await this._userService.toggleAdminRole(userId);
+
+        res.json(updatedRole);
+    }
 
     /**
      * Get current user

@@ -1,5 +1,4 @@
-// api/src/services/UserService.ts (Fixed)
-import { IUser } from "../../../shared/types";
+import { IUser, PaginatedResponse, PaginationOptions, PaginationSortOptions } from "../../../shared/types";
 import { DatabaseService } from "./DatabaseService";
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { hash, compare } from "bcrypt-ts/node";
@@ -38,11 +37,69 @@ export class UserService {
                 a.postalCode,
                 a.city,
                 a.country,
+                r.name AS role,
                 u.created,
                 u.updated
             FROM users u
             LEFT JOIN addresses a ON u.id = a.userId
+            LEFT JOIN roles r ON u.roleId = r.id
         `;
+    }
+
+    public async getUsers(options: PaginationOptions & PaginationSortOptions): Promise<PaginatedResponse<IUser>> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        const offset: number = (options.page - 1) * options.limit;
+
+        const sortDirection: string = options.sort === "desc" ? "DESC" : "ASC";
+        const sortByValues: Map<string, string> = new Map([
+            ["id", "u.id"],
+            ["email", "u.email"],
+            ["name", "u.firstName"],
+            ["username", "u.username"],
+            ["role", "r.name"],
+            ["created", "u.created"],
+        ]);
+
+        const sortByQuery: string = options.sortBy && sortByValues.has(options.sortBy)
+            ? `ORDER BY ${sortByValues.get(options.sortBy)} ${sortDirection}`
+            : "ORDER BY u.id DESC";
+
+        try {
+            const query: string = `
+                ${this._getUserBaseQuery()}
+                GROUP BY u.id
+                ${sortByQuery}
+                LIMIT ?
+                OFFSET ?
+            `;
+
+            const users: IUser[] = await this._databaseService.query(
+                connection,
+                query,
+                options.limit,
+                offset
+            );
+
+            const countResult: { totalCount: number }[] = await this._databaseService.query<{ totalCount: number }[]>(
+                connection,
+                "SELECT COUNT(DISTINCT u.id) as totalCount FROM users u"
+            );
+
+            const paginatedResponse: PaginatedResponse<IUser> = {
+                items: users,
+                pagination: {
+                    totalItems: countResult[0].totalCount,
+                    totalPages: Math.ceil(countResult[0].totalCount / options.limit),
+                    currentPage: options.page,
+                    itemsPerPage: options.limit,
+                },
+            };
+
+            return paginatedResponse;
+        }
+        finally {
+            connection.release();
+        }
     }
 
     public async getUserByUsername(username: string): Promise<IUser | undefined> {
@@ -326,6 +383,38 @@ export class UserService {
         catch (e: unknown) {
             console.error("Error in updateUserAddress:", e);
             throw new Error(`Failed to update address: ${e}`);
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    public async toggleAdminRole(userId: number): Promise<string> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+        try {
+            const user: IUser | undefined = await this.getUserById(userId);
+
+            if (!user) {
+                throw new Error(`User with ID ${userId} not found.`);
+            }
+
+            const newRoleId: number | null = user.role === "admin" ? null : 1;
+
+            await this._databaseService.query<ResultSetHeader>(
+                connection,
+                `
+                UPDATE users
+                SET roleId = ?
+                WHERE id = ?
+                `,
+                newRoleId,
+                userId
+            );
+
+            return newRoleId === null ? "" : "admin";
+        }
+        catch (e: unknown) {
+            throw new Error(`Failed to toggle admin role for user ID ${userId}: ${e}`);
         }
         finally {
             connection.release();
