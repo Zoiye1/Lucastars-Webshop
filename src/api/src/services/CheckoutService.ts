@@ -87,7 +87,7 @@ export class CheckoutService implements ICheckoutService {
                 currency: "EUR",
                 value: value,
                 description: `Bestelling ${this.gameName}`,
-                redirectUrl: `${process.env.WEB_URL}/payment-return?orderId=${orderId}`,
+                redirectUrl: `${process.env.WEB_URL}/payment-return.html?orderId=${orderId}`,
             }),
         });
 
