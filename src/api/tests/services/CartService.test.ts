@@ -46,7 +46,7 @@ describe("CartService", () => {
     test("createCart inserts item and returns undefined", async () => {
         const cartService: CartService = new CartService();
         const mockDatabaseService: MockDatabaseService = createMockDatabaseService();
-        mockDatabaseService.query.mockResolvedValue(undefined);
+        mockDatabaseService.query.mockResolvedValue([]);
 
         const result: Cart[] | undefined = await cartService.createCart(1, 2, 3);
 
