@@ -12,6 +12,18 @@ export class CartService implements ICartService {
         quantity: number
     ): Promise<Cart[] | undefined> {
         const connection: PoolConnection = await this._databaseService.openConnection();
+        if (!userId) {
+            throw new Error("User ID is required to create a cart item.");
+        }
+        const cartItems: CartItem[] = await this.getCart(userId);
+
+        for (let i: number = 0; i < cartItems.length; i++) {
+            if (cartItems[i].gameId === gameId) {
+                // If the item already exists, don't add it again
+                return undefined;
+            }
+        }
+
         try {
             // const hashedPassword: string = password;
             await this._databaseService.query<Cart>(
