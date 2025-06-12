@@ -30,23 +30,21 @@ export class ChartService {
         }
     }
 
-    public async getOrdersByMonth(month: number, year: number): Promise<OrdersByMonth[]> {
+    public async getOrdersByMonth(): Promise<OrdersByMonth[]> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         try {
             const query: string = `
                 SELECT DATE_FORMAT(orderDate, '%m/%d') AS date, COUNT(*) AS orderCount
                 FROM orders
-                WHERE MONTH(orderDate) = ? AND YEAR(orderDate) = ?
+                WHERE orderDate >= DATE_SUB(CURDATE(), INTERVAL 31 DAY)
                 GROUP BY date
                 ORDER BY date
             `;
 
             const result: OrdersByMonth[] = await this._databaseService.query(
                 connection,
-                query,
-                month,
-                year
+                query
             );
 
             return result;

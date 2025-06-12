@@ -13,11 +13,8 @@ export class ChartController {
         res.status(200).json(turnover);
     }
 
-    public async getOrdersByMonth(req: Request, res: Response): Promise<void> {
-        const month: number = req.params.month ? parseInt(req.params.month) : new Date().getMonth() + 1;
-        const year: number = req.params.year ? parseInt(req.params.year) : new Date().getFullYear();
-
-        const orders: OrdersByMonth[] = await this._checkoutService.getOrdersByMonth(month, year);
+    public async getOrdersByMonth(_req: Request, res: Response): Promise<void> {
+        const orders: OrdersByMonth[] = await this._checkoutService.getOrdersByMonth();
 
         res.status(200).json(orders);
     }
