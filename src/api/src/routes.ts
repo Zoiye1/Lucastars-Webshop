@@ -7,7 +7,7 @@ import { GamesController } from "./controllers/GamesController";
 import { OrdersGamesController } from "@api/controllers/OrdersGamesController";
 import { AuthController } from "./controllers/AuthController";
 import { TagController } from "./controllers/TagController";
-import { Request, Response } from "express";
+import { AddressLookupController } from "./controllers/AddressLookupController";
 
 // Create a router
 export const router: Router = Router();
@@ -25,6 +25,7 @@ const ordersGamesController: OrdersGamesController = new OrdersGamesController()
 const authController: AuthController = new AuthController();
 const cartController: CartController = new CartController();
 const tagController: TagController = new TagController();
+const addressLookupController: AddressLookupController = new AddressLookupController();
 
 router.post("/auth/register", authController.register);
 router.post("/auth/login", authController.login);
@@ -53,7 +54,7 @@ router.get("/cart", (req, res) => cartController.getCart(req, res));
 router.delete("/cart/:gameId", (req, res) => cartController.deleteCartItem(req, res));
 router.get("/checkout", (req, res) => checkoutController.getCheckout(req, res));
 router.post("/checkout", (req, res) => checkoutController.postCheckout(req, res));
-
+router.get("/address-lookup", (req, res) => addressLookupController.getAddressLookup(req, res));
 router.get("/owned-games", (req, res) => gamesController.getOwnedGames(req, res));
 router.get("/secret", (req, res) => welcomeController.getSecret(req, res));
 
@@ -72,21 +73,6 @@ router.post("/cart/add", (_req, _res) => {
 
 router.post("/Checkout/add", (_req, _res) => {
     throw new Error("Add a product to the cart");
-});
-
-// Add address lookup endpoint BEFORE session-required middleware
-router.get("/address-lookup", (req: Request, res: Response) => {
-    // Dummy implementation: always return the same data
-    // In production, you would call a real postcode API here
-    const { postalCode, houseNumber } = req.query;
-    if (!postalCode || !houseNumber) {
-        res.status(400).json({ error: "Missing postalCode or houseNumber" });
-        return;
-    }
-    res.json({
-        street: "Voorbeeldstraat",
-        city: "Voorbeeldstad",
-    });
 });
 
 export default router;

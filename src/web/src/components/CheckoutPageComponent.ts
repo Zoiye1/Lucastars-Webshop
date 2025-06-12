@@ -1,9 +1,11 @@
-import { CheckoutItem } from "@shared/types";
+import { AddressLookupResponse, CheckoutItem } from "@shared/types";
 import "@web/components/CheckoutPageComponent";
 import { CheckoutService } from "@web/services/CheckoutService";
+import { PostalCodeService } from "@web/services/PostalCodeService";
 
 export class CheckoutPageComponent extends HTMLElement {
     private _checkoutService = new CheckoutService();
+    private _postalCodeService = new PostalCodeService();
 
     private item?: CheckoutItem;
 
@@ -121,7 +123,9 @@ export class CheckoutPageComponent extends HTMLElement {
             </form>
         `;
 
-        const submitButton: HTMLElement = document.createElement("button");
+        const submitButton: HTMLButtonElement = document.createElement("button");
+        submitButton.type = "submit";
+        submitButton.setAttribute("form", "address-form");
         submitButton.textContent = "Bestelling plaatsen";
         submitButton.style.padding = "0.75rem";
         submitButton.style.backgroundColor = "var(--primary-color)";
@@ -130,9 +134,12 @@ export class CheckoutPageComponent extends HTMLElement {
         submitButton.style.borderRadius = "8px";
         submitButton.style.fontSize = "1rem";
         submitButton.style.cursor = "pointer";
-        submitButton.onclick = async () => {
-            // Haal adresgegevens op uit het formulier
-            const addressForm: HTMLFormElement | null | undefined = this.shadowRoot?.querySelector<HTMLFormElement>("#address-form");
+
+        userInfo.querySelector<HTMLFormElement>("#address-form")!.onsubmit = async (event: SubmitEvent) => {
+            event.preventDefault();
+
+            const addressForm: HTMLFormElement | null = event.target as HTMLFormElement | null;
+
             if (addressForm) {
                 const formData: FormData = new FormData(addressForm);
                 const street: string = formData.get("street") as string;
@@ -167,31 +174,32 @@ export class CheckoutPageComponent extends HTMLElement {
 
         this.shadowRoot.appendChild(container);
 
-        // After userInfo.innerHTML, add JS for lookup button
-        setTimeout(() => {
-            const addressForm = this.shadowRoot?.querySelector<HTMLFormElement>("#address-form");
-            const lookupBtn = this.shadowRoot?.querySelector<HTMLButtonElement>("#lookup-address");
-            if (lookupBtn && addressForm) {
-                lookupBtn.onclick = async () => {
-                    const formData = new FormData(addressForm);
-                    const postalCode = formData.get("postalCode") as string;
-                    const houseNumber = formData.get("houseNumber") as string;
-                    if (!postalCode || !houseNumber) {
-                        alert("Vul postcode en huisnummer in.");
-                        return;
-                    }
-                    try {
-                        const res = await fetch(`/address-lookup?postalCode=${encodeURIComponent(postalCode)}&houseNumber=${encodeURIComponent(houseNumber)}`);
-                        if (!res.ok) throw new Error("Adres niet gevonden");
-                        const data = await res.json();
-                        (addressForm.elements.namedItem("street") as HTMLInputElement).value = data.street || "";
-                        (addressForm.elements.namedItem("city") as HTMLInputElement).value = data.city || "";
-                    } catch {
-                        alert("Adres niet gevonden.");
-                    }
-                };
-            }
-        }, 0);
+        const addressForm: HTMLFormElement | null = this.shadowRoot.querySelector("#address-form");
+        const lookupBtn: HTMLButtonElement | null = this.shadowRoot.querySelector("#lookup-address");
+
+        if (lookupBtn && addressForm) {
+            lookupBtn.onclick = async () => {
+                const formData: FormData = new FormData(addressForm);
+                const postalCode: string = formData.get("postalCode") as string;
+                const houseNumber: string = formData.get("houseNumber") as string;
+
+                if (!postalCode || !houseNumber) {
+                    alert("Vul postcode en huisnummer in.");
+                    return;
+                }
+
+                const addressLookup: AddressLookupResponse = await this._postalCodeService.getAddressByPostalCode(postalCode, houseNumber);
+
+                if (!addressLookup.street || !addressLookup.city) {
+                    alert("Adres niet gevonden.");
+                    return;
+                }
+
+                // Vul de straat en stad in het formulier
+                (addressForm.elements.namedItem("street") as HTMLInputElement).value = addressLookup.street;
+                (addressForm.elements.namedItem("city") as HTMLInputElement).value = addressLookup.city;
+            };
+        }
     }
 }
 

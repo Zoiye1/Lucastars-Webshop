@@ -208,3 +208,14 @@ export type Tag = {
     /** Name of the tag */
     value: string;
 };
+
+export type AddressLookupResponse = {
+    /** Postal code */
+    postalCode: string;
+    /** City */
+    city: string;
+    /** Street */
+    street: string;
+    /** House number */
+    houseNumber: string;
+};
