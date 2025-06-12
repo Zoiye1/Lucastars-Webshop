@@ -27,11 +27,12 @@ export default html`
             line-height: 1.6;
             color: #333;
             background-color: #f8f9fa;
+            margin: 40px;
         }
         
         .container {
             max-width: 600px;
-            margin: 40px auto;
+            margin: auto;
             background: white;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
