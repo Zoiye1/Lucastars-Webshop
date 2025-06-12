@@ -1,6 +1,6 @@
-import { Order } from "@shared/types";
+import { InvoiceOrder } from "@shared/types";
 
 @Interface
 export abstract class IInvoiceService {
-    public abstract generateInvoice(order: Order): Buffer;
+    public abstract generateInvoice(order: InvoiceOrder): Buffer;
 }

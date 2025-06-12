@@ -1,6 +1,6 @@
 import { PoolConnection } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
-import { Order, Order, OrdersGames, PaginatedResponse, GetOrdersOptions } from "@shared/types";
+import { Order, OrdersGames, PaginatedResponse, GetOrdersOptions, InvoiceOrder } from "@shared/types";
 import { IOrdersGamesService } from "@api/interfaces/IOrdersGamesService";
 
 /**
@@ -103,7 +103,7 @@ export class OrdersGamesService implements IOrdersGamesService {
         }
     }
 
-    public async getOrderById(orderId: number): Promise<Order | undefined> {
+    public async getOrderById(orderId: number): Promise<InvoiceOrder | undefined> {
         const connection: PoolConnection = await this._databaseService.openConnection();
 
         try {
@@ -145,7 +145,7 @@ export class OrdersGamesService implements IOrdersGamesService {
                 GROUP BY o.id
             `;
 
-            const result: Order[] = await this._databaseService.query<Order[]>(connection, query, orderId);
+            const result: InvoiceOrder[] = await this._databaseService.query<InvoiceOrder[]>(connection, query, orderId);
 
             if (result.length !== 1) {
                 return undefined;

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ICheckoutService } from "@api/interfaces/ICheckoutService";
 import { CheckoutService } from "@api/services/CheckoutService";
-import { CheckoutItem, Payment, PaymentReturnResponse, Order } from "@shared/types";
+import { CheckoutItem, Payment, PaymentReturnResponse, InvoiceOrder } from "@shared/types";
 import { PassThrough } from "stream";
 import { OrdersGamesService } from "@api/services/OrdersGamesService";
 import { IOrdersGamesService } from "@api/interfaces/IOrdersGamesService";
@@ -111,7 +111,7 @@ export class CheckoutController {
             return;
         }
 
-        const order: Order | undefined = await this._ordersGamesService.getOrderById(orderId);
+        const order: InvoiceOrder | undefined = await this._ordersGamesService.getOrderById(orderId);
 
         if (!order || order.user.id !== userId) {
             res.status(404).json({ message: "Order not found." });

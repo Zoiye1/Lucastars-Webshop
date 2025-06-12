@@ -353,3 +353,12 @@ export type AddressLookupResponse = {
     /** House number */
     houseNumber: string;
 };
+
+export type InvoiceOrder = {
+    id: number;
+    user: IUser;
+    orderDate: Date;
+    status: string;
+    totalAmount: number;
+    games: Game[];
+};

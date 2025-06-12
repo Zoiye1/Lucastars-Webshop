@@ -1,5 +1,5 @@
 import { IInvoiceService } from "@api/interfaces/IInvoiceService";
-import { IUser, Order } from "@shared/types";
+import { InvoiceOrder, IUser, Order } from "@shared/types";
 import { jsPDF } from "jspdf";
 import autoTable, { CellDef } from "jspdf-autotable";
 
@@ -14,7 +14,7 @@ export class InvoiceService implements IInvoiceService {
      * @param order The order for which the invoice is to be generated.
      * @returns A Buffer containing the PDF invoice data.
      */
-    public generateInvoice(order: Order): Buffer {
+    public generateInvoice(order: InvoiceOrder): Buffer {
         const document: jsPDF = new jsPDF({
             orientation: "portrait",
             format: "a4",
