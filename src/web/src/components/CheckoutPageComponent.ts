@@ -1,4 +1,4 @@
-import { AddressLookupResponse, CheckoutItem } from "@shared/types";
+import { AddressLookupResponse, CheckoutItem, Payment, PaymentResponse } from "@shared/types";
 import "@web/components/CheckoutPageComponent";
 import { CheckoutService } from "@web/services/CheckoutService";
 import { PostalCodeService } from "@web/services/PostalCodeService";
@@ -152,16 +152,32 @@ export class CheckoutPageComponent extends HTMLElement {
                     return;
                 }
 
+                if (!street || !city) {
+                    alert("Zoek eerst het adres op.");
+                    return;
+                }
+
+                if (!street || !houseNumber || !postalCode || !city) {
+                    alert("Vul alle velden in.");
+                    return;
+                }
                 const data: CheckoutItem = {
+                    orderId: null,
                     street: street,
                     houseNumber: houseNumber,
                     postalCode: postalCode,
                     city: city,
-                    totalPrice: this.item!.totalPrice,
+                    totalPrice: Number(localStorage.getItem("cart-total")) || 0,
                 };
-
-                await this._checkoutService.submitCheckout(data);
-                location.href = "/my-games.html";
+                console.log(data);
+                const result: CheckoutItem = await this._checkoutService.submitCheckout(data);
+                const data2: Payment = {
+                    orderId: result.orderId ?? 0,
+                    value: this.item?.totalPrice ?? 0,
+                };
+                const transactionId: PaymentResponse = await this._checkoutService.createPayment(data2);
+                console.log(transactionId.transactionId);
+                location.href = `https://psp.api.lucastars.hbo-ict.cloud/checkout/${transactionId.transactionId}`;
             }
             else {
                 alert("Vul het adres in.");

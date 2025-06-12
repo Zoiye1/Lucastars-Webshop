@@ -79,7 +79,7 @@ export class CartPageComponent extends HTMLElement {
 
             // eslint-disable-next-line @typescript-eslint/typedef
             const img = document.createElement("img");
-            img.src = item.thumbnail;
+            img.src = `${VITE_API_URL}uploads/${item.thumbnail}`;
             img.alt = item.name;
             img.style.width = "100px";
             img.style.height = "100px";

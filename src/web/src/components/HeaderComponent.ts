@@ -29,10 +29,12 @@ export class HeaderComponent extends HTMLElement {
                     max-width: var(--max-width);
                     width: 100%;
                     height: 100%;
+                    padding: 0 1em;
                     margin: 0 auto;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
+                    box-sizing: border-box;
                 }
 
                 div.wrapper > div {

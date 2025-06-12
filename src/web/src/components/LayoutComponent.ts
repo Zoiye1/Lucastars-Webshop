@@ -5,7 +5,7 @@ import { WebshopEventService } from "@web/services/WebshopEventService";
 import { WebshopEvent } from "@web/enums/WebshopEvent";
 import { CartService } from "@web/services/CartService";
 import { ICartService } from "@web/interfaces/ICartService";
-import { ICartResponse } from "@shared/types";
+import { ICartResponse, NotificationEvent } from "@shared/types";
 
 /**
  * This component is the main layout for the webshop.
@@ -35,7 +35,6 @@ export class LayoutComponent extends HTMLElement {
                     flex-direction: column;
                     min-height: 100dvh;
                     width: 100%;
-                    padding: 0 1em;
                     box-sizing: border-box;
                 }
                 
@@ -44,6 +43,7 @@ export class LayoutComponent extends HTMLElement {
                     flex-grow: 1;
                     max-width: var(--max-width);
                     width: 100%;
+                    padding: 0 1em;
                     margin: 0 auto;
                     box-sizing: border-box;
                 }
@@ -127,6 +127,14 @@ export class LayoutComponent extends HTMLElement {
                     "warning"
                 );
             }
+        });
+
+        // Standard event listener for showing notifications
+        this._webshopEventService.addEventListener(WebshopEvent.Notification, (event: NotificationEvent) => {
+            this.showNotification(
+                event.message,
+                event.type
+            );
         });
     }
 

@@ -6,6 +6,7 @@ CREATE TABLE `games` (
   `description` text,
   `price` decimal(10,2) NOT NULL COMMENT 'Price in Euros',
   `playUrl` varchar(255) NOT NULL,
+  `deleted` boolean NOT NULL DEFAULT false,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -39,6 +40,7 @@ CREATE TABLE `users` (
   `email` varchar(255) UNIQUE NOT NULL,
   `phoneNumber` varchar(255),
   `password` varchar(255) NOT NULL,
+  `roleId` integer,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -103,11 +105,18 @@ CREATE TABLE `sessions` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE `roles` (
+  `id` integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) UNIQUE NOT NULL
+);
+
 ALTER TABLE `game_images` ADD FOREIGN KEY (`gameId`) REFERENCES `games` (`id`);
 
 ALTER TABLE `games_tags` ADD FOREIGN KEY (`gameId`) REFERENCES `games` (`id`);
 
 ALTER TABLE `games_tags` ADD FOREIGN KEY (`tagId`) REFERENCES `tags` (`id`);
+
+ALTER TABLE `users` ADD FOREIGN KEY (`roleId`) REFERENCES `roles` (`id`);
 
 ALTER TABLE `addresses` ADD FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
 

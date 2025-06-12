@@ -22,7 +22,7 @@ export class LinkButtonComponent extends HTMLElement {
                 .link-button {
                     font-size: 25px;
                     border: none;
-                    background: #159eff;
+                    background: var(--primary-color);
                     color: white;
                     padding: 5px 0;
                     border-radius: 15px;
@@ -32,7 +32,7 @@ export class LinkButtonComponent extends HTMLElement {
                 }
                 
                 .link-button:hover {
-                    background: #159eff;
+                    background: var(--primary-color-dark);
                 }
             </style>
         `;

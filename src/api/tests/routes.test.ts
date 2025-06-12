@@ -32,7 +32,10 @@ describe("Routes", () => {
         // Arrange
         const testApp: TestApp = createTestApp(app);
 
-        vi.spyOn(SessionService.prototype, "getUserIdBySession").mockResolvedValue(1337);
+        vi.spyOn(SessionService.prototype, "getUserBySession").mockResolvedValue({
+            userId: 1337,
+            userRole: undefined,
+        });
 
         // Act
         const response: TestResponse = await testApp

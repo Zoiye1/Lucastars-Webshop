@@ -40,8 +40,19 @@ export class GameService implements IGameService {
         return gamesResponse;
     }
 
-    public async getGameById(id: number): Promise<Game[]> {
-        const url: string = `${VITE_API_URL}game-info?id=${encodeURIComponent(id)}`;
+    public async getGameById(id: number, withPlayUrl?: boolean): Promise<Game[]> {
+        const url: string = `${VITE_API_URL}game-info?id=${encodeURIComponent(id)}${withPlayUrl ? "&withPlayUrl=true" : ""}`;
+        const response: Response = await fetch(url, {
+            credentials: "include",
+        });
+
+        const gamesResponse: GamesResponse = await response.json() as unknown as GamesResponse;
+
+        return gamesResponse.games;
+    }
+
+    public async getFiveRandomGames(): Promise<Game[]> {
+        const url: string = `${VITE_API_URL}five-random-games`;
         const response: Response = await fetch(url);
 
         const gamesResponse: GamesResponse = await response.json() as unknown as GamesResponse;
@@ -72,5 +83,70 @@ export class GameService implements IGameService {
         const gamesResponse: GamesResponse = await response.json() as unknown as GamesResponse;
 
         return gamesResponse.games;
+    }
+
+    public async createGame(game: Game, thumbnail: Blob, images?: Blob[]): Promise<Game> {
+        const formData: FormData = new FormData();
+        formData.append("game", JSON.stringify(game));
+
+        formData.append("thumbnail", thumbnail);
+
+        if (images && images.length > 0) {
+            images.forEach(img => {
+                formData.append("images", img);
+            });
+        }
+
+        const response: Response = await fetch(`${VITE_API_URL}games`, {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to create game");
+        }
+
+        const createdGame: Game = await response.json() as unknown as Game;
+        return createdGame;
+    }
+
+    public async updateGame(game: Game, thumbnail?: Blob, images?: Blob[]): Promise<Game> {
+        const formData: FormData = new FormData();
+        formData.append("game", JSON.stringify(game));
+
+        if (thumbnail) {
+            formData.append("thumbnail", thumbnail);
+        }
+
+        if (images && images.length > 0) {
+            images.forEach(img => {
+                formData.append("images", img);
+            });
+        }
+
+        const response: Response = await fetch(`${VITE_API_URL}games/${game.id}`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to update game");
+        }
+
+        const updatedGame: Game = await response.json() as unknown as Game;
+        return updatedGame;
+    }
+
+    public async deleteGame(id: number): Promise<void> {
+        const response: Response = await fetch(`${VITE_API_URL}games/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to delete game");
+        }
     }
 }

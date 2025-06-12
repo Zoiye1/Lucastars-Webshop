@@ -170,7 +170,7 @@ describe("GameService", () => {
         expect(games.length).toBe(2);
         expect(mockDatabaseService.query).toHaveBeenCalledWith(
             expect.anything(),
-            expect.stringContaining("WHERE o.userId = ?"),
+            expect.stringContaining("o.userId = ?"),
             1
         );
     });

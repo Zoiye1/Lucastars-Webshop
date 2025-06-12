@@ -133,6 +133,7 @@ export class GameListComponent extends HTMLElement {
             this._minPrice = event.minPrice;
             this._maxPrice = event.maxPrice;
             this._tags = event.tags;
+            this._currentPage = 1;
             await this.updateGames();
         });
 
@@ -176,7 +177,7 @@ export class GameListComponent extends HTMLElement {
                 <webshop-select-game
                     gameId="${game.id}"
                     name="${game.name}"
-                    image="${game.thumbnail}"
+                    image="${VITE_API_URL}uploads/${game.thumbnail}"
                     price="${game.price}"
                 ></webshop-select-game>
             `;
