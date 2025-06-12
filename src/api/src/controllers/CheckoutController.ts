@@ -72,16 +72,14 @@ export class CheckoutController {
             return;
         }
 
-        const pdfBase64: string = await this._invoiceService.generateInvoice(order);
-
-        // Decode base64 to Buffer
-        const pdfBuffer: Buffer = Buffer.from(pdfBase64, "base64");
+        const fileName: string = `invoice-${order.id}.pdf`;
+        const pdfBuffer: Buffer = this._invoiceService.generateInvoice(order);
 
         const readStream: PassThrough = new PassThrough();
         readStream.end(pdfBuffer);
 
         res.setHeader("Content-Type", "application/pdf");
-        res.setHeader("Content-Disposition", "inline; filename=invoice.pdf");
+        res.setHeader("Content-Disposition", `inline; filename=${fileName}`);
 
         readStream.pipe(res);
     }
