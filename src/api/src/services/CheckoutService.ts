@@ -1,8 +1,12 @@
 import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
-import { CheckoutItem, Game, PaymentReturnResponse } from "@shared/types";
+import { CheckoutItem, Game, InvoiceOrder, PaymentReturnResponse } from "@shared/types";
 import { ICheckoutService } from "@api/interfaces/ICheckoutService";
 import { PaymentResponse } from "@shared/types";
+import { EmailService } from "./EmailService";
+import { OrdersGamesService } from "./OrdersGamesService";
+import { IInvoiceService } from "@api/interfaces/IInvoiceService";
+import { InvoiceService } from "./InvoiceService";
 
 type CartItemsResult = {
     gameId: number;
@@ -21,6 +25,9 @@ type AddressIdResult = {
 export class CheckoutService implements ICheckoutService {
     private gameName: string = "";
     private readonly _databaseService: DatabaseService = new DatabaseService();
+    private readonly _ordersGamesService: OrdersGamesService = new OrdersGamesService();
+    private readonly _emailService: EmailService = new EmailService();
+    private readonly _invoiceService: IInvoiceService = new InvoiceService();
 
     public async getCheckout(userId: number): Promise<CheckoutItem | null> {
         const connection: PoolConnection = await this._databaseService.openConnection();
@@ -77,6 +84,19 @@ export class CheckoutService implements ICheckoutService {
         catch (e: unknown) {
             throw new Error(`Failed to get checkout info: ${e}`);
         }
+
+        const order: InvoiceOrder | undefined = await this._ordersGamesService.getOrderById(orderId);
+
+        if (!order) {
+            throw new Error(`Order with ID ${orderId} not found.`);
+        }
+
+        await this._emailService.sendMail(
+            order.user.email,
+            "Bestelling geplaatst",
+            this._invoiceService.generateInvoiceMail(order)
+        );
+
         const res: Response = await fetch("https://psp.api.lucastars.hbo-ict.cloud/payments", {
             method: "POST",
             headers: {
