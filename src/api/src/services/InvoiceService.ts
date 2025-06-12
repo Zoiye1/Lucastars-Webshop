@@ -1,13 +1,48 @@
 import { IInvoiceService } from "@api/interfaces/IInvoiceService";
-import { InvoiceOrder, IUser, Order } from "@shared/types";
+import { InvoiceOrder, IUser } from "@shared/types";
 import { jsPDF } from "jspdf";
 import autoTable, { CellDef } from "jspdf-autotable";
+import invoiceHtml from "@api/templates/invoice";
+import Handlebars from "handlebars";
 
 export class InvoiceService implements IInvoiceService {
     private readonly _vat: number = 21;
 
     private readonly _font: string = "Helvetica";
     private readonly _pageMargin: number = 5;
+
+    public generateInvoiceMail(order: InvoiceOrder): string {
+        const template: Handlebars.TemplateDelegate = Handlebars.compile(invoiceHtml);
+
+        const currencyFormatter: Intl.NumberFormat = new Intl.NumberFormat("nl-NL", {
+            style: "currency",
+            currency: "EUR",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+
+        return template({
+            order: {
+                ...order,
+                user: {
+                    ...order.user,
+                    fullName: this.formatFullName(order.user),
+                },
+                games: order.games.map(game => ({
+                    ...game,
+                    price: currencyFormatter.format(game.price),
+                })),
+                id: order.id.toString().padStart(6, "0"),
+                orderDate: new Date(order.orderDate).toLocaleDateString("nl-NL", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                }),
+                totalAmount: currencyFormatter.format(order.totalAmount),
+                invoiceUrl: `${process.env.API_URL}/invoice/${order.id}`,
+            },
+        });
+    }
 
     /**
      * Generates a PDF invoice for the given order.
@@ -74,7 +109,7 @@ export class InvoiceService implements IInvoiceService {
         });
     }
 
-    private renderInvoiceInfo(document: jsPDF, order: Order): void {
+    private renderInvoiceInfo(document: jsPDF, order: InvoiceOrder): void {
         const pageWidth: number = document.internal.pageSize.getWidth();
 
         const invoiceDate: string = new Date().toLocaleDateString();
@@ -116,7 +151,7 @@ export class InvoiceService implements IInvoiceService {
         });
     }
 
-    private renderOrderSummaryTable(document: jsPDF, order: Order): void {
+    private renderOrderSummaryTable(document: jsPDF, order: InvoiceOrder): void {
         const currencyFormatter: Intl.NumberFormat = new Intl.NumberFormat("nl-NL", {
             style: "currency",
             currency: "EUR",
