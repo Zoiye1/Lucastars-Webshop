@@ -50,7 +50,7 @@ router.use(sessionMiddleware);
 
 router.get("/game-info", (req, res) => gamesController.getGameById(req, res));
 router.get("/auth/verify", (req, res) => authController.verify(req, res));
-router.post("/auth/logout", (req, res) => authController.logout(req, res)); // NEW LOGOUT ROUTE
+router.post("/auth/logout", (req, res) => authController.logout(req, res));
 router.get("/session", (req, res) => welcomeController.getSession(req, res));
 router.delete("/session", (req, res) => welcomeController.deleteSession(req, res));
 router.delete("/session/expired", (req, res) => welcomeController.deleteExpiredSessions(req, res));
