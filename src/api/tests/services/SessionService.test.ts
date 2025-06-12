@@ -3,6 +3,7 @@ import { createMockDatabaseService, MockDatabaseService } from "../__helpers__/d
 
 import { ISessionService } from "@api/interfaces/ISessionService";
 import { SessionService } from "@api/services/SessionService";
+import { UserSession } from "@shared/types";
 
 beforeEach(() => {
     // Clear and reset all mocks
@@ -11,7 +12,7 @@ beforeEach(() => {
 });
 
 describe("SessionService", () => {
-    test("getUserBySessionId returns user", async () => {
+    test("getUserBySession returns user", async () => {
         // Arrange
         const sessionService: ISessionService = new SessionService();
 
@@ -25,14 +26,17 @@ describe("SessionService", () => {
             ]);
 
         // Act
-        const userId: number | undefined = await sessionService.getUserIdBySession("test-session");
+        const userId: UserSession | undefined = await sessionService.getUserBySession("test-session");
 
         // Assert
         expect(mockDatabaseService.query).toBeCalledWith(expect.anything(), expect.anything(), "test-session");
-        expect(userId).toBe(1337);
+        expect(userId).toEqual({
+            userId: 1337,
+            userRole: undefined,
+        });
     });
 
-    test("getUserBySessionId should release connection on exception", async () => {
+    test("getUserBySession should release connection on exception", async () => {
         // Arrange
         const sessionService: ISessionService = new SessionService();
 
@@ -45,7 +49,7 @@ describe("SessionService", () => {
         let throwError: boolean = false;
 
         try {
-            await sessionService.getUserIdBySession("test-session");
+            await sessionService.getUserBySession("test-session");
         }
         catch {
             throwError = true;
