@@ -76,7 +76,7 @@ class DashboardTagsPageComponent extends HTMLElement {
             title: "Voeg tag toe",
             icon: "/images/icons/add-circle.svg",
             action: () => {
-                location.href = "/dashboard/tag-form";
+                location.href = "/dashboard/tag-form.html";
             },
         };
 
@@ -112,7 +112,7 @@ class DashboardTagsPageComponent extends HTMLElement {
 
                             const editLink: HTMLAnchorElement = document.createElement("a");
                             editLink.className = "action-btn icon";
-                            editLink.href = `/dashboard/tag-form?id=${tag.id}`;
+                            editLink.href = `/dashboard/tag-form.html?id=${tag.id}`;
 
                             const editIcon: HTMLImageElement = document.createElement("img");
                             editIcon.src = "/images/icons/pencil.svg";

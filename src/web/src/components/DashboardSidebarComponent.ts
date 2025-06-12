@@ -46,35 +46,35 @@ class DashboardSidebarComponent extends HTMLElement {
 
         const element: HTMLElement = html`
             <div class="sidebar">
-                <a href="/dashboard/" class="sidebar-item">
+                <a href="/dashboard/index.html" class="sidebar-item">
                     <span class="icon">
                         <img src="/images/icons/home.svg" alt="Dashboard Icon">
                     </span>
                     <span class="label">Dashboard</span>
                 </a>
 
-                <a href="/dashboard/orders" class="sidebar-item">
+                <a href="/dashboard/orders.html" class="sidebar-item">
                     <span class="icon">
                         <img src="/images/icons/package.svg" alt="Orders Icon">
                     </span>
                     <span class="label">Orders</span>
                 </a>
 
-                <a href="/dashboard/games" class="sidebar-item">
+                <a href="/dashboard/games.html" class="sidebar-item">
                     <span class="icon">
                         <img src="/images/icons/gamepad.svg" alt="Games Icon">
                     </span>
                     <span class="label">Games</span>
                 </a>
 
-                <a href="/dashboard/tags" class="sidebar-item">
+                <a href="/dashboard/tags.html" class="sidebar-item">
                     <span class="icon">
                         <img src="/images/icons/tag.svg" alt="Tags Icon">
                     </span>
                     <span class="label">Tags</span>
                 </a>
 
-                <a href="/dashboard/users" class="sidebar-item">
+                <a href="/dashboard/users.html" class="sidebar-item">
                     <span class="icon">
                         <img src="/images/icons/account.svg" alt="Users Icon">
                     </span>

@@ -447,7 +447,7 @@ export class GameFormPageComponent extends HTMLElement {
         );
 
         setTimeout(() => {
-            window.location.href = "/dashboard/games";
+            window.location.href = "/dashboard/games.html";
         }, 2000);
     }
 }

@@ -122,7 +122,7 @@ class DashboardGamesPageComponent extends HTMLElement {
 
                         const editLink: HTMLAnchorElement = document.createElement("a");
                         editLink.className = "action-btn icon";
-                        editLink.href = `/dashboard/game-form?id=${game.id}`;
+                        editLink.href = `/dashboard/game-form.html?id=${game.id}`;
 
                         const editIcon: HTMLImageElement = document.createElement("img");
                         editIcon.src = "/images/icons/pencil.svg";
@@ -179,7 +179,7 @@ class DashboardGamesPageComponent extends HTMLElement {
             title: "Voeg game toe",
             icon: "/images/icons/add-circle.svg",
             action: () => {
-                location.href = "/dashboard/game-form";
+                location.href = "/dashboard/game-form.html";
             },
         };
 

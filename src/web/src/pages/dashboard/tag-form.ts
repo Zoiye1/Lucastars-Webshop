@@ -171,7 +171,7 @@ export class TagFormPageComponent extends HTMLElement {
         );
 
         setTimeout(() => {
-            window.location.href = "/dashboard/tags";
+            window.location.href = "/dashboard/tags.html";
         }, 2000);
     }
 }

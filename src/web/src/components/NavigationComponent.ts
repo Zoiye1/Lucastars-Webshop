@@ -184,7 +184,7 @@ export class NavigationComponent extends HTMLElement {
 : `
                             <a href="/profile.html">Account</a>
                             <a href="/my-games.html">Mijn spellen</a>
-                            ${user?.role === "admin" ? "<a href=\"/dashboard/\">Dashboard</a>" : ""}
+                            ${user?.role === "admin" ? "<a href=\"/dashboard/index.html\">Dashboard</a>" : ""}
                         `}
                     </div>
                 </div>
