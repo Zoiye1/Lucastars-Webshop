@@ -182,7 +182,7 @@ export class NavigationComponent extends HTMLElement {
                             <a href="/register.html">Registreren</a>
                         `
 : `
-                            <a href="/index.html">Account</a>
+                            <a href="/profile.html">Account</a>
                             <a href="/my-games.html">Mijn spellen</a>
                             ${user?.role === "admin" ? "<a href=\"/dashboard/\">Dashboard</a>" : ""}
                         `}

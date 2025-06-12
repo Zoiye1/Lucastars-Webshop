@@ -114,6 +114,12 @@ class AuthService {
             try {
                 const data: IAuthResponse = JSON.parse(text) as IAuthResponse;
                 console.log("Parsed response data:", data);
+
+                // Update login state if successful
+                if (data.success) {
+                    this._isLoggedIn = true;
+                }
+
                 return data;
             }
             catch (parseError) {
@@ -137,8 +143,8 @@ class AuthService {
     }
 
     /**
- * Login a user
- */
+     * Login a user
+     */
     public async login(email: string, password: string): Promise<IAuthResponse> {
         try {
             const url: string = `${VITE_API_URL}auth/login`;
@@ -179,6 +185,12 @@ class AuthService {
             try {
                 const data: IAuthResponse = JSON.parse(text) as IAuthResponse;
                 console.log("Parsed login response data:", data);
+
+                // Update login state if successful
+                if (data.success) {
+                    this._isLoggedIn = true;
+                }
+
                 return data;
             }
             catch (parseError) {
@@ -197,6 +209,83 @@ class AuthService {
             return {
                 success: false,
                 message: "An error occurred during login",
+            };
+        }
+    }
+
+    /**
+     * Logout the current user
+     */
+    public async logout(): Promise<IAuthResponse> {
+        try {
+            console.log("AuthService: Logging out user");
+
+            const url: string = `${VITE_API_URL}auth/logout`;
+            const response: Response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include", // Include cookies for session
+            });
+
+            console.log("AuthService: Logout response status:", response.status, response.statusText);
+
+            // Always reset login state regardless of response
+            this._isLoggedIn = false;
+            this._isLoggedInPromise = null;
+
+            // Try to read the response text
+            let text: string;
+            try {
+                text = await response.text();
+                console.log("Raw logout response text:", text);
+            }
+            catch (readError) {
+                console.error("Error reading logout response text:", readError);
+                // Even if we can't read response, logout was likely successful
+                return {
+                    success: true,
+                    message: "Logged out (response unreadable)",
+                };
+            }
+
+            if (!text || text.trim() === "") {
+                console.warn("Server returned empty logout response");
+                return {
+                    success: true,
+                    message: "Logged out (empty response)",
+                };
+            }
+
+            // Parse the text as JSON
+            try {
+                const data: IAuthResponse = JSON.parse(text) as IAuthResponse;
+                console.log("Parsed logout response data:", data);
+                return data;
+            }
+            catch (parseError) {
+                const errorMessage: string = parseError instanceof Error ? parseError.message : String(parseError);
+                console.error("JSON parse error:", errorMessage);
+                console.error("Response text that failed to parse:", text);
+                // Even if parsing fails, logout was likely successful
+                return {
+                    success: true,
+                    message: "Logged out (response parse error)",
+                };
+            }
+        }
+        catch (error) {
+            const errorMessage: string = error instanceof Error ? error.message : String(error);
+            console.error("AuthService: Logout error:", errorMessage);
+
+            // Always reset login state even on error
+            this._isLoggedIn = false;
+            this._isLoggedInPromise = null;
+
+            return {
+                success: true, // Still return success to allow redirect
+                message: "Logged out (with errors)",
             };
         }
     }
