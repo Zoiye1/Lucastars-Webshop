@@ -342,3 +342,14 @@ export type GameTagCount = {
     tag: string;
     count: number;
 };
+
+export type AddressLookupResponse = {
+    /** Postal code */
+    postalCode: string;
+    /** City */
+    city: string;
+    /** Street */
+    street: string;
+    /** House number */
+    houseNumber: string;
+};
