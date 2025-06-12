@@ -1,6 +1,6 @@
 import { PoolConnection } from "mysql2/promise";
 import { DatabaseService } from "./DatabaseService";
-import { Order, OrdersGames, PaginatedResponse, GetOrdersOptions } from "@shared/types";
+import { Order, OrdersGames, PaginatedResponse, GetOrdersOptions, InvoiceOrder } from "@shared/types";
 import { IOrdersGamesService } from "@api/interfaces/IOrdersGamesService";
 
 /**
@@ -97,6 +97,61 @@ export class OrdersGamesService implements IOrdersGamesService {
             };
 
             return paginatedResponse;
+        }
+        finally {
+            connection.release();
+        }
+    }
+
+    public async getOrderById(orderId: number): Promise<InvoiceOrder | undefined> {
+        const connection: PoolConnection = await this._databaseService.openConnection();
+
+        try {
+            const query: string = `
+                SELECT 
+                    o.id,
+                    o.userId,
+                    o.orderDate,
+                    o.status,
+                    o.totalAmount,
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', g.id,
+                            'sku', g.sku,
+                            'name', g.name,
+                            'thumbnail', g.thumbnail,
+                            'price', og.price
+                        )
+                    ) as 'games',
+                    JSON_OBJECT(
+                        'id', u.id,
+                        'username', u.username,
+                        'email', u.email,
+                        'firstName', u.firstName,
+                        'prefix', u.prefix,
+                        'lastName', u.lastName,
+                        'street', ua.street,
+                        'houseNumber', ua.houseNumber,
+                        'postalCode', ua.postalCode,
+                        'city', ua.city,
+                        'country', ua.country
+                    ) as 'user'
+                FROM orders o
+                LEFT JOIN orders_games og ON og.orderId = o.id
+                LEFT JOIN games g ON og.gameId = g.id
+                LEFT JOIN users u ON o.userId = u.id
+                LEFT JOIN addresses ua ON u.id = ua.userId
+                WHERE o.id = ?
+                GROUP BY o.id
+            `;
+
+            const result: InvoiceOrder[] = await this._databaseService.query<InvoiceOrder[]>(connection, query, orderId);
+
+            if (result.length !== 1) {
+                return undefined;
+            }
+
+            return result[0];
         }
         finally {
             connection.release();
