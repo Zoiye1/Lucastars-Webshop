@@ -349,9 +349,9 @@ export class BannerComponent extends HTMLElement {
                                 <div class="small-picture">
                                     <img
                                         alt="Screenshot"
-                                        src="${games[i].images[0]}"
+                                        src="${games[i].thumbnail}"
                                         data-banner-index="${i}"
-                                        data-image-src="${games[i].images[0]}"
+                                        data-image-src="${games[i].thumbnail}"
                                         class="thumbnail"
                                     />
                                 </div>
