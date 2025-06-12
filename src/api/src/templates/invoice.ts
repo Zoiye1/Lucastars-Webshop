@@ -26,7 +26,6 @@ export default html`
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            background-color: #f8f9fa;
             margin: 40px;
         }
         
