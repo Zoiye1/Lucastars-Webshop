@@ -36,8 +36,8 @@ const chartController: ChartController = new ChartController();
 const addressLookupController: AddressLookupController = new AddressLookupController();
 
 // Public routes (no authentication required)
-router.post("/auth/register", authController.register);
-router.post("/auth/login", authController.login);
+router.post("/auth/register", (req, res) => authController.register(req, res));
+router.post("/auth/login", (req, res) => authController.login(req, res));
 router.get("/games/search", (req, res) => gamesController.searchGames(req, res));
 router.get("/games", (req, res) => gamesController.getGames(req, res));
 router.get("/orders-games", (req, res) => ordersGamesController.getOrdersGames(req, res));

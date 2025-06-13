@@ -10,7 +10,7 @@ export class AuthController {
     /**
      * Register a new user
      */
-    public register = async (req: Request, res: Response): Promise<void> => {
+    public async register(req: Request, res: Response): Promise<void> {
         try {
             console.log("Register request received:", req.body);
             const userData: IUserRegisterDTO = req.body as IUserRegisterDTO;
@@ -122,7 +122,7 @@ export class AuthController {
     /**
      * Login a user
      */
-    public login = async (req: Request, res: Response): Promise<void> => {
+    public async login(req: Request, res: Response): Promise<void> {
         try {
             const loginData: { email: string; password: string } = req.body as { email: string; password: string };
             const { email, password } = loginData;
@@ -225,7 +225,7 @@ export class AuthController {
     /**
      * Logout the current user
      */
-    public logout = async (req: Request, res: Response): Promise<void> => {
+    public async logout(req: Request, res: Response): Promise<void> {
         try {
             console.log("Logout request received for user:", req.userId || "unknown");
 
