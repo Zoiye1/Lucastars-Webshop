@@ -70,14 +70,13 @@ router.post("/checkout", (req, res) => checkoutController.postCheckout(req, res)
 router.post("/payments/create", (req, res) => checkoutController.createPayment(req, res));
 router.get("/address-lookup", (req, res) => addressLookupController.getAddressLookup(req, res));
 router.get("/invoice/:orderId", (req, res) => checkoutController.getInvoice(req, res));
-
+router.put("/users/:id", (req, res) => userController.updateUser(req, res));
+router.put("/users/:id/address", (req, res) => userController.updateAddress(req, res));
 router.get("/owned-games", (req, res) => gamesController.getOwnedGames(req, res));
 
 // NOTE: After this line, all endpoints will require the user to have the "admin" role.
 router.use(requireRole("admin"));
 router.get("/secret", (req, res) => welcomeController.getSecret(req, res));
-router.put("/users/:id", (req, res) => userController.updateUser(req, res));
-router.put("/users/:id/address", (req, res) => userController.updateAddress(req, res));
 router.get("/orders", (req, res) => ordersGamesController.getOrders(req, res));
 router.get("/image-proxy", (req, res) => imageProxyController.getImage(req, res));
 router.get("/users", (req, res) => userController.getUsers(req, res));

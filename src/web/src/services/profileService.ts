@@ -191,18 +191,18 @@ class ProfileService {
 
             if (result.success) {
                 console.log("ProfileService: Logout successful, redirecting to login");
-                window.location.href = "/login";
+                window.location.href = "/login.html";
             }
             else {
                 console.error("ProfileService: Logout failed:", result.message);
                 // Still redirect even if logout "failed" to ensure user gets logged out
-                window.location.href = "/login";
+                window.location.href = "/login.html";
             }
         }
         catch (error: unknown) {
             console.error("ProfileService: Error during logout:", error);
             // Even if logout fails, redirect to login page
-            window.location.href = "/login";
+            window.location.href = "/login.html";
         }
     }
 }
