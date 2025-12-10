@@ -96,7 +96,7 @@ export class AuthController {
             // Set session cookie
             res.cookie("session", sessionId, {
                 httpOnly: true,
-                sameSite: "strict",
+                sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
                 secure: process.env.NODE_ENV === "production",
             });
 
@@ -178,7 +178,7 @@ export class AuthController {
             // Set session cookie
             res.cookie("session", sessionId, {
                 httpOnly: true,
-                sameSite: "strict",
+                sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
                 secure: process.env.NODE_ENV === "production",
             });
 
@@ -253,7 +253,7 @@ export class AuthController {
             // Clear the session cookie
             res.clearCookie("session", {
                 httpOnly: true,
-                sameSite: "strict",
+                sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
                 secure: process.env.NODE_ENV === "production",
             });
 
@@ -271,7 +271,7 @@ export class AuthController {
             // Even if there's an error, clear the cookie to ensure logout
             res.clearCookie("session", {
                 httpOnly: true,
-                sameSite: "strict",
+                sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
                 secure: process.env.NODE_ENV === "production",
             });
 
