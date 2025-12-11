@@ -56,25 +56,31 @@ export class CheckoutController {
         const userId: number | undefined = req.userId;
 
         if (!userId) {
-            res.status(401);
+            res.status(401).json({ error: "Unauthorized" });
             return;
         }
 
         const item: CheckoutItem | undefined = req.body as CheckoutItem | undefined;
 
         if (!item) {
-            res.status(400);
+            res.status(400).json({ error: "Invalid checkout data" });
             return;
         }
 
-        const result: CheckoutItem | null = await this._checkoutService.postCheckout(userId, item);
+        try {
+            const result: CheckoutItem | null = await this._checkoutService.postCheckout(userId, item);
 
-        if (!result) {
-            res.status(400);
-            return;
+            if (!result || !result.orderId) {
+                res.status(400).json({ error: "Failed to create order" });
+                return;
+            }
+
+            res.json(result);
         }
-
-        res.json(result);
+        catch (error) {
+            console.error("Checkout error:", error);
+            res.status(500).json({ error: "Internal server error" });
+        }
     }
 
     public async getPaymentStatus(req: Request, res: Response): Promise<void> {
